@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout | Last Plate</title>
+</head>
+<body>
+
+<h2>Checkout</h2>
+
+<label for="qty">Quantity</label><br>
+<input id="qty" type="number" min="1" value="1"><br><br>
+
+<button id="buyBtn" data-food-id="{{ food_id }}">
+  Buy
+</button>
+
+<script>
+  const buyBtn = document.getElementById("buyBtn");
+  const qtyInput = document.getElementById("qty");
+
+  if (buyBtn && qtyInput) {
+    const foodId = buyBtn.dataset.foodId;
+
+    buyBtn.addEventListener("click", function () {
+      const quantity = parseInt(qtyInput.value);
+
+      if (quantity <= 0 || isNaN(quantity)) {
+        alert("Please enter a valid quantity");
+        return;
+      }
+
+      fetch("/api/order/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          food_id: foodId,
+          quantity: quantity
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Order created successfully. Proceeding to payment...");
+          // Step 5: redirect to Razorpay payment
+          // window.location.href = `/payment/${data.order_id}`;
+        } else {
+          alert(data.message || "Order failed");
+        }
+      })
+      .catch(err => {
+        console.error("Order error:", err);
+        alert("Something went wrong");
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

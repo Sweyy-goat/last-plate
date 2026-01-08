@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Login | Last Plate</title>
+
+  <link rel="stylesheet" href="/static/css/common.css">
+
+  <style>
+    body {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(14,15,17,0.85),
+          rgba(14,15,17,0.95)
+        ),
+        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: 400px;
+      padding: 38px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+      animation: floatIn 0.8s ease forwards;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .title {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #2ecc71, #a8ff78);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    input {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2ecc71;
+      background: rgba(255,255,255,0.22);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 22px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: #0e0f11;
+      box-shadow: 0 12px 30px rgba(46,204,113,0.4);
+      transition: all 0.25s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(46,204,113,0.55);
+    }
+
+    .signup-text {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .signup-text a {
+      color: #2ecc71;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .signup-text a:hover {
+      text-decoration: underline;
+    }
+
+    .trust-note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        width: 100%;
+        padding: 30px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <div class="title">Welcome Back</div>
+
+    <div class="subtitle">
+      Log in to discover <strong>fresh, unsold food</strong> at  
+      beautiful prices — and be part of a movement  
+      that saves food, one plate at a time 🍽️
+    </div>
+
+    <label>Mobile Number</label>
+    <input id="mobile" placeholder="Enter your mobile number">
+
+    <br><br>
+
+    <label>Password</label>
+    <input id="password" type="password" placeholder="••••••••">
+
+    <button id="loginBtn" class="login-btn">
+      Continue to Browse
+    </button>
+
+    <div class="signup-text">
+      New here?  
+      <a href="/signup">Create an account</a> and start saving food today
+    </div>
+
+    <div class="trust-note">
+      🔒 Your details are safe. We respect your privacy.
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById("loginBtn").onclick = function () {
+    fetch("/api/user/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        mobile: document.getElementById("mobile").value,
+        password: document.getElementById("password").value
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.success ? "Login successful" : "Invalid credentials");
+      if (data.success) window.location.href = "/browse";
+    });
+  };
+</script>
+
+</body>
+</html>

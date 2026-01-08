@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Dashboard – Last Plate</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f8fafc;
+      font-family: Inter, system-ui, sans-serif;
+      color: #0f172a;
+    }
+
+    header {
+      padding: 20px;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h2 {
+      margin: 0;
+    }
+
+    header a {
+      background: #22c55e;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-size: 14px;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>Restaurant Dashboard</h2>
+  <a href="/restaurant/add-food">➕ Add Food</a>
+</header>
+
+<div class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>Food</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Pickup Window</th>
+      </tr>
+    </thead>
+    <tbody id="foodTable"></tbody>
+  </table>
+</div>
+
+<script>
+  fetch("/restaurant/api/my-foods")
+    .then(res => res.json())
+    .then(data => {
+      const table = document.getElementById("foodTable");
+
+      if (!data || data.length === 0) {
+        table.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty">No food added yet</td>
+          </tr>`;
+        return;
+      }
+
+      data.forEach(food => {
+        table.innerHTML += `
+          <tr>
+            <td>${food.name}</td>
+            <td>₹${food.price}</td>
+            <td>${food.available_quantity}</td>
+            <td>${food.pickup_start} – ${food.pickup_end}</td>
+          </tr>`;
+      });
+    });
+</script>
+
+</body>
+</html>

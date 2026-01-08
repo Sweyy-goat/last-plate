@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Login | Last Plate</title>
+
+  <!-- Common design system -->
+  <link rel="stylesheet" href="/static/css/common.css">
+
+  <style>
+    body {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(14,15,17,0.9),
+          rgba(14,15,17,0.95)
+        ),
+        url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: 400px;
+      padding: 38px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+      animation: floatUp 0.8s ease forwards;
+    }
+
+    @keyframes floatUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    input {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #f1c40f;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      color: #0e0f11;
+      box-shadow: 0 12px 30px rgba(241,196,15,0.4);
+      transition: all 0.25s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(241,196,15,0.55);
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .footer-note span {
+      color: #f1c40f;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        width: 100%;
+        padding: 30px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <div class="title">Restaurant Partner</div>
+    <div class="subtitle">
+      Manage surplus food & reduce waste
+    </div>
+
+    <label>Mobile Number</label>
+    <input id="mobile" placeholder="Enter registered mobile">
+
+    <br><br>
+
+    <label>Password</label>
+    <input id="password" type="password" placeholder="••••••••">
+
+    <button id="restLoginBtn" class="login-btn">
+      Login to Dashboard
+    </button>
+
+    <div class="footer-note">
+      🔒 Secure access for <span>verified partners</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const rbtn = document.getElementById("restLoginBtn");
+
+  if (rbtn) {
+    rbtn.addEventListener("click", function () {
+      fetch("/api/restaurant/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          mobile: document.getElementById("mobile").value,
+          password: document.getElementById("password").value
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.success ? "Login successful" : "Invalid credentials");
+        if (data.success) {
+          window.location.href = "/restaurant/dashboard";
+        }
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

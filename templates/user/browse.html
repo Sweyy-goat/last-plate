@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Last Plate – Nearby Food</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: #0b0f14;
+      color: #e5e7eb;
+    }
+
+    /* HERO */
+    .hero {
+      height: 280px;
+      background-image: url("https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1920&auto=format&fit=crop");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        rgba(5, 8, 15, 0.85),
+        rgba(5, 8, 15, 0.95)
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin-top: 12px;
+      font-size: 18px;
+      opacity: 0.85;
+    }
+
+    /* GRID */
+    .container {
+      max-width: 1100px;
+      margin: -40px auto 40px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* CARD */
+    .card {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        rgba(10,12,15,0.65),
+        rgba(10,12,15,0.85)
+      );
+      z-index: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .restaurant {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4ade80;
+      margin: 6px 0;
+    }
+
+    .meta {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    .card button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #062e14;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      opacity: 0.6;
+      margin: 80px auto;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>🍽️ Fud Edkate</h1>
+    <p>Late nights. Fresh food. Zero waste.</p>
+  </div>
+</section>
+
+<div class="container" id="foodList"></div>
+
+<script>
+/* FOOD NAME → IMAGE MAPPER */
+
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, " ")  // remove -, _, etc
+    .replace(/\s+/g, " ")       // collapse spaces
+    .trim();
+}
+
+function getFoodImage(name) {
+  const n = normalize(name);
+
+  /* RICE */
+  if (n.includes("biriyani") || n.includes("briyani"))
+    return "https://www.apnachef.com/wp-content/uploads/2023/12/chicken-biryani-50-people-wide.jpg";
+
+  if (n.includes("mandhi") || n.includes("mandy"))
+    return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
+
+  /* BREAD */
+  if (n.includes("porotta") || n.includes("parotta"))
+    return "https://images.unsplash.com/photo-1628294897771-b7b6c75d1e33?auto=format&fit=crop&w=900&q=80";
+
+  if (n.includes("chapati") || n.includes("chappati") || n.includes("roti"))
+    return "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80";
+
+  /* AL FAHM (ALL VARIANTS) */
+  if (n.includes("al fahm") || n.includes("fahm"))
+    return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg/photos/4x3/photo.jpg";
+
+  /* MEAT */
+  if (n.includes("ribs"))
+    return "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80";
+
+  /* SNACKS */
+  if (n.includes("fries"))
+    return "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80";
+
+  /* FAST FOOD */
+  if (n.includes("pizza"))
+    return "https://images.unsplash.com/photo-1548365328-9f547fb09502?auto=format&fit=crop&w=900&q=80";
+
+  if (n.includes("burger"))
+    return "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80";
+
+  if (n.includes("shawarma"))
+    return "https://images.unsplash.com/photo-1604908554166-90a3f0e35318?auto=format&fit=crop&w=900&q=80";
+
+  /* FALLBACK */
+  return "https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01?auto=format&fit=crop&w=900&q=80";
+}
+
+
+/* FETCH FOODS */
+fetch("/api/foods")
+  .then(res => res.json())
+  .then(data => {
+    const foodList = document.getElementById("foodList");
+
+    if (!data.foods || data.foods.length === 0) {
+      foodList.innerHTML = `
+        <div class="empty">
+          No food available right now 🌙
+        </div>`;
+      return;
+    }
+
+    data.foods.forEach(food => {
+      const img = getFoodImage(food.name);
+
+      foodList.innerHTML += `
+        <div class="card" style="background-image:url('${img}')">
+          <div class="card-content">
+            <h3>${food.name}</h3>
+            <div class="restaurant">${food.restaurant_name}</div>
+
+            <div class="price">₹${food.price}</div>
+            <div class="meta">Available: ${food.available_quantity}</div>
+            <div class="meta">Pickup: ${food.pickup_start} – ${food.pickup_end}</div>
+
+            <a href="/checkout/${food.id}">
+              <button>Reserve quietly 🤍</button>
+            </a>
+          </div>
+        </div>
+      `;
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Food • Last Plate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Inter, system-ui, sans-serif;
+    background:
+      linear-gradient(rgba(10,12,15,0.9), rgba(10,12,15,0.95)),
+      url("https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1600&q=80");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e5e7eb;
+  }
+
+  .card {
+    width: 420px;
+    max-width: 92%;
+    padding: 34px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: rise 0.8s ease;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.75;
+    margin-bottom: 26px;
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.6);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #062e14;
+    box-shadow: 0 14px 35px rgba(34,197,94,0.4);
+    transition: 0.25s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 45px rgba(34,197,94,0.55);
+  }
+
+  .hint {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.55;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <h2>➕ Add Unsold Food</h2>
+  <div class="sub">
+    List remaining food before closing time
+  </div>
+
+  <div class="field">
+    <label>Food name</label>
+    <input id="name" placeholder="Chicken Biryani">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Original price (₹)</label>
+      <input id="original_price" placeholder="200">
+    </div>
+
+    <div class="field">
+      <label>Discount price (₹)</label>
+      <input id="price" placeholder="150">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Quantity</label>
+      <input id="quantity" placeholder="5">
+    </div>
+
+    <div class="field">
+      <label>Pickup start</label>
+      <input type="time" id="pickup_start">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Pickup end</label>
+    <input type="time" id="pickup_end">
+  </div>
+
+  <button class="btn" type="button" onclick="addFood()">
+    Publish Food
+  </button>
+
+  <div class="hint">
+    This item will appear immediately on user browse 🌙
+  </div>
+
+</div>
+
+<script src="/static/js/restaurant.js"></script>
+</body>
+</html>
