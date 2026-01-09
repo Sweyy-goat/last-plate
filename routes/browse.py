@@ -30,30 +30,36 @@ def food_list():
     cur = mysql.connection.cursor()
 
     cur.execute("""
-        SELECT
-            f.id,
-            f.name,
-            f.price,
-            f.available_quantity,
-            f.pickup_start,
-            f.pickup_end,
-            r.name AS restaurant_name,
+SELECT
+    f.id,
+    f.name,
+    f.price,
+    f.available_quantity,
+    f.pickup_start,
+    f.pickup_end,
+    r.name AS restaurant_name,
 
-            TIMESTAMPDIFF(
-                MINUTE,
-                NOW(),
-                TIMESTAMP(CURDATE(), f.pickup_end)
-            ) AS minutes_left
+    TIMESTAMPDIFF(
+        MINUTE,
+        CONVERT_TZ(NOW(), '+00:00', '+05:30'),
+        TIMESTAMP(
+            DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+            f.pickup_end
+        )
+    ) AS minutes_left
 
-        FROM foods f
-        JOIN restaurants r ON f.restaurant_id = r.id
+FROM foods f
+JOIN restaurants r ON f.restaurant_id = r.id
 
-        WHERE
-            f.available_quantity > 0
-            AND f.is_active = 1
-            AND TIMESTAMP(CURDATE(), f.pickup_end) > NOW()
+WHERE f.available_quantity > 0
+  AND f.is_active = 1
+  AND TIMESTAMP(
+        DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+        f.pickup_end
+      ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
 
-        ORDER BY TIMESTAMP(CURDATE(), f.pickup_end) ASC
+ORDER BY minutes_left ASC;
+
     """)
 
     rows = cur.fetchall()
