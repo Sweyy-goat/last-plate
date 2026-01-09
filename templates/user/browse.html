@@ -206,6 +206,22 @@ function getFoodImage(name) {
   /* FALLBACK */
   return "https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01?auto=format&fit=crop&w=900&q=80";
 }
+function formatTimeLeft(minutes) {
+  if (minutes <= 0) return "Closed";
+
+  if (minutes < 60) {
+    return `⏳ Closing in ${minutes} min`;
+  }
+
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if (mins === 0) {
+    return `⏳ Closing in ${hrs} hr`;
+  }
+
+  return `⏳ Closing in ${hrs} hr ${mins} min`;
+}
 
 
 /* FETCH FOODS */
@@ -234,6 +250,10 @@ fetch("/api/foods")
             <div class="price">₹${food.price}</div>
             <div class="meta">Available: ${food.available_quantity}</div>
             <div class="meta">Pickup: ${food.pickup_start} – ${food.pickup_end}</div>
+            <div class="meta" style="color:#facc15;font-weight:600;">
+              ${formatTimeLeft(food.minutes_left)}
+            </div>
+
 
             <a href="/checkout/${food.id}">
               <button>Reserve quietly 🤍</button>
