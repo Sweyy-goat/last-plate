@@ -42,11 +42,11 @@ def user_signup():
     return jsonify({"success": True})
 
 # ---------------- USER LOGIN ----------------
-@auth_bp.route("/api/user/login", methods=["POST"])
+@auth.route("/api/user/login", methods=["POST"])
 def user_login():
     data = request.json
-    mobile = data["mobile"]
-    password = data["password"]
+    mobile = data.get("mobile")
+    password = data.get("password")
 
     cur = mysql.connection.cursor()
     cur.execute(
@@ -55,13 +55,17 @@ def user_login():
     )
     user = cur.fetchone()
 
-    if user and verify_password(user[1], password):
-        session.clear()
-        session["user_id"] = user[0]
-        session["role"] = "user"
-        return jsonify({"success": True})
+    if not user:
+        return jsonify({"error": "User not found"}), 401
 
-    return jsonify({"success": False}), 401
+    if not verify_password(user["password_hash"], password):
+        return jsonify({"error": "Invalid password"}), 401
+
+    return jsonify({
+        "success": True,
+        "user_id": user["id"]
+    })
+
 
 # ---------------- RESTAURANT LOGIN ----------------
 @auth_bp.route("/api/restaurant/login", methods=["POST"])
