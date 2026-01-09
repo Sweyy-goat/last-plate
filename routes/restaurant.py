@@ -75,13 +75,14 @@ def my_foods():
     foods = []
     for f in rows:
         foods.append({
-            "id": f[0],
-            "name": f[1],
-            "original_price": f[2],
-            "price": f[3],
-            "available_quantity": f[4],
-            "pickup_start": str(f[5]),   # ✅ timedelta fixed
-            "pickup_end": str(f[6])      # ✅ timedelta fixed
+            "id": f["id"],
+            "name": f["name"],
+            "price": f["price"],
+            "available_quantity": f["available_quantity"],
+            "pickup_start": str(f["pickup_start"]),
+            "pickup_end": str(f["pickup_end"]),
+            "is_active": f["is_active"],
+
         })
 
     return jsonify(foods)
