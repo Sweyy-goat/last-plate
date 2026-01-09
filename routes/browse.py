@@ -37,7 +37,12 @@ def food_list():
             f.available_quantity,
             f.pickup_start,
             f.pickup_end,
-            r.name AS restaurant_name
+            r.name AS restaurant_name,
+            TIMESTAMPDIFF(
+                MINUTE,
+                TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+                f.pickup_end
+            ) AS minutes_left
         FROM foods f
         JOIN restaurants r ON f.restaurant_id = r.id
         WHERE f.available_quantity > 0
@@ -57,7 +62,8 @@ def food_list():
             "available_quantity": f["available_quantity"],
             "pickup_start": str(f["pickup_start"]),
             "pickup_end": str(f["pickup_end"]),
-            "restaurant_name": f["restaurant_name"]
+            "restaurant_name": f["restaurant_name"],
+            "minutes_left": f["minutes_left"]
         })
 
     return jsonify({"foods": foods})
