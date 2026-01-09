@@ -40,7 +40,7 @@ def add_food():
         restaurant_id,
         data["name"],
         data["original_price"],
-        data["price"],          # ✅ FIXED
+        data["price"],
         data["quantity"],
         data["pickup_start"],
         data["pickup_end"]
@@ -55,20 +55,21 @@ def my_foods():
     if not restaurant_required():
         return jsonify([]), 401
 
+    restaurant_id = session["restaurant_id"]  # ✅ FIX
+
     cur = mysql.connection.cursor()
     cur.execute("""
-    SELECT
-        id,
-        name,
-        price,
-        available_quantity,
-        pickup_start,
-        pickup_end,
-        is_active
-    FROM foods
-    WHERE restaurant_id = %s
-""", (restaurant_id,))
-
+        SELECT
+            id,
+            name,
+            price,
+            available_quantity,
+            pickup_start,
+            pickup_end,
+            is_active
+        FROM foods
+        WHERE restaurant_id = %s
+    """, (restaurant_id,))
 
     rows = cur.fetchall()
 
@@ -82,7 +83,6 @@ def my_foods():
             "pickup_start": str(f["pickup_start"]),
             "pickup_end": str(f["pickup_end"]),
             "is_active": f["is_active"],
-
         })
 
     return jsonify(foods)
