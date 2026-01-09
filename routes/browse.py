@@ -14,6 +14,7 @@ def browse_entry():
 
     return redirect("/browse")
 
+
 # -------- ACTUAL BROWSE PAGE --------
 @browse_bp.route("/browse")
 def browse_page():
@@ -22,25 +23,28 @@ def browse_page():
 
     return render_template("user/browse.html")
 
-# -------- FOOD LIST API --------
+
+# -------- FOOD LIST API (FIXED) --------
 @browse_bp.route("/api/foods")
 def food_list():
     cur = mysql.connection.cursor()
 
     cur.execute("""
-    SELECT
-        f.id,
-        f.name,
-        f.price,
-        f.available_quantity,
-        f.pickup_start,
-        f.pickup_end,
-        r.name AS restaurant_name
-    FROM foods f
-    JOIN restaurants r ON f.restaurant_id = r.id
-    WHERE f.available_quantity > 0
-      AND f.is_active = 1
-""")
+        SELECT
+            f.id,
+            f.name,
+            f.price,
+            f.available_quantity,
+            f.pickup_start,
+            f.pickup_end,
+            r.name AS restaurant_name
+        FROM foods f
+        JOIN restaurants r ON f.restaurant_id = r.id
+        WHERE f.available_quantity > 0
+          AND f.is_active = 1
+          AND f.pickup_end > CURTIME()
+        ORDER BY f.pickup_end ASC
+    """)
 
     rows = cur.fetchall()
 
@@ -53,8 +57,8 @@ def food_list():
             "available_quantity": f["available_quantity"],
             "pickup_start": str(f["pickup_start"]),
             "pickup_end": str(f["pickup_end"]),
-            "restaurant_name": f["restaurant_name"],
-})
-
+            "restaurant_name": f["restaurant_name"]
+        })
 
     return jsonify({"foods": foods})
+
