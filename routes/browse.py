@@ -41,11 +41,8 @@ SELECT
 
     TIMESTAMPDIFF(
         MINUTE,
-        CONVERT_TZ(NOW(), '+00:00', '+05:30'),
-        TIMESTAMP(
-            DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-            f.pickup_end
-        )
+        TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+        f.pickup_end
     ) AS minutes_left
 
 FROM foods f
@@ -53,14 +50,12 @@ JOIN restaurants r ON f.restaurant_id = r.id
 
 WHERE f.available_quantity > 0
   AND f.is_active = 1
-  AND TIMESTAMP(
-        DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-        f.pickup_end
-      ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
+  AND TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+      BETWEEN f.pickup_start AND f.pickup_end
 
 ORDER BY minutes_left ASC;
+""")
 
-    """)
 
     rows = cur.fetchall()
 
