@@ -286,9 +286,10 @@ fetch("/api/foods")
             </div>
 
 
-            <button onclick="openQuantityModal(${food.id}, ${food.available_quantity}, ${food.price})">
-  Reserve quietly 🤍
-</button>
+<a href="/checkout/${food.id}">
+  <button>Reserve quietly 🤍</button>
+</a>
+
 
           </div>
         </div>
