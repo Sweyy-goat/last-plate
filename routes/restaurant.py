@@ -57,18 +57,18 @@ def my_foods():
 
     cur = mysql.connection.cursor()
     cur.execute("""
-        SELECT
-            id,
-            name,
-            original_price,
-            price,
-            available_quantity,
-            pickup_start,
-            pickup_end
-        FROM foods
-        WHERE restaurant_id=%s
-          AND is_active=1
-    """, (session["restaurant_id"],))
+    SELECT
+        id,
+        name,
+        price,
+        available_quantity,
+        pickup_start,
+        pickup_end,
+        is_active
+    FROM foods
+    WHERE restaurant_id = %s
+""", (restaurant_id,))
+
 
     rows = cur.fetchall()
 
