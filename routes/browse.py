@@ -28,21 +28,19 @@ def food_list():
     cur = mysql.connection.cursor()
 
     cur.execute("""
-        SELECT
-            f.id,
-            f.name,
-            f.price,
-            f.available_quantity,
-            f.pickup_start,
-            f.pickup_end,
-            r.name
-        FROM foods f
-        JOIN restaurants r ON f.restaurant_id = r.id
-        WHERE
-            f.available_quantity > 0
-            AND f.is_active = 1
-            AND CURTIME() <= f.pickup_end
-    """)
+    SELECT
+        f.id,
+        f.name,
+        f.price,
+        f.available_quantity,
+        f.pickup_start,
+        f.pickup_end,
+        r.name AS restaurant_name
+    FROM foods f
+    JOIN restaurants r ON f.restaurant_id = r.id
+    WHERE f.available_quantity > 0
+      AND f.is_active = 1
+""")
 
     rows = cur.fetchall()
 
