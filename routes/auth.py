@@ -4,7 +4,7 @@ from utils.security import hash_password, verify_password
 
 auth_bp = Blueprint("auth", __name__)
 
-# ---------------- USER PAGES ----------------
+# ================= USER PAGES =================
 @auth_bp.route("/login")
 def user_login_page():
     return render_template("auth/user_login.html")
@@ -13,40 +13,48 @@ def user_login_page():
 def user_signup_page():
     return render_template("auth/user_signup.html")
 
-# ---------------- RESTAURANT PAGE ----------------
+# ================= RESTAURANT PAGE =================
 @auth_bp.route("/restaurant/login")
 def restaurant_login_page():
     return render_template("auth/restaurant_login.html")
 
-# ---------------- USER SIGNUP ----------------
+# ================= USER SIGNUP =================
 @auth_bp.route("/api/user/signup", methods=["POST"])
 def user_signup():
     data = request.json
-    name = data["name"]
-    mobile = data["mobile"]
-    password = data["password"]
+    name = data.get("name")
+    mobile = data.get("mobile")
+    password = data.get("password")
+
+    if not name or not mobile or not password:
+        return jsonify({"error": "Missing fields"}), 400
 
     cur = mysql.connection.cursor()
+
+    # Check existing user
     cur.execute("SELECT id FROM users WHERE mobile=%s", (mobile,))
     if cur.fetchone():
-        return jsonify({"success": False, "message": "Mobile already exists"}), 400
+        return jsonify({"error": "Mobile already exists"}), 400
 
     hashed = hash_password(password)
 
     cur.execute(
-        "INSERT INTO users (name, mobile, password_hash) VALUES (%s,%s,%s)",
+        "INSERT INTO users (name, mobile, password_hash) VALUES (%s, %s, %s)",
         (name, mobile, hashed)
     )
     mysql.connection.commit()
 
     return jsonify({"success": True})
 
-# ---------------- USER LOGIN ----------------
-@auth.route("/api/user/login", methods=["POST"])
+# ================= USER LOGIN =================
+@auth_bp.route("/api/user/login", methods=["POST"])
 def user_login():
     data = request.json
     mobile = data.get("mobile")
     password = data.get("password")
+
+    if not mobile or not password:
+        return jsonify({"error": "Missing credentials"}), 400
 
     cur = mysql.connection.cursor()
     cur.execute(
@@ -61,18 +69,21 @@ def user_login():
     if not verify_password(user["password_hash"], password):
         return jsonify({"error": "Invalid password"}), 401
 
-    return jsonify({
-        "success": True,
-        "user_id": user["id"]
-    })
+    session.clear()
+    session["user_id"] = user["id"]
+    session["role"] = "user"
 
+    return jsonify({"success": True})
 
-# ---------------- RESTAURANT LOGIN ----------------
+# ================= RESTAURANT LOGIN =================
 @auth_bp.route("/api/restaurant/login", methods=["POST"])
 def restaurant_login():
     data = request.json
-    mobile = data["mobile"]
-    password = data["password"]
+    mobile = data.get("mobile")
+    password = data.get("password")
+
+    if not mobile or not password:
+        return jsonify({"error": "Missing credentials"}), 400
 
     cur = mysql.connection.cursor()
     cur.execute(
@@ -81,16 +92,21 @@ def restaurant_login():
     )
     restaurant = cur.fetchone()
 
-    if restaurant and verify_password(restaurant[1], password):
-        session.clear()
-        session["restaurant_id"] = restaurant[0]
-        session["role"] = "restaurant"
-        return jsonify({"success": True})
+    if not restaurant:
+        return jsonify({"error": "Restaurant not found"}), 401
 
-    return jsonify({"success": False}), 401
+    if not verify_password(restaurant["password_hash"], password):
+        return jsonify({"error": "Invalid password"}), 401
 
-# ---------------- LOGOUT ----------------
+    session.clear()
+    session["restaurant_id"] = restaurant["id"]
+    session["role"] = "restaurant"
+
+    return jsonify({"success": True})
+
+# ================= LOGOUT =================
 @auth_bp.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
+
