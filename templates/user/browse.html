@@ -266,6 +266,31 @@ fetch("/api/foods")
     });
   });
 </script>
+<!-- Quantity Modal -->
+<div id="qtyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999;">
+  <div style="
+    background:#0b0f14;
+    width:320px;
+    margin:15% auto;
+    padding:20px;
+    border-radius:14px;
+    color:white;
+  ">
+    <h3>Select Quantity</h3>
+
+    <input type="number" id="qtyInput" min="1" style="width:100%; padding:10px; margin:10px 0;">
+
+    <div id="totalPrice" style="margin-bottom:12px; font-weight:600;"></div>
+
+    <button onclick="confirmQuantity()" style="width:100%; padding:12px; background:#22c55e; border:none; border-radius:10px;">
+      Continue
+    </button>
+
+    <button onclick="closeModal()" style="margin-top:10px; width:100%; background:none; color:#aaa;">
+      Cancel
+    </button>
+  </div>
+</div>
 
 </body>
 </html>
