@@ -154,6 +154,36 @@
 <div class="container" id="foodList"></div>
 
 <script>
+  let selectedFoodId = null;
+let unitPrice = 0;
+let maxQty = 0;
+
+function openQuantityModal(foodId, availableQty, price) {
+  selectedFoodId = foodId;
+  unitPrice = price;
+  maxQty = availableQty;
+
+  const qtyInput = document.getElementById("qtyInput");
+  qtyInput.value = 1;
+  qtyInput.max = availableQty;
+
+  updateTotal();
+
+  document.getElementById("qtyModal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("qtyModal").style.display = "none";
+}
+
+function updateTotal() {
+  const qty = parseInt(document.getElementById("qtyInput").value || 1);
+  document.getElementById("totalPrice").innerText =
+    `Total: ₹${qty * unitPrice}`;
+}
+
+document.getElementById("qtyInput").addEventListener("input", updateTotal);
+
 /* FOOD NAME → IMAGE MAPPER */
 
 function normalize(str) {
