@@ -11,6 +11,7 @@
       color: #e5e7eb;
     }
 
+    /* HERO */
     .hero {
       height: 280px;
       background-image: url("https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1920&auto=format&fit=crop");
@@ -50,6 +51,7 @@
       opacity: 0.85;
     }
 
+    /* GRID */
     .container {
       max-width: 1100px;
       margin: -40px auto 40px;
@@ -61,12 +63,14 @@
       z-index: 2;
     }
 
+    /* CARD */
     .card {
       position: relative;
       border-radius: 18px;
       padding: 18px;
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
       background-size: cover;
       background-position: center;
     }
@@ -80,6 +84,11 @@
         rgba(10,12,15,0.85)
       );
       z-index: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
     }
 
     .card-content {
@@ -105,8 +114,10 @@
       padding: 12px;
       border-radius: 14px;
       border: none;
+      font-size: 15px;
       font-weight: 600;
       background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #062e14;
       cursor: pointer;
     }
 
@@ -131,34 +142,50 @@
 <div class="container" id="foodList"></div>
 
 <script>
+/* 🔒 SAFE TIME FORMATTER (THIS IS THE FIX) */
 function formatTimeLeft(minutes) {
-  if (minutes === undefined || minutes === null) return "⏳ Pickup open";
+  if (minutes === undefined || minutes === null || isNaN(minutes)) {
+    return "⏳ Pickup window open";
+  }
+
   if (minutes <= 0) return "Closed";
+
   if (minutes < 60) return `⏳ Closing in ${minutes} min`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `⏳ Closing in ${h} hr ${m} min`;
+
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `⏳ Closing in ${hrs} hr ${mins} min`;
 }
 
+/* FETCH FOODS */
 fetch("/api/foods")
   .then(res => res.json())
   .then(data => {
     const foodList = document.getElementById("foodList");
 
     if (!data.foods || data.foods.length === 0) {
-      foodList.innerHTML = `<div class="empty">No food available 🌙</div>`;
+      foodList.innerHTML = `
+        <div class="empty">
+          No food available right now 🌙
+        </div>`;
       return;
     }
 
     data.foods.forEach(food => {
+      const img =
+        "https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01?auto=format&fit=crop&w=900&q=80";
+
       foodList.innerHTML += `
-        <div class="card" style="background-image:url('https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01')">
+        <div class="card" style="background-image:url('${img}')">
           <div class="card-content">
             <h3>${food.name}</h3>
             <div class="meta">${food.restaurant_name}</div>
+
             <div class="price">₹${food.price}</div>
             <div class="meta">Available: ${food.available_quantity}</div>
-            <div class="meta">${formatTimeLeft(food.minutes_left)}</div>
+            <div class="meta">
+              ${formatTimeLeft(food.minutes_left)}
+            </div>
 
             <a href="/checkout/${food.id}">
               <button>Reserve quietly 🤍</button>
@@ -171,10 +198,9 @@ fetch("/api/foods")
   .catch(err => {
     console.error(err);
     document.getElementById("foodList").innerHTML =
-      `<div class="empty">Error loading food</div>`;
+      `<div class="empty">Something went wrong</div>`;
   });
 </script>
 
 </body>
 </html>
-
