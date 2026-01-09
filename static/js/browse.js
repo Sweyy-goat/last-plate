@@ -24,23 +24,5 @@ if (foodList) {
         `;
       });
     })
-    .catch(err => {
-      console.error("Failed to load foods:", err);
-    });
-  function formatTimeLeft(minutes) {
-    if (minutes <= 0) return "Closed";
-
-    if (minutes < 60) {
-        return `⏳ Closing in ${minutes} min`;
-    }
-
-    const hrs = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    return mins === 0
-        ? `⏳ Closing in ${hrs} hr`
-        : `⏳ Closing in ${hrs} hr ${mins} min`;
-}
-
 }
 
