@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Restaurant Dashboard – Last Plate</title>
+
   <style>
     body {
       margin: 0;
@@ -33,7 +34,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 30px auto;
       padding: 0 20px;
     }
@@ -50,17 +51,61 @@
     th, td {
       padding: 14px;
       text-align: left;
+      font-size: 14px;
     }
 
     th {
       background: #f1f5f9;
-      font-size: 14px;
       text-transform: uppercase;
       opacity: 0.7;
     }
 
     tr:not(:last-child) {
       border-bottom: 1px solid #e5e7eb;
+    }
+
+    .status {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .active {
+      color: #16a34a;
+    }
+
+    .inactive {
+      color: #dc2626;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-cancel {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .btn-update {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .qty-input {
+      width: 60px;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
     }
 
     .empty {
@@ -70,6 +115,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <header>
@@ -85,6 +131,8 @@
         <th>Price</th>
         <th>Qty</th>
         <th>Pickup Window</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="foodTable"></tbody>
@@ -92,15 +140,17 @@
 </div>
 
 <script>
+function loadFoods() {
   fetch("/restaurant/api/my-foods")
     .then(res => res.json())
     .then(data => {
       const table = document.getElementById("foodTable");
+      table.innerHTML = "";
 
       if (!data || data.length === 0) {
         table.innerHTML = `
           <tr>
-            <td colspan="4" class="empty">No food added yet</td>
+            <td colspan="6" class="empty">No food added yet</td>
           </tr>`;
         return;
       }
@@ -110,11 +160,59 @@
           <tr>
             <td>${food.name}</td>
             <td>₹${food.price}</td>
-            <td>${food.available_quantity}</td>
+            <td>
+              <input
+                type="number"
+                min="0"
+                value="${food.available_quantity}"
+                class="qty-input"
+                id="qty-${food.id}"
+              >
+            </td>
             <td>${food.pickup_start} – ${food.pickup_end}</td>
-          </tr>`;
+            <td class="status ${food.is_active ? "active" : "inactive"}">
+              ${food.is_active ? "ACTIVE" : "INACTIVE"}
+            </td>
+            <td>
+              <div class="actions">
+                <button
+                  class="btn btn-update"
+                  onclick="updateQty(${food.id})">
+                  Update
+                </button>
+
+                <button
+                  class="btn btn-cancel"
+                  onclick="cancelFood(${food.id})">
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
       });
     });
+}
+
+function updateQty(foodId) {
+  const qty = document.getElementById(`qty-${foodId}`).value;
+
+  fetch(`/restaurant/api/update-food-quantity/${foodId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quantity: qty })
+  }).then(() => loadFoods());
+}
+
+function cancelFood(foodId) {
+  if (!confirm("Cancel this food listing?")) return;
+
+  fetch(`/restaurant/api/cancel-food/${foodId}`, {
+    method: "POST"
+  }).then(() => loadFoods());
+}
+
+loadFoods();
 </script>
 
 </body>
