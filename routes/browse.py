@@ -42,7 +42,7 @@ def food_list():
         JOIN restaurants r ON f.restaurant_id = r.id
         WHERE f.available_quantity > 0
           AND f.is_active = 1
-          AND f.pickup_end > CURTIME()
+          AND f.pickup_end > TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
         ORDER BY f.pickup_end ASC
     """)
 
