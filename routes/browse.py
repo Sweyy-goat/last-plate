@@ -38,17 +38,22 @@ def food_list():
             f.pickup_start,
             f.pickup_end,
             r.name AS restaurant_name,
+
             TIMESTAMPDIFF(
                 MINUTE,
-                TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-                f.pickup_end
+                NOW(),
+                TIMESTAMP(CURDATE(), f.pickup_end)
             ) AS minutes_left
+
         FROM foods f
         JOIN restaurants r ON f.restaurant_id = r.id
-        WHERE f.available_quantity > 0
-          AND f.is_active = 1
-          AND f.pickup_end > TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
-        ORDER BY f.pickup_end ASC
+
+        WHERE
+            f.available_quantity > 0
+            AND f.is_active = 1
+            AND TIMESTAMP(CURDATE(), f.pickup_end) > NOW()
+
+        ORDER BY TIMESTAMP(CURDATE(), f.pickup_end) ASC
     """)
 
     rows = cur.fetchall()
@@ -63,7 +68,7 @@ def food_list():
             "pickup_start": str(f["pickup_start"]),
             "pickup_end": str(f["pickup_end"]),
             "restaurant_name": f["restaurant_name"],
-            "minutes_left": f["minutes_left"]
+            "minutes_left": int(f["minutes_left"])
         })
 
     return jsonify({"foods": foods})
