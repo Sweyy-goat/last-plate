@@ -1,182 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Checkout • Last Plate</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: radial-gradient(circle at top, #111827, #020617);
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-
-    .checkout-card {
-      width: 360px;
-      background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(18px);
-      border-radius: 22px;
-      padding: 26px;
-      box-shadow: 0 30px 70px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.1);
-      animation: rise 0.8s ease forwards;
-    }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(20px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    h2 {
-      margin: 0 0 6px;
-      font-size: 26px;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      opacity: 0.75;
-      margin-bottom: 22px;
-    }
-
-    label {
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-top: 6px;
-      border-radius: 14px;
-      border: none;
-      background: rgba(255,255,255,0.08);
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
-
-    .total {
-      margin: 16px 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: #4ade80;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #052e14;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(34,197,94,0.45);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .note {
-      margin-top: 14px;
-      font-size: 12px;
-      opacity: 0.55;
-      text-align: center;
-    }
-  </style>
 </head>
-
 <body>
 
-<div class="checkout-card">
-  <h2>Checkout</h2>
-  <div class="subtitle">Confirm quantity before payment</div>
+<h2>{{ food_name }}</h2>
+<p>Price per item: ₹{{ price }}</p>
 
-  <label for="qty">Quantity</label>
-  <input id="qty" type="number" min="1" value="1">
+<label>Quantity</label>
+<input type="number" id="qty" min="1" max="{{ max_qty }}" value="1">
 
-  <div class="total" id="totalText">
-    Total: calculating…
-  </div>
-
-  <button id="buyBtn" data-food-id="{{ food_id }}">
-    Reserve & Pay
-  </button>
-
-  <div class="note">
-    You’ll get a pickup OTP after payment ✨
-  </div>
-</div>
+<button id="buyBtn">Reserve</button>
 
 <script>
-  const buyBtn = document.getElementById("buyBtn");
-  const qtyInput = document.getElementById("qty");
-  const totalText = document.getElementById("totalText");
-
-  const UNIT_PRICE = {{ price }}; // 🔴 pass price from backend
-
-  function updateTotal() {
-    const qty = parseInt(qtyInput.value || 1);
-    totalText.innerText = `Total: ₹${qty * UNIT_PRICE}`;
-  }
-
-  qtyInput.addEventListener("input", updateTotal);
-  updateTotal();
-
-  buyBtn.addEventListener("click", function () {
-    const quantity = parseInt(qtyInput.value);
-    const foodId = buyBtn.dataset.foodId;
-
-    if (!quantity || quantity <= 0) {
-      alert("Please enter a valid quantity");
-      return;
-    }
-
-    buyBtn.disabled = true;
-    buyBtn.innerText = "Reserving…";
-
-    fetch("/api/reserve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        food_id: foodId,
-        quantity: quantity
-      })
+document.getElementById("buyBtn").onclick = () => {
+  fetch("/api/reserve", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      food_id: {{ food_id }},
+      quantity: document.getElementById("qty").value
     })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("Reserved successfully! Proceeding to payment.");
-        // NEXT STEP:
-        // window.location.href = `/payment/${data.order_id}`;
-      } else {
-        alert(data.error || "Reservation failed");
-      }
-    })
-    .catch(() => {
-      alert("Something went wrong");
-    })
-    .finally(() => {
-      buyBtn.disabled = false;
-      buyBtn.innerText = "Reserve & Pay";
-    });
-  });
+  })
+  .then(r => r.json())
+  .then(d => alert(JSON.stringify(d)));
+};
 </script>
 
 </body>
