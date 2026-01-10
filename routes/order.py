@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from utils.db import mysql
-from datetime import datetime
+from datetime import datetime, timedelta
 
 order_bp = Blueprint("order", __name__)
 
@@ -18,50 +18,78 @@ def reserve_food():
 
     cur = mysql.connection.cursor()
 
-    # 🔒 LOCK food row (IMPORTANT)
-    cur.execute("""
-        SELECT id, restaurant_id, price, available_quantity, pickup_end
-        FROM foods
-        WHERE id=%s
-        FOR UPDATE
-    """, (food_id,))
+    try:
+        # 🔐 START TRANSACTION
+        cur.execute("START TRANSACTION")
 
-    food = cur.fetchone()
-    if not food:
-        return jsonify({"error": "Food not found"}), 404
+        # 🔒 LOCK food row
+        cur.execute("""
+            SELECT
+                id,
+                restaurant_id,
+                price,
+                available_quantity,
+                pickup_end
+            FROM foods
+            WHERE id = %s AND is_active = 1
+            FOR UPDATE
+        """, (food_id,))
 
-    # ⏰ pickup expired
-    if food["pickup_end"] <= datetime.now().time():
-        return jsonify({"error": "Pickup window expired"}), 400
+        food = cur.fetchone()
+        if not food:
+            cur.execute("ROLLBACK")
+            return jsonify({"error": "Food not found"}), 404
 
-    if food["available_quantity"] < quantity:
-        return jsonify({"error": "Not enough quantity"}), 400
+        # ⏰ FIX TIMEZONE (IST)
+        cur.execute("""
+            SELECT
+                TIMESTAMP(
+                    DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+                    %s
+                ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
+        """, (food["pickup_end"],))
 
-    total = food["price"] * quantity
+        still_valid = cur.fetchone()[0]
+        if not still_valid:
+            cur.execute("ROLLBACK")
+            return jsonify({"error": "Pickup window expired"}), 400
 
-    # ➖ Reduce quantity
-    cur.execute("""
-        UPDATE foods
-        SET available_quantity = available_quantity - %s
-        WHERE id=%s
-    """, (quantity, food_id))
+        # 📦 STOCK CHECK
+        if food["available_quantity"] < quantity:
+            cur.execute("ROLLBACK")
+            return jsonify({"error": "Not enough quantity"}), 400
 
-    # 📦 Create order
-    cur.execute("""
-        INSERT INTO orders
-        (user_id, restaurant_id, total_amount, status, payment_status)
-        VALUES (%s,%s,%s,'PENDING','PENDING')
-    """, (
-        session["user_id"],
-        food["restaurant_id"],
-        total
-    ))
+        total = food["price"] * quantity
 
-    order_id = cur.lastrowid
-    mysql.connection.commit()
+        # ➖ REDUCE STOCK
+        cur.execute("""
+            UPDATE foods
+            SET available_quantity = available_quantity - %s
+            WHERE id = %s
+        """, (quantity, food_id))
 
-    return jsonify({
-        "success": True,
-        "order_id": order_id,
-        "amount": total
-    })
+        # 📦 CREATE ORDER (VALID ENUM)
+        cur.execute("""
+            INSERT INTO orders
+            (user_id, restaurant_id, total_amount, status)
+            VALUES (%s, %s, %s, 'PAID')
+        """, (
+            session["user_id"],
+            food["restaurant_id"],
+            total
+        ))
+
+        order_id = cur.lastrowid
+
+        # ✅ COMMIT
+        mysql.connection.commit()
+
+        return jsonify({
+            "success": True,
+            "order_id": order_id,
+            "amount": total
+        })
+
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"error": "Server error", "details": str(e)}), 500
