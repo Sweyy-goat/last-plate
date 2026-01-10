@@ -97,35 +97,55 @@ button {
 </div>
 
 <script>
-const price = {{ food.price }};
-const qtyInput = document.getElementById("qty");
-const totalEl = document.getElementById("total");
+let createdOrderId = null;
 
-qtyInput.addEventListener("input", () => {
-  const q = parseInt(qtyInput.value || 1);
-  totalEl.innerText = `Total: ₹${q * price}`;
-});
+document.getElementById("buyBtn").addEventListener("click", () => {
+  const qty = document.getElementById("qty").value;
 
-function reserve() {
-  fetch("/api/reserve", {
+  fetch("/api/order/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       food_id: {{ food.id }},
-      quantity: qtyInput.value
+      quantity: qty
     })
   })
-  .then(r => r.json())
-  .then(d => {
-    if (d.success) {
-      alert("Order created! ID: " + d.order_id);
-      // NEXT: redirect to Razorpay
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      alert(data.message);
+      return;
+    }
+
+    createdOrderId = data.order_id;
+
+    if (confirm("Confirm reservation? Food will be blocked.")) {
+      confirmReservation();
+    }
+  });
+});
+
+function confirmReservation() {
+  fetch("/api/order/confirm", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      order_id: createdOrderId
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("Reservation confirmed ✅");
+      // NEXT: redirect to payment
+      // window.location.href = `/payment/${createdOrderId}`;
     } else {
-      alert(d.error || "Failed");
+      alert(data.message);
     }
   });
 }
 </script>
+
 
 </body>
 </html>
