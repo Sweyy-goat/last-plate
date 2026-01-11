@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Checkout | Last Plate</title>
+
+  <!-- Razorpay -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
@@ -17,20 +19,29 @@
     .box {
       background:#111827;
       padding:30px;
-      border-radius:16px;
-      width:360px;
+      border-radius:20px;
+      width:380px;
+      box-shadow:0 20px 50px rgba(0,0,0,.6);
     }
-    h2 { margin-top:0 }
-    input, button {
+    h2 { margin:0 0 6px }
+    p { margin:4px 0; opacity:.85 }
+    input {
       width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:10px;
+      padding:14px;
+      border-radius:12px;
       border:none;
+      margin-top:16px;
+      font-size:16px;
     }
     button {
-      background:#22c55e;
+      width:100%;
+      padding:14px;
+      margin-top:18px;
+      border-radius:14px;
+      border:none;
+      font-size:16px;
       font-weight:700;
+      background:#22c55e;
       cursor:pointer;
     }
   </style>
@@ -43,25 +54,47 @@
   <p>{{ food.restaurant_name }}</p>
   <p>₹{{ food.price }} each</p>
 
-  <input type="number" id="qty" min="1" max="{{ food.available_quantity }}" value="1">
+  <input id="qty" type="number" min="1" max="{{ food.available_quantity }}" value="1">
 
-  <button onclick="pay()">Pay Now</button>
+  <!-- IMPORTANT: type="button" -->
+  <button type="button" id="payBtn">Pay Now</button>
 </div>
 
 <script>
+document.getElementById("payBtn").addEventListener("click", pay);
+
 function pay() {
-  const qty = document.getElementById("qty").value;
+  const qty = parseInt(document.getElementById("qty").value);
+
+  if (!qty || qty <= 0) {
+    alert("Invalid quantity");
+    return;
+  }
+
+  console.log("Creating order...");
 
   fetch("/api/create-order", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
       food_id: {{ food.id }},
       quantity: qty
     })
   })
-  .then(res => res.json())
+  .then(res => {
+    console.log("Create order response:", res.status);
+    return res.json();
+  })
   .then(data => {
+    console.log("Order data:", data);
+
+    if (!data.razorpay_order_id) {
+      alert("Order creation failed");
+      return;
+    }
+
     const options = {
       key: data.key,
       amount: data.amount,
@@ -69,17 +102,32 @@ function pay() {
       name: "Last Plate",
       description: "Food Reservation",
       order_id: data.razorpay_order_id,
+
       handler: function (response) {
+        console.log("Payment success:", response);
+
         fetch("/api/verify-payment", {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body:JSON.stringify(response)
-        }).then(() => {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(response)
+        })
+        .then(() => {
           alert("Payment successful 🎉");
         });
+      },
+
+      theme: {
+        color: "#22c55e"
       }
     };
-    new Razorpay(options).open();
+
+    console.log("Opening Razorpay...");
+    const rzp = new Razorpay(options);
+    rzp.open();
+  })
+  .catch(err => {
+    console.error("PAY ERROR:", err);
+    alert("Something went wrong");
   });
 }
 </script>
