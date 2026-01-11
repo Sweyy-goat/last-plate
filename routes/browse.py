@@ -30,59 +30,55 @@ def food_list():
     cur = mysql.connection.cursor()
 
     cur.execute("""
-SELECT
-    f.id,
-    f.name,
-    f.price,
-    f.available_quantity,
-    f.pickup_start,
-    f.pickup_end,
-    r.name AS restaurant_name,
+    SELECT
+        f.id,
+        f.name,
+        f.price,
+        f.available_quantity,
+        f.pickup_start,
+        f.pickup_end,
+        r.name AS restaurant_name,
 
-    TIMESTAMPDIFF(
-        MINUTE,
-        CONVERT_TZ(NOW(), '+00:00', '+05:30'),
-        TIMESTAMP(
-            DATE(f.created_at),
-            f.pickup_end
-        )
-    ) AS minutes_left
+        TIMESTAMPDIFF(
+            MINUTE,
+            CONVERT_TZ(NOW(), '+00:00', '+05:30'),
+            TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_end)
+        ) AS minutes_left
 
-FROM foods f
-JOIN restaurants r ON f.restaurant_id = r.id
+    FROM foods f
+    JOIN restaurants r ON f.restaurant_id = r.id
 
-WHERE f.available_quantity > 0
-  AND f.is_active = 1
+    WHERE f.available_quantity > 0
+      AND f.is_active = 1
 
-  -- 🔒 SAME DAY ONLY
-  AND DATE(f.created_at) = DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+      AND CONVERT_TZ(NOW(), '+00:00', '+05:30')
+          BETWEEN
+          TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_start)
+          AND
+          TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_end)
 
-  -- 🔒 CURRENT TIME BETWEEN PICKUP WINDOW
-  AND CONVERT_TZ(NOW(), '+00:00', '+05:30')
-      BETWEEN
-      TIMESTAMP(DATE(f.created_at), f.pickup_start)
-      AND
-      TIMESTAMP(DATE(f.created_at), f.pickup_end)
+      AND TIMESTAMP(
+          DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+          f.pickup_end
+      ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
 
-ORDER BY minutes_left ASC;
-
-""")
-
+    ORDER BY minutes_left ASC;
+    """)
 
     rows = cur.fetchall()
+    cur.close()
 
-    foods = []
-    for f in rows:
-        foods.append({
-            "id": f["id"],
-            "name": f["name"],
-            "price": f["price"],
-            "available_quantity": f["available_quantity"],
-            "pickup_start": str(f["pickup_start"]),
-            "pickup_end": str(f["pickup_end"]),
-            "restaurant_name": f["restaurant_name"],
-            "minutes_left": int(f["minutes_left"])
-        })
+    foods = [{
+        "id": f["id"],
+        "name": f["name"],
+        "price": f["price"],
+        "available_quantity": f["available_quantity"],
+        "pickup_start": str(f["pickup_start"]),
+        "pickup_end": str(f["pickup_end"]),
+        "restaurant_name": f["restaurant_name"],
+        "minutes_left": max(0, int(f["minutes_left"]))
+    } for f in rows]
 
     return jsonify({"foods": foods})
+
 
