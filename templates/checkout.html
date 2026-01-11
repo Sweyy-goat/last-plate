@@ -1,151 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Checkout • Last Plate</title>
+  <title>Checkout | Last Plate</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<style>
-body {
-  margin: 0;
-  font-family: Inter, system-ui, sans-serif;
-  background: #0b0f14;
-  color: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-
-.card {
-  background: #111827;
-  padding: 30px;
-  width: 360px;
-  border-radius: 18px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-}
-
-h2 {
-  margin: 0 0 6px;
-}
-
-.restaurant {
-  opacity: 0.7;
-  margin-bottom: 14px;
-}
-
-.price {
-  font-size: 22px;
-  font-weight: 700;
-  color: #4ade80;
-}
-
-label {
-  display: block;
-  margin-top: 18px;
-  margin-bottom: 6px;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-size: 15px;
-}
-
-.total {
-  margin-top: 14px;
-  font-weight: 600;
-}
-
-button {
-  width: 100%;
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-</style>
+  <style>
+    body {
+      background:#0b0f14;
+      color:#e5e7eb;
+      font-family: Inter, system-ui;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .box {
+      background:#111827;
+      padding:30px;
+      border-radius:16px;
+      width:360px;
+    }
+    h2 { margin-top:0 }
+    input, button {
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
+    button {
+      background:#22c55e;
+      font-weight:700;
+      cursor:pointer;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="box">
   <h2>{{ food.name }}</h2>
-  <div class="restaurant">{{ food.restaurant_name }}</div>
+  <p>{{ food.restaurant_name }}</p>
+  <p>₹{{ food.price }} each</p>
 
-  <div class="price">₹{{ food.price }} / item</div>
+  <input type="number" id="qty" min="1" max="{{ food.available_quantity }}" value="1">
 
-  <label>Quantity</label>
-  <input
-    type="number"
-    id="qty"
-    min="1"
-    max="{{ food.available_quantity }}"
-    value="1"
-  >
-
-  <div class="total" id="total">
-    Total: ₹{{ food.price }}
-  </div>
-
-  <button onclick="reserve()">Confirm Reservation</button>
+  <button onclick="pay()">Pay Now</button>
 </div>
 
 <script>
-let createdOrderId = null;
-
-document.getElementById("buyBtn").addEventListener("click", () => {
+function pay() {
   const qty = document.getElementById("qty").value;
 
-  fetch("/api/order/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  fetch("/api/create-order", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
       food_id: {{ food.id }},
       quantity: qty
     })
   })
   .then(res => res.json())
   .then(data => {
-    if (!data.success) {
-      alert(data.message);
-      return;
-    }
-
-    createdOrderId = data.order_id;
-
-    if (confirm("Confirm reservation? Food will be blocked.")) {
-      confirmReservation();
-    }
-  });
-});
-
-function confirmReservation() {
-  fetch("/api/order/confirm", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      order_id: createdOrderId
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      alert("Reservation confirmed ✅");
-      // NEXT: redirect to payment
-      // window.location.href = `/payment/${createdOrderId}`;
-    } else {
-      alert(data.message);
-    }
+    const options = {
+      key: data.key,
+      amount: data.amount,
+      currency: "INR",
+      name: "Last Plate",
+      description: "Food Reservation",
+      order_id: data.razorpay_order_id,
+      handler: function (response) {
+        fetch("/api/verify-payment", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify(response)
+        }).then(() => {
+          alert("Payment successful 🎉");
+        });
+      }
+    };
+    new Razorpay(options).open();
   });
 }
 </script>
-
 
 </body>
 </html>
