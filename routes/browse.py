@@ -41,8 +41,11 @@ SELECT
 
     TIMESTAMPDIFF(
         MINUTE,
-        TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-        f.pickup_end
+        CONVERT_TZ(NOW(), '+00:00', '+05:30'),
+        TIMESTAMP(
+            DATE(f.created_at),
+            f.pickup_end
+        )
     ) AS minutes_left
 
 FROM foods f
@@ -50,10 +53,19 @@ JOIN restaurants r ON f.restaurant_id = r.id
 
 WHERE f.available_quantity > 0
   AND f.is_active = 1
-  AND TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
-      BETWEEN f.pickup_start AND f.pickup_end
+
+  -- 🔒 SAME DAY ONLY
+  AND DATE(f.created_at) = DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+
+  -- 🔒 CURRENT TIME BETWEEN PICKUP WINDOW
+  AND CONVERT_TZ(NOW(), '+00:00', '+05:30')
+      BETWEEN
+      TIMESTAMP(DATE(f.created_at), f.pickup_start)
+      AND
+      TIMESTAMP(DATE(f.created_at), f.pickup_end)
 
 ORDER BY minutes_left ASC;
+
 """)
 
 
