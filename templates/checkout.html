@@ -73,7 +73,7 @@ function pay() {
 
   console.log("Creating order...");
 
-  fetch("/api/create-order", {
+  fetch("/api/reserve", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
