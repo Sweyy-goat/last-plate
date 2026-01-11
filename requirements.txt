@@ -3,3 +3,4 @@ gunicorn
 flask-mysqldb
 mysqlclient
 python-dotenv
+razorpay
