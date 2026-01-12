@@ -6,12 +6,10 @@ import os
 
 order_bp = Blueprint("order", __name__)
 
-# ✅ Razorpay client (FIXED)
 razorpay_client = razorpay.Client(auth=(
     os.getenv("RAZORPAY_KEY_ID"),
     os.getenv("RAZORPAY_KEY_SECRET")
 ))
-
 
 # ---------------- CHECKOUT PAGE ----------------
 @order_bp.route("/checkout/<int:food_id>")
@@ -47,7 +45,7 @@ def create_order():
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 🔒 Lock row
+    # 🔒 lock food row
     cur.execute("""
         SELECT id, restaurant_id, price, available_quantity
         FROM foods
@@ -61,20 +59,22 @@ def create_order():
 
     amount = food["price"] * quantity * 100  # paise
 
-    # ✅ Create Razorpay order
     razorpay_order = razorpay_client.order.create({
         "amount": amount,
         "currency": "INR",
         "payment_capture": 1
     })
 
-    # ✅ Save order
+    # ⛔ DO NOT reduce quantity here
     cur.execute("""
         INSERT INTO orders
-        (user_id, restaurant_id, total_amount, status, payment_status, razorpay_order_id)
-        VALUES (%s,%s,%s,'PENDING','PENDING',%s)
+        (user_id, food_id, quantity, restaurant_id,
+         total_amount, status, payment_status, razorpay_order_id)
+        VALUES (%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
     """, (
         session["user_id"],
+        food_id,
+        quantity,
         food["restaurant_id"],
         amount / 100,
         razorpay_order["id"]
@@ -89,7 +89,7 @@ def create_order():
     })
 
 
-# ---------------- VERIFY PAYMENT ----------------
+# ---------------- VERIFY PAYMENT (REDUCE STOCK HERE) ----------------
 @order_bp.route("/api/verify-payment", methods=["POST"])
 def verify_payment():
     data = request.json
@@ -103,15 +103,35 @@ def verify_payment():
     except:
         return jsonify({"success": False}), 400
 
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # get order
+    cur.execute("""
+        SELECT id, food_id, quantity
+        FROM orders
+        WHERE razorpay_order_id=%s AND payment_status='PENDING'
+        FOR UPDATE
+    """, (data["razorpay_order_id"],))
+    order = cur.fetchone()
+
+    if not order:
+        return jsonify({"success": False}), 400
+
+    # ✅ REDUCE STOCK NOW
+    cur.execute("""
+        UPDATE foods
+        SET available_quantity = available_quantity - %s
+        WHERE id = %s
+    """, (order["quantity"], order["food_id"]))
+
+    # mark order paid
     cur.execute("""
         UPDATE orders
-        SET payment_status='PAID', razorpay_payment_id=%s
-        WHERE razorpay_order_id=%s
-    """, (
-        data["razorpay_payment_id"],
-        data["razorpay_order_id"]
-    ))
+        SET payment_status='PAID',
+            status='CONFIRMED',
+            razorpay_payment_id=%s
+        WHERE id=%s
+    """, (data["razorpay_payment_id"], order["id"]))
 
     mysql.connection.commit()
 
