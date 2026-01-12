@@ -3,7 +3,6 @@
 <head>
   <title>Checkout | Last Plate</title>
 
-  <!-- Razorpay -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
@@ -23,8 +22,8 @@
       width:380px;
       box-shadow:0 20px 50px rgba(0,0,0,.6);
     }
-    h2 { margin:0 0 6px }
-    p { margin:4px 0; opacity:.85 }
+    h2 { margin:0 }
+    p { opacity:.85 }
     input {
       width:100%;
       padding:14px;
@@ -52,50 +51,32 @@
 <div class="box">
   <h2>{{ food.name }}</h2>
   <p>{{ food.restaurant_name }}</p>
-  <p>₹{{ food.price }} each</p>
+  <p>₹{{ food.price }} per item</p>
 
-  <!-- Quantity -->
   <input id="qty" type="number" min="1" max="{{ food.available_quantity }}" value="1">
-
-  <!-- Email (REQUIRED for OTP) -->
-  <input id="email" type="email" placeholder="Enter email for pickup OTP">
 
   <button type="button" id="payBtn">Pay Now</button>
 </div>
 
 <script>
-document.getElementById("payBtn").addEventListener("click", pay);
-
-function pay() {
+document.getElementById("payBtn").onclick = function () {
   const qty = parseInt(document.getElementById("qty").value);
-  const email = document.getElementById("email").value.trim();
 
   if (!qty || qty <= 0) {
     alert("Invalid quantity");
     return;
   }
 
-  if (!email) {
-    alert("Email is required to receive pickup OTP");
-    return;
-  }
-
   fetch("/api/create-order", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       food_id: {{ food.id }},
-      quantity: qty,
-      email: email
+      quantity: qty
     })
   })
   .then(res => res.json())
   .then(data => {
-
-    if (!data.razorpay_order_id) {
-      alert("Order creation failed");
-      return;
-    }
 
     const options = {
       key: data.key,
@@ -108,11 +89,17 @@ function pay() {
       handler: function (response) {
         fetch("/api/verify-payment", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify(response)
         })
-        .then(() => {
-          alert("Payment successful 🎉\nCheck your email for pickup OTP");
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            alert("Payment successful!\nPickup OTP: " + result.pickup_otp);
+            window.location.href = "/browse";
+          } else {
+            alert("Payment verification failed");
+          }
         });
       },
 
@@ -121,11 +108,8 @@ function pay() {
 
     new Razorpay(options).open();
   })
-  .catch(err => {
-    console.error(err);
-    alert("Something went wrong");
-  });
-}
+  .catch(() => alert("Something went wrong"));
+};
 </script>
 
 </body>
