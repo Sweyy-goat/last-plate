@@ -33,7 +33,6 @@
       border-radius: 26px;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.15);
       box-shadow: 0 40px 80px rgba(0,0,0,0.6);
       animation: riseIn 0.9s ease forwards;
@@ -64,19 +63,24 @@
       text-align: center;
       font-size: 14px;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 30px;
+      margin-bottom: 28px;
       line-height: 1.6;
     }
 
     label {
       font-size: 13px;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.75);
     }
 
     input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 14px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.18);
       border: 1px solid rgba(255,255,255,0.25);
       color: white;
+      font-size: 15px;
     }
 
     input::placeholder {
@@ -89,10 +93,16 @@
       background: rgba(255,255,255,0.22);
     }
 
+    .helper {
+      font-size: 12px;
+      margin-top: 4px;
+      color: rgba(255,255,255,0.55);
+    }
+
     .signup-btn {
       width: 100%;
       padding: 15px;
-      margin-top: 24px;
+      margin-top: 26px;
       border-radius: 18px;
       font-size: 16px;
       font-weight: 600;
@@ -132,13 +142,6 @@
       font-size: 12px;
       color: rgba(255,255,255,0.5);
     }
-
-    @media (max-width: 480px) {
-      .signup-card {
-        width: 100%;
-        padding: 32px 24px;
-      }
-    }
   </style>
 </head>
 
@@ -160,8 +163,16 @@
 
     <br><br>
 
-    <label>Mobile Number</label>
-    <input id="mobile" placeholder="Enter your mobile number">
+    <label>Email Address</label>
+    <input id="email" type="email" placeholder="you@example.com">
+    <div class="helper">
+      📩 We send your pickup OTP & order receipt here
+    </div>
+
+    <br>
+
+    <label>Mobile Number (optional)</label>
+    <input id="mobile" placeholder="Enter mobile number">
 
     <br><br>
 
@@ -178,30 +189,46 @@
     </div>
 
     <div class="trust-note">
-      🔒 We’ll never share your details.  
-      Your trust matters to us.
+      🔒 Your email is used only for OTPs & receipts
     </div>
 
   </div>
 </div>
 
 <script>
-  document.getElementById("signupBtn").onclick = function () {
-    fetch("/api/user/signup", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        name: document.getElementById("name").value,
-        mobile: document.getElementById("mobile").value,
-        password: document.getElementById("password").value
-      })
+document.getElementById("signupBtn").onclick = function () {
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const mobile = document.getElementById("mobile").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!name || !email || !password) {
+    alert("Name, Email and Password are required");
+    return;
+  }
+
+  if (!email.includes("@")) {
+    alert("Please enter a valid email address");
+    return;
+  }
+
+  fetch("/api/user/signup", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      name,
+      email,
+      mobile,
+      password
     })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.success ? "Signup successful" : data.message);
-      if (data.success) window.location.href = "/login";
-    });
-  };
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.success ? "Signup successful 🎉" : data.message);
+    if (data.success) window.location.href = "/login";
+  });
+};
 </script>
 
 </body>
