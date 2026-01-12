@@ -3,6 +3,7 @@ from utils.db import mysql
 import MySQLdb.cursors
 import razorpay
 import os
+import random
 
 order_bp = Blueprint("order", __name__)
 
@@ -11,6 +12,7 @@ razorpay_client = razorpay.Client(auth=(
     os.getenv("RAZORPAY_KEY_ID"),
     os.getenv("RAZORPAY_KEY_SECRET")
 ))
+
 
 # ================= CHECKOUT PAGE =================
 @order_bp.route("/checkout/<int:food_id>")
@@ -28,9 +30,8 @@ def checkout(food_id):
             r.name AS restaurant_name
         FROM foods f
         JOIN restaurants r ON f.restaurant_id = r.id
-        WHERE f.id = %s AND f.is_active = 1
+        WHERE f.id=%s AND f.is_active=1
     """, (food_id,))
-
     food = cur.fetchone()
 
     if not food:
@@ -61,7 +62,7 @@ def create_order():
     cur.execute("""
         SELECT id, restaurant_id, price, available_quantity
         FROM foods
-        WHERE id = %s
+        WHERE id=%s
         FOR UPDATE
     """, (food_id,))
     food = cur.fetchone()
@@ -69,7 +70,7 @@ def create_order():
     if not food or food["available_quantity"] < quantity:
         return jsonify({"error": "Not enough quantity"}), 400
 
-    amount_paise = food["price"] * quantity * 100  # Razorpay uses paise
+    amount_paise = food["price"] * quantity * 100
 
     # ✅ CREATE RAZORPAY ORDER
     razorpay_order = razorpay_client.order.create({
@@ -83,7 +84,7 @@ def create_order():
         INSERT INTO orders
         (user_id, food_id, quantity, restaurant_id,
          total_amount, status, payment_status, razorpay_order_id)
-        VALUES (%s, %s, %s, %s, %s, 'PENDING', 'PENDING', %s)
+        VALUES (%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
     """, (
         session["user_id"],
         food_id,
@@ -107,46 +108,42 @@ def create_order():
 def verify_payment():
     data = request.json
 
-    razorpay_payment_id = data.get("razorpay_payment_id")
-    razorpay_order_id = data.get("razorpay_order_id")
-    razorpay_signature = data.get("razorpay_signature")
-
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    mysql.connection.begin()
 
-    # 🔐 VERIFY SIGNATURE
     try:
         razorpay_client.utility.verify_payment_signature({
-            "razorpay_payment_id": razorpay_payment_id,
-            "razorpay_order_id": razorpay_order_id,
-            "razorpay_signature": razorpay_signature
+            "razorpay_payment_id": data["razorpay_payment_id"],
+            "razorpay_order_id": data["razorpay_order_id"],
+            "razorpay_signature": data["razorpay_signature"]
         })
     except:
-        # ❌ MARK ORDER FAILED
         cur.execute("""
             UPDATE orders
             SET status='FAILED', payment_status='FAILED'
             WHERE razorpay_order_id=%s
-        """, (razorpay_order_id,))
+        """, (data["razorpay_order_id"],))
         mysql.connection.commit()
         return jsonify({"success": False}), 400
 
-    # 🔒 LOCK ORDER ROW
+    # 🔒 LOCK ORDER
     cur.execute("""
         SELECT id, food_id, quantity
         FROM orders
         WHERE razorpay_order_id=%s AND payment_status='PENDING'
         FOR UPDATE
-    """, (razorpay_order_id,))
+    """, (data["razorpay_order_id"],))
     order = cur.fetchone()
 
     if not order:
+        mysql.connection.rollback()
         return jsonify({"success": False}), 400
 
-    # 🔒 SAFE STOCK REDUCTION
+    # 🔒 REDUCE STOCK SAFELY
     cur.execute("""
         UPDATE foods
         SET available_quantity = available_quantity - %s
-        WHERE id = %s AND available_quantity >= %s
+        WHERE id=%s AND available_quantity >= %s
     """, (
         order["quantity"],
         order["food_id"],
@@ -154,17 +151,29 @@ def verify_payment():
     ))
 
     if cur.rowcount == 0:
+        mysql.connection.rollback()
         return jsonify({"success": False, "error": "Stock issue"}), 409
 
-    # ✅ MARK ORDER PAID
+    # 🎯 GENERATE PICKUP OTP
+    pickup_otp = str(random.randint(100000, 999999))
+
+    # ✅ MARK ORDER CONFIRMED
     cur.execute("""
         UPDATE orders
         SET payment_status='PAID',
             status='CONFIRMED',
-            razorpay_payment_id=%s
+            razorpay_payment_id=%s,
+            pickup_otp=%s
         WHERE id=%s
-    """, (razorpay_payment_id, order["id"]))
+    """, (
+        data["razorpay_payment_id"],
+        pickup_otp,
+        order["id"]
+    ))
 
     mysql.connection.commit()
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True,
+        "pickup_otp": pickup_otp
+    })
