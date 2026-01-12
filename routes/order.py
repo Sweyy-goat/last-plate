@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, session, redirect, current_app
+from flask import Blueprint, render_template, request, jsonify, session, redirect
 from utils.db import mysql
 import MySQLdb.cursors
 import razorpay
@@ -6,10 +6,10 @@ import os
 
 order_bp = Blueprint("order", __name__)
 
-# Razorpay client
+# ✅ Razorpay client (FIXED)
 razorpay_client = razorpay.Client(auth=(
-    os.getenv("rzp_test_S2bmctosdabOoM"),
-    os.getenv("77RfmWU2bJoKhsAknuxti9bi")
+    os.getenv("RAZORPAY_KEY_ID"),
+    os.getenv("RAZORPAY_KEY_SECRET")
 ))
 
 
@@ -47,6 +47,7 @@ def create_order():
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
+    # 🔒 Lock row
     cur.execute("""
         SELECT id, restaurant_id, price, available_quantity
         FROM foods
@@ -60,14 +61,14 @@ def create_order():
 
     amount = food["price"] * quantity * 100  # paise
 
-    # Create Razorpay order
+    # ✅ Create Razorpay order
     razorpay_order = razorpay_client.order.create({
         "amount": amount,
         "currency": "INR",
         "payment_capture": 1
     })
 
-    # Save order
+    # ✅ Save order
     cur.execute("""
         INSERT INTO orders
         (user_id, restaurant_id, total_amount, status, payment_status, razorpay_order_id)
@@ -93,15 +94,11 @@ def create_order():
 def verify_payment():
     data = request.json
 
-    razorpay_payment_id = data["razorpay_payment_id"]
-    razorpay_order_id = data["razorpay_order_id"]
-    razorpay_signature = data["razorpay_signature"]
-
     try:
         razorpay_client.utility.verify_payment_signature({
-            "razorpay_payment_id": razorpay_payment_id,
-            "razorpay_order_id": razorpay_order_id,
-            "razorpay_signature": razorpay_signature
+            "razorpay_payment_id": data["razorpay_payment_id"],
+            "razorpay_order_id": data["razorpay_order_id"],
+            "razorpay_signature": data["razorpay_signature"]
         })
     except:
         return jsonify({"success": False}), 400
@@ -111,10 +108,11 @@ def verify_payment():
         UPDATE orders
         SET payment_status='PAID', razorpay_payment_id=%s
         WHERE razorpay_order_id=%s
-    """, (razorpay_payment_id, razorpay_order_id))
+    """, (
+        data["razorpay_payment_id"],
+        data["razorpay_order_id"]
+    ))
 
     mysql.connection.commit()
 
     return jsonify({"success": True})
-
-
