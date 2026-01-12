@@ -54,7 +54,11 @@
   <p>{{ food.restaurant_name }}</p>
   <p>₹{{ food.price }} each</p>
 
+  <!-- Quantity -->
   <input id="qty" type="number" min="1" max="{{ food.available_quantity }}" value="1">
+
+  <!-- Email (REQUIRED for OTP) -->
+  <input id="email" type="email" placeholder="Enter email for pickup OTP">
 
   <button type="button" id="payBtn">Pay Now</button>
 </div>
@@ -64,20 +68,25 @@ document.getElementById("payBtn").addEventListener("click", pay);
 
 function pay() {
   const qty = parseInt(document.getElementById("qty").value);
+  const email = document.getElementById("email").value.trim();
 
   if (!qty || qty <= 0) {
     alert("Invalid quantity");
     return;
   }
 
-  fetch("/api/create-order", {   // ✅ FIXED HERE
+  if (!email) {
+    alert("Email is required to receive pickup OTP");
+    return;
+  }
+
+  fetch("/api/create-order", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       food_id: {{ food.id }},
-      quantity: qty
+      quantity: qty,
+      email: email
     })
   })
   .then(res => res.json())
@@ -103,17 +112,14 @@ function pay() {
           body: JSON.stringify(response)
         })
         .then(() => {
-          alert("Payment successful 🎉");
+          alert("Payment successful 🎉\nCheck your email for pickup OTP");
         });
       },
 
-      theme: {
-        color: "#22c55e"
-      }
+      theme: { color: "#22c55e" }
     };
 
-    const rzp = new Razorpay(options);
-    rzp.open();
+    new Razorpay(options).open();
   })
   .catch(err => {
     console.error(err);
