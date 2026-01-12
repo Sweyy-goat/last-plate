@@ -56,7 +56,6 @@
 
   <input id="qty" type="number" min="1" max="{{ food.available_quantity }}" value="1">
 
-  <!-- IMPORTANT: type="button" -->
   <button type="button" id="payBtn">Pay Now</button>
 </div>
 
@@ -71,9 +70,7 @@ function pay() {
     return;
   }
 
-  console.log("Creating order...");
-
-  fetch("/api/reserve", {
+  fetch("/api/create-order", {   // ✅ FIXED HERE
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -83,12 +80,8 @@ function pay() {
       quantity: qty
     })
   })
-  .then(res => {
-    console.log("Create order response:", res.status);
-    return res.json();
-  })
+  .then(res => res.json())
   .then(data => {
-    console.log("Order data:", data);
 
     if (!data.razorpay_order_id) {
       alert("Order creation failed");
@@ -104,8 +97,6 @@ function pay() {
       order_id: data.razorpay_order_id,
 
       handler: function (response) {
-        console.log("Payment success:", response);
-
         fetch("/api/verify-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,12 +112,11 @@ function pay() {
       }
     };
 
-    console.log("Opening Razorpay...");
     const rzp = new Razorpay(options);
     rzp.open();
   })
   .catch(err => {
-    console.error("PAY ERROR:", err);
+    console.error(err);
     alert("Something went wrong");
   });
 }
