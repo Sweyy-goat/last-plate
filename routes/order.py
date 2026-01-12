@@ -104,13 +104,14 @@ def create_order():
 
 
 # ================= VERIFY PAYMENT =================
+from utils.emailer import send_email
+
 @order_bp.route("/api/verify-payment", methods=["POST"])
 def verify_payment():
     data = request.json
-
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    mysql.connection.begin()
 
+    # 🔐 VERIFY SIGNATURE
     try:
         razorpay_client.utility.verify_payment_signature({
             "razorpay_payment_id": data["razorpay_payment_id"],
@@ -154,10 +155,10 @@ def verify_payment():
         mysql.connection.rollback()
         return jsonify({"success": False, "error": "Stock issue"}), 409
 
-    # 🎯 GENERATE PICKUP OTP
+    # 🎯 GENERATE OTP
     pickup_otp = str(random.randint(100000, 999999))
 
-    # ✅ MARK ORDER CONFIRMED
+    # ✅ CONFIRM ORDER
     cur.execute("""
         UPDATE orders
         SET payment_status='PAID',
@@ -173,7 +174,61 @@ def verify_payment():
 
     mysql.connection.commit()
 
+    # ================= SEND EMAILS =================
+    cur.execute("""
+        SELECT 
+            u.email AS user_email,
+            u.name AS user_name,
+            f.name AS food_name,
+            r.name AS restaurant_name,
+            r.mobile AS restaurant_phone
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN foods f ON o.food_id = f.id
+        JOIN restaurants r ON o.restaurant_id = r.id
+        WHERE o.id = %s
+    """, (order["id"],))
+
+    details = cur.fetchone()
+
+    # USER EMAIL
+    user_html = f"""
+    <h2>🍽️ Last Plate – Pickup OTP</h2>
+    <p>Hi <b>{details['user_name']}</b>,</p>
+    <p>Your order is confirmed!</p>
+    <h1>{pickup_otp}</h1>
+    <p>
+      Food: <b>{details['food_name']}</b><br>
+      Restaurant: <b>{details['restaurant_name']}</b>
+    </p>
+    """
+
+    send_email(
+        details["user_email"],
+        "Your Last Plate Pickup OTP",
+        user_html
+    )
+
+    # ADMIN EMAIL
+    admin_html = f"""
+    <h2>📦 New Order</h2>
+    <p>
+      Food: <b>{details['food_name']}</b><br>
+      Restaurant: <b>{details['restaurant_name']}</b><br>
+      Phone: <b>{details['restaurant_phone']}</b><br>
+      Customer: <b>{details['user_name']}</b><br>
+      OTP: <b>{pickup_otp}</b>
+    </p>
+    """
+
+    send_email(
+        "terminalplate@gmail.com",
+        "New Last Plate Order",
+        admin_html
+    )
+
     return jsonify({
         "success": True,
         "pickup_otp": pickup_otp
     })
+
