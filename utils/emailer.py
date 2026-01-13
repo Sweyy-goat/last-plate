@@ -1,24 +1,19 @@
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email.message import EmailMessage
 import os
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_EMAIL = os.getenv("SMTP_EMAIL")
+SMTP_PASS = os.getenv("SMTP_PASS")
 
-EMAIL_USER = os.getenv("EMAIL_USER")      # terminalplate@gmail.com
-EMAIL_PASS = os.getenv("EMAIL_PASS")      # App password
-
-def send_email(to_email, subject, html_content):
-    msg = MIMEMultipart("alternative")
-    msg["From"] = EMAIL_USER
-    msg["To"] = to_email
+def send_email(to, subject, html):
+    msg = EmailMessage()
+    msg["From"] = SMTP_EMAIL
+    msg["To"] = to
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(html_content, "html"))
+    msg.set_content("Your email client does not support HTML.")
+    msg.add_alternative(html, subtype="html")
 
-    server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-    server.starttls()
-    server.login(EMAIL_USER, EMAIL_PASS)
-    server.sendmail(EMAIL_USER, to_email, msg.as_string())
-    server.quit()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(SMTP_EMAIL, SMTP_PASS)
+        smtp.send_message(msg)
