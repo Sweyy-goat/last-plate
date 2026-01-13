@@ -38,10 +38,16 @@ def user_signup():
 
     hashed = hash_password(password)
 
-    cur.execute(
-        "INSERT INTO users (name, mobile, password_hash) VALUES (%s, %s, %s)",
-        (name, mobile, hashed)
-    )
+cur.execute("""
+    INSERT INTO users (name, email, mobile, password_hash)
+    VALUES (%s, %s, %s, %s)
+""", (
+    data["name"],
+    data["email"],
+    data["mobile"],
+    password_hash
+))
+
     mysql.connection.commit()
 
     return jsonify({"success": True})
