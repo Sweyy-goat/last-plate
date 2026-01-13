@@ -1,96 +1,55 @@
-from flask import Blueprint, render_template, request, jsonify, session, redirect
+from flask import Blueprint, request, jsonify, session
 from utils.db import mysql
 import MySQLdb.cursors
-import razorpay
-import os
-import random
+import razorpay, os, random
+from utils.emailer import send_email
 
 order_bp = Blueprint("order", __name__)
 
-# ================= RAZORPAY CLIENT =================
 razorpay_client = razorpay.Client(auth=(
     os.getenv("RAZORPAY_KEY_ID"),
     os.getenv("RAZORPAY_KEY_SECRET")
 ))
 
 
-# ================= CHECKOUT PAGE =================
-@order_bp.route("/checkout/<int:food_id>")
-def checkout(food_id):
-    if "user_id" not in session or session.get("role") != "user":
-        return redirect("/login")
-
-    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute("""
-        SELECT
-            f.id,
-            f.name,
-            f.price,
-            f.available_quantity,
-            r.name AS restaurant_name
-        FROM foods f
-        JOIN restaurants r ON f.restaurant_id = r.id
-        WHERE f.id=%s AND f.is_active=1
-    """, (food_id,))
-    food = cur.fetchone()
-
-    if not food:
-        return "Food not found", 404
-
-    if food["available_quantity"] <= 0:
-        return "Sold out", 400
-
-    return render_template("checkout.html", food=food)
-
-
-# ================= CREATE RAZORPAY ORDER =================
+# ================= CREATE ORDER =================
 @order_bp.route("/api/create-order", methods=["POST"])
 def create_order():
-    if "user_id" not in session or session.get("role") != "user":
+    if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
     data = request.json
-    food_id = int(data.get("food_id"))
-    quantity = int(data.get("quantity"))
-
-    if quantity <= 0:
-        return jsonify({"error": "Invalid quantity"}), 400
+    food_id = int(data["food_id"])
+    quantity = int(data["quantity"])
+    email = data["email"]
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 🔒 LOCK FOOD ROW
     cur.execute("""
-        SELECT id, restaurant_id, price, available_quantity
-        FROM foods
-        WHERE id=%s
-        FOR UPDATE
+        SELECT id, price, restaurant_id, available_quantity
+        FROM foods WHERE id=%s FOR UPDATE
     """, (food_id,))
     food = cur.fetchone()
 
     if not food or food["available_quantity"] < quantity:
-        return jsonify({"error": "Not enough quantity"}), 400
+        return jsonify({"error": "Insufficient stock"}), 400
 
-    amount_paise = food["price"] * quantity * 100
+    amount = food["price"] * quantity * 100
 
-    # ✅ CREATE RAZORPAY ORDER
     razorpay_order = razorpay_client.order.create({
-        "amount": amount_paise,
+        "amount": amount,
         "currency": "INR",
         "payment_capture": 1
     })
 
-    # ✅ SAVE ORDER (DO NOT REDUCE STOCK YET)
     cur.execute("""
         INSERT INTO orders
         (user_id, food_id, quantity, restaurant_id,
-         total_amount, status, payment_status, razorpay_order_id)
-        VALUES (%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
+         total_amount, user_email, status, payment_status, razorpay_order_id)
+        VALUES (%s,%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
     """, (
-        session["user_id"],
-        food_id,
-        quantity,
-        food["restaurant_id"],
-        amount_paise / 100,
+        session["user_id"], food_id, quantity,
+        food["restaurant_id"], amount / 100, email,
         razorpay_order["id"]
     ))
 
@@ -98,137 +57,59 @@ def create_order():
 
     return jsonify({
         "razorpay_order_id": razorpay_order["id"],
-        "amount": amount_paise,
+        "amount": amount,
         "key": os.getenv("RAZORPAY_KEY_ID")
     })
 
 
 # ================= VERIFY PAYMENT =================
-from utils.emailer import send_email
-
 @order_bp.route("/api/verify-payment", methods=["POST"])
 def verify_payment():
     data = request.json
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 🔐 VERIFY SIGNATURE
     try:
-        razorpay_client.utility.verify_payment_signature({
-            "razorpay_payment_id": data["razorpay_payment_id"],
-            "razorpay_order_id": data["razorpay_order_id"],
-            "razorpay_signature": data["razorpay_signature"]
-        })
+        razorpay_client.utility.verify_payment_signature(data)
     except:
-        cur.execute("""
-            UPDATE orders
-            SET status='FAILED', payment_status='FAILED'
-            WHERE razorpay_order_id=%s
-        """, (data["razorpay_order_id"],))
-        mysql.connection.commit()
         return jsonify({"success": False}), 400
 
-    # 🔒 LOCK ORDER
     cur.execute("""
-        SELECT id, food_id, quantity
-        FROM orders
+        SELECT * FROM orders
         WHERE razorpay_order_id=%s AND payment_status='PENDING'
         FOR UPDATE
     """, (data["razorpay_order_id"],))
     order = cur.fetchone()
 
     if not order:
-        mysql.connection.rollback()
         return jsonify({"success": False}), 400
 
-    # 🔒 REDUCE STOCK SAFELY
     cur.execute("""
         UPDATE foods
         SET available_quantity = available_quantity - %s
         WHERE id=%s AND available_quantity >= %s
-    """, (
-        order["quantity"],
-        order["food_id"],
-        order["quantity"]
-    ))
+    """, (order["quantity"], order["food_id"], order["quantity"]))
 
     if cur.rowcount == 0:
         mysql.connection.rollback()
-        return jsonify({"success": False, "error": "Stock issue"}), 409
+        return jsonify({"success": False}), 409
 
-    # 🎯 GENERATE OTP
-    pickup_otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(100000, 999999))
 
-    # ✅ CONFIRM ORDER
     cur.execute("""
         UPDATE orders
-        SET payment_status='PAID',
-            status='CONFIRMED',
-            razorpay_payment_id=%s,
-            pickup_otp=%s
+        SET payment_status='PAID', status='CONFIRMED',
+            razorpay_payment_id=%s, pickup_otp=%s
         WHERE id=%s
-    """, (
-        data["razorpay_payment_id"],
-        pickup_otp,
-        order["id"]
-    ))
+    """, (data["razorpay_payment_id"], otp, order["id"]))
 
     mysql.connection.commit()
 
-    # ================= SEND EMAILS =================
-    cur.execute("""
-        SELECT 
-            u.email AS user_email,
-            u.name AS user_name,
-            f.name AS food_name,
-            r.name AS restaurant_name,
-            r.mobile AS restaurant_phone
-        FROM orders o
-        JOIN users u ON o.user_id = u.id
-        JOIN foods f ON o.food_id = f.id
-        JOIN restaurants r ON o.restaurant_id = r.id
-        WHERE o.id = %s
-    """, (order["id"],))
-
-    details = cur.fetchone()
-
-    # USER EMAIL
-    user_html = f"""
-    <h2>🍽️ Last Plate – Pickup OTP</h2>
-    <p>Hi <b>{details['user_name']}</b>,</p>
-    <p>Your order is confirmed!</p>
-    <h1>{pickup_otp}</h1>
-    <p>
-      Food: <b>{details['food_name']}</b><br>
-      Restaurant: <b>{details['restaurant_name']}</b>
-    </p>
+    html = f"""
+    <h2>🍽️ Last Plate Pickup OTP</h2>
+    <h1>{otp}</h1>
+    <p>Show this OTP at the restaurant.</p>
     """
 
-    send_email(
-        details["user_email"],
-        "Your Last Plate Pickup OTP",
-        user_html
-    )
+    send_email(order["user_email"], "Your Pickup OTP", html)
 
-    # ADMIN EMAIL
-    admin_html = f"""
-    <h2>📦 New Order</h2>
-    <p>
-      Food: <b>{details['food_name']}</b><br>
-      Restaurant: <b>{details['restaurant_name']}</b><br>
-      Phone: <b>{details['restaurant_phone']}</b><br>
-      Customer: <b>{details['user_name']}</b><br>
-      OTP: <b>{pickup_otp}</b>
-    </p>
-    """
-
-    send_email(
-        "terminalplate@gmail.com",
-        "New Last Plate Order",
-        admin_html
-    )
-
-    return jsonify({
-        "success": True,
-        "pickup_otp": pickup_otp
-    })
-
+    return jsonify({"success": True, "pickup_otp": otp})
