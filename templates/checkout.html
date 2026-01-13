@@ -1,18 +1,212 @@
-<input id="email" type="email" placeholder="Enter email for OTP" required>
-<input id="qty" type="number" min="1" max="{{ food.available_quantity }}" value="1">
-<button id="payBtn">Pay Now</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Checkout | Last Plate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Razorpay -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111827;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --accent: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 420px;
+      max-width: 92%;
+      background: var(--card);
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 30px 70px rgba(0,0,0,.65);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .food {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .food h2 {
+      font-size: 18px;
+      margin: 0 0 4px;
+    }
+
+    .food p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .price {
+      margin-top: 10px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #020617;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      box-shadow: 0 0 0 2px rgba(34,197,94,.35);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 15px;
+      border-radius: 14px;
+      border: none;
+      background: var(--accent);
+      color: #022c22;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .1s ease, opacity .1s ease;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .secure {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <!-- BRAND -->
+  <div class="brand">
+    <h1>Last Plate</h1>
+    <p>Complete your reservation securely</p>
+  </div>
+
+  <!-- FOOD INFO -->
+  <div class="food">
+    <h2>{{ food.name }}</h2>
+    <p>{{ food.restaurant_name }}</p>
+    <div class="price">₹{{ food.price }} per item</div>
+  </div>
+
+  <!-- EMAIL -->
+  <label for="email">Email for pickup OTP</label>
+  <input id="email" type="email" placeholder="you@example.com" required>
+
+  <!-- QUANTITY -->
+  <label for="qty">Quantity</label>
+  <input
+    id="qty"
+    type="number"
+    min="1"
+    max="{{ food.available_quantity }}"
+    value="1"
+  >
+
+  <!-- PAY -->
+  <button id="payBtn">Pay & Reserve</button>
+
+  <div class="secure">
+    🔒 Secured by Razorpay
+  </div>
+
+  <div class="footer">
+    You’ll receive a pickup OTP after successful payment
+  </div>
+</div>
 
 <script>
 document.getElementById("payBtn").onclick = function () {
-  const qty = parseInt(document.getElementById("qty").value);
-  const email = document.getElementById("email").value;
 
-  if (!email) return alert("Email required");
+  const qty = parseInt(document.getElementById("qty").value);
+  const email = document.getElementById("email").value.trim();
+  const btn = this;
+
+  if (!email) return alert("Please enter your email");
   if (!qty || qty <= 0) return alert("Invalid quantity");
+
+  btn.disabled = true;
+  btn.innerText = "Processing...";
 
   fetch("/api/create-order", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       food_id: {{ food.id | tojson }},
       quantity: qty,
@@ -21,31 +215,53 @@ document.getElementById("payBtn").onclick = function () {
   })
   .then(res => res.json())
   .then(data => {
+
     const options = {
       key: data.key,
       amount: data.amount,
       currency: "INR",
       order_id: data.razorpay_order_id,
       name: "Last Plate",
+      description: "Food Reservation",
 
       handler: function (response) {
         fetch("/api/verify-payment", {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(response)
         })
         .then(res => res.json())
         .then(result => {
           if (result.success) {
-            alert("Pickup OTP: " + result.pickup_otp);
-            setTimeout(() => location.href = "/browse", 1500);
+            alert("Reservation confirmed!\nPickup OTP: " + result.pickup_otp);
+            setTimeout(() => window.location.href = "/browse", 1500);
           } else {
             alert("Payment verification failed");
+            btn.disabled = false;
+            btn.innerText = "Pay & Reserve";
           }
         });
-      }
+      },
+
+      modal: {
+        ondismiss: function () {
+          btn.disabled = false;
+          btn.innerText = "Pay & Reserve";
+        }
+      },
+
+      theme: { color: "#22c55e" }
     };
+
     new Razorpay(options).open();
+  })
+  .catch(() => {
+    alert("Something went wrong");
+    btn.disabled = false;
+    btn.innerText = "Pay & Reserve";
   });
 };
 </script>
+
+</body>
+</html>
