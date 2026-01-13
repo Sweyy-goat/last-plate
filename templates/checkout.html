@@ -46,6 +46,7 @@ body{
   overflow:hidden;
 }
 
+/* 🔥 GLOW LAYER (VISUAL ONLY) */
 .card::before{
   content:"";
   position:absolute;
@@ -53,7 +54,16 @@ body{
   background:radial-gradient(circle,var(--glow),transparent 60%);
   opacity:.25;
   animation:pulse 8s infinite linear;
+  pointer-events:none;   /* ✅ CRITICAL FIX */
+  z-index:0;              /* ✅ stay behind */
 }
+
+/* 🔒 PUSH ALL CONTENT ABOVE GLOW */
+.card > *{
+  position:relative;
+  z-index:1;
+}
+
 
 @keyframes pulse{
   0%{transform:rotate(0deg)}
