@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, render_template, request, jsonify, session, redirect
 from utils.db import mysql
 import MySQLdb.cursors
 import razorpay, os, random
@@ -10,6 +10,28 @@ razorpay_client = razorpay.Client(auth=(
     os.getenv("RAZORPAY_KEY_ID"),
     os.getenv("RAZORPAY_KEY_SECRET")
 ))
+
+
+# ================= CHECKOUT PAGE =================
+@order_bp.route("/checkout/<int:food_id>")
+def checkout(food_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("""
+        SELECT f.id, f.name, f.price, f.available_quantity,
+               r.name AS restaurant_name
+        FROM foods f
+        JOIN restaurants r ON f.restaurant_id = r.id
+        WHERE f.id=%s AND f.is_active=1
+    """, (food_id,))
+    food = cur.fetchone()
+
+    if not food:
+        return "Food not found", 404
+
+    return render_template("checkout.html", food=food)
 
 
 # ================= CREATE ORDER =================
@@ -26,7 +48,7 @@ def create_order():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     cur.execute("""
-        SELECT id, price, restaurant_id, available_quantity
+        SELECT price, restaurant_id, available_quantity
         FROM foods WHERE id=%s FOR UPDATE
     """, (food_id,))
     food = cur.fetchone()
@@ -48,8 +70,12 @@ def create_order():
          total_amount, user_email, status, payment_status, razorpay_order_id)
         VALUES (%s,%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
     """, (
-        session["user_id"], food_id, quantity,
-        food["restaurant_id"], amount / 100, email,
+        session["user_id"],
+        food_id,
+        quantity,
+        food["restaurant_id"],
+        amount / 100,
+        email,
         razorpay_order["id"]
     ))
 
@@ -97,19 +123,19 @@ def verify_payment():
 
     cur.execute("""
         UPDATE orders
-        SET payment_status='PAID', status='CONFIRMED',
-            razorpay_payment_id=%s, pickup_otp=%s
+        SET payment_status='PAID',
+            status='CONFIRMED',
+            razorpay_payment_id=%s,
+            pickup_otp=%s
         WHERE id=%s
     """, (data["razorpay_payment_id"], otp, order["id"]))
 
     mysql.connection.commit()
 
-    html = f"""
-    <h2>🍽️ Last Plate Pickup OTP</h2>
-    <h1>{otp}</h1>
-    <p>Show this OTP at the restaurant.</p>
-    """
-
-    send_email(order["user_email"], "Your Pickup OTP", html)
+    send_email(
+        order["user_email"],
+        "Your Last Plate Pickup OTP",
+        f"<h2>Your Pickup OTP</h2><h1>{otp}</h1>"
+    )
 
     return jsonify({"success": True, "pickup_otp": otp})
