@@ -19,38 +19,47 @@ def restaurant_login_page():
     return render_template("auth/restaurant_login.html")
 
 # ================= USER SIGNUP =================
+# ================= USER SIGNUP =================
 @auth_bp.route("/api/user/signup", methods=["POST"])
 def user_signup():
     data = request.json
+
     name = data.get("name")
+    email = data.get("email")          # ✅ FIX
     mobile = data.get("mobile")
     password = data.get("password")
 
-    if not name or not mobile or not password:
-        return jsonify({"error": "Missing fields"}), 400
+    if not name or not email or not mobile or not password:
+        return jsonify({"error": "All fields required"}), 400
 
     cur = mysql.connection.cursor()
 
-    # Check existing user
+    # ❌ Check duplicate email
+    cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+    if cur.fetchone():
+        return jsonify({"error": "Email already exists"}), 400
+
+    # ❌ Check duplicate mobile
     cur.execute("SELECT id FROM users WHERE mobile=%s", (mobile,))
     if cur.fetchone():
         return jsonify({"error": "Mobile already exists"}), 400
 
-    hashed = hash_password(password)
+    password_hash = hash_password(password)  # ✅ FIX
 
-cur.execute("""
-    INSERT INTO users (name, email, mobile, password_hash)
-    VALUES (%s, %s, %s, %s)
-""", (
-    data["name"],
-    data["email"],
-    data["mobile"],
-    password_hash
-))
+    cur.execute("""
+        INSERT INTO users (name, email, mobile, password_hash)
+        VALUES (%s, %s, %s, %s)
+    """, (
+        name,
+        email,
+        mobile,
+        password_hash
+    ))
 
     mysql.connection.commit()
 
     return jsonify({"success": True})
+
 
 # ================= USER LOGIN =================
 @auth_bp.route("/api/user/login", methods=["POST"])
