@@ -145,3 +145,64 @@ def update_food_quantity(food_id):
 
     mysql.connection.commit()
     return jsonify({"success": True})
+@restaurant_bp.route("/restaurant/verify-otp")
+def verify_otp_page():
+    if session.get("role") != "restaurant":
+        return redirect("/restaurant/login")
+    return render_template("restaurant/verify_otp.html")
+
+
+# ================= VERIFY OTP API =================
+@restaurant_bp.route("/restaurant/api/verify-otp", methods=["POST"])
+def verify_otp():
+    if session.get("role") != "restaurant":
+        return jsonify({"error":"Unauthorized"}),401
+
+    otp=request.json.get("otp")
+    restaurant_id=session["restaurant_id"]
+
+    cur=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cur.execute("""
+        SELECT o.id, o.quantity, u.name AS customer,
+               f.name AS food
+        FROM orders o
+        JOIN users u ON o.user_id=u.id
+        JOIN foods f ON o.food_id=f.id
+        WHERE o.pickup_otp=%s
+          AND o.restaurant_id=%s
+          AND o.status='CONFIRMED'
+          AND o.payment_status='PAID'
+    """,(otp,restaurant_id))
+
+    order=cur.fetchone()
+
+    if not order:
+        return jsonify({"success":False,"error":"Invalid or already used OTP"})
+
+    return jsonify({
+        "success":True,
+        "order_id":order["id"],
+        "food":order["food"],
+        "quantity":order["quantity"],
+        "customer":order["customer"]
+    })
+
+
+# ================= COMPLETE ORDER =================
+@restaurant_bp.route("/restaurant/api/complete-order", methods=["POST"])
+def complete_order():
+    if session.get("role") != "restaurant":
+        return jsonify({"error":"Unauthorized"}),401
+
+    order_id=request.json.get("order_id")
+
+    cur=mysql.connection.cursor()
+    cur.execute("""
+        UPDATE orders
+        SET status='PICKED_UP'
+        WHERE id=%s
+    """,(order_id,))
+
+    mysql.connection.commit()
+    return jsonify({"success":True})
