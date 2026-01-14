@@ -33,6 +33,17 @@ def add_food():
     data = request.json
     restaurant_id = session["restaurant_id"]
 
+    # 🔒 VALIDATION (CRITICAL)
+    try:
+        price = int(data.get("price"))
+        original_price = int(data.get("original_price"))
+        quantity = int(data.get("quantity"))
+    except:
+        return jsonify({"error": "Invalid numeric values"}), 400
+
+    if price <= 0 or quantity <= 0:
+        return jsonify({"error": "Invalid price or quantity"}), 400
+
     cur = mysql.connection.cursor()
     cur.execute("""
         INSERT INTO foods
@@ -42,15 +53,16 @@ def add_food():
     """, (
         restaurant_id,
         data["name"],
-        data["original_price"],
-        data["price"],
-        data["quantity"],
+        original_price,
+        price,
+        quantity,
         data["pickup_start"],
         data["pickup_end"]
     ))
     mysql.connection.commit()
 
     return jsonify({"success": True})
+
 
 
 # ----------- VIEW MY FOODS API -----------
