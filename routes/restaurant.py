@@ -183,9 +183,11 @@ def complete_order():
     cur = mysql.connection.cursor()
     cur.execute("""
         UPDATE orders
-        SET status = 'PICKED_UP'
+        SET status = 'PICKED_UP',
+            pickup_otp = NULL
         WHERE id = %s AND restaurant_id = %s
     """, (order_id, session["restaurant_id"]))
 
     mysql.connection.commit()
     return jsonify({"success": True})
+
