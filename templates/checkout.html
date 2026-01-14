@@ -259,7 +259,7 @@ document.getElementById("payBtn").onclick=function(){
         .then(r=>r.json())
         .then(out=>{
           if(out.success){
-            alert("Reservation confirmed!\nPickup OTP: "+out.pickup_otp);
+            alert("Reservation confirmed!\nBest regards \n Kindly note that the OTP has been dispatched to the respective registered email addresses." );
             setTimeout(()=>location.href="/browse",1600);
           }else{
             alert("Payment verification failed");
