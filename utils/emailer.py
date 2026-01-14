@@ -6,7 +6,7 @@ FROM_EMAIL = os.getenv("EMAIL_FROM")
 
 def send_email(to, subject, html):
     try:
-        response = requests.post(
+        r = requests.post(
             "https://api.resend.com/emails",
             headers={
                 "Authorization": f"Bearer {RESEND_API_KEY}",
@@ -21,10 +21,10 @@ def send_email(to, subject, html):
             timeout=10
         )
 
-        if response.status_code >= 400:
-            print("❌ EMAIL FAILED:", response.text)
+        if r.status_code >= 400:
+            print("❌ Email failed:", r.text)
         else:
-            print(f"📧 Email sent to {to}")
+            print("📧 Email sent to", to)
 
     except Exception as e:
-        print("❌ EMAIL ERROR:", str(e))
+        print("❌ Email exception:", e)
