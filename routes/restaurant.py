@@ -74,15 +74,34 @@ def my_foods():
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute("""
-        SELECT id, name, price, available_quantity,
-               pickup_start, pickup_end, is_active
+        SELECT
+            id,
+            name,
+            price,
+            available_quantity,
+            pickup_start,
+            pickup_end,
+            is_active
         FROM foods
         WHERE restaurant_id = %s
         ORDER BY pickup_end ASC
     """, (restaurant_id,))
 
     rows = cur.fetchall()
-    return jsonify(rows)
+
+    foods = []
+    for f in rows:
+        foods.append({
+            "id": f["id"],
+            "name": f["name"],
+            "price": f["price"],
+            "available_quantity": f["available_quantity"],
+            "pickup_start": str(f["pickup_start"]),
+            "pickup_end": str(f["pickup_end"]),
+            "is_active": bool(f["is_active"])
+        })
+
+    return jsonify(foods)
 
 
 # ----------- CANCEL FOOD -----------
