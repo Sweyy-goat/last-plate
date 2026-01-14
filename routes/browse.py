@@ -1,68 +1,61 @@
 from flask import Blueprint, render_template, session, redirect, jsonify
 from utils.db import mysql
+import MySQLdb.cursors
 
 browse_bp = Blueprint("browse", __name__)
 
-# -------- ENTRY POINT FOR BROWSE BUTTON --------
+
 @browse_bp.route("/browse-entry")
 def browse_entry():
     if "user_id" not in session:
         return redirect("/login")
-
     if session.get("role") != "user":
         return redirect("/")
-
     return redirect("/browse")
 
 
-# -------- ACTUAL BROWSE PAGE --------
 @browse_bp.route("/browse")
 def browse_page():
     if "user_id" not in session or session.get("role") != "user":
         return redirect("/login")
-
     return render_template("user/browse.html")
 
 
-# -------- FOOD LIST API (FIXED) --------
 @browse_bp.route("/api/foods")
 def food_list():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     cur.execute("""
-    SELECT
-        f.id,
-        f.name,
-        f.price,
-        f.available_quantity,
-        f.pickup_start,
-        f.pickup_end,
-        r.name AS restaurant_name,
+        SELECT
+            f.id,
+            f.name,
+            f.price,
+            f.available_quantity,
+            f.pickup_start,
+            f.pickup_end,
+            r.name AS restaurant_name,
 
-        TIMESTAMPDIFF(
-            MINUTE,
-            CONVERT_TZ(NOW(), '+00:00', '+05:30'),
-            TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_end)
-        ) AS minutes_left
+            TIMESTAMPDIFF(
+                MINUTE,
+                CONVERT_TZ(NOW(), '+00:00', '+05:30'),
+                TIMESTAMP(
+                    DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+                    f.pickup_end
+                )
+            ) AS minutes_left
 
-    FROM foods f
-    JOIN restaurants r ON f.restaurant_id = r.id
+        FROM foods f
+        JOIN restaurants r ON f.restaurant_id = r.id
 
-    WHERE f.available_quantity > 0
-      AND f.is_active = 1
+        WHERE
+            f.is_active = 1
+            AND f.available_quantity > 0
+            AND TIMESTAMP(
+                DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+                f.pickup_end
+            ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
 
-      AND CONVERT_TZ(NOW(), '+00:00', '+05:30')
-          BETWEEN
-          TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_start)
-          AND
-          TIMESTAMP(DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')), f.pickup_end)
-
-      AND TIMESTAMP(
-          DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-          f.pickup_end
-      ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
-
-    ORDER BY minutes_left ASC;
+        ORDER BY minutes_left ASC;
     """)
 
     rows = cur.fetchall()
@@ -80,5 +73,3 @@ def food_list():
     } for f in rows]
 
     return jsonify({"foods": foods})
-
-
