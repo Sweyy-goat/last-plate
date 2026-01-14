@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verify Pickup OTP | Last Plate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#05070c;
+  --card:#0f172a;
+  --glass:rgba(255,255,255,.06);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#22c55e;
+  --danger:#ef4444;
+  --glow:rgba(34,197,94,.45);
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top,#0b1220,#020617 60%),
+    linear-gradient(180deg,#020617,#000);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+}
+
+/* ===== CARD ===== */
+.card{
+  width:420px;
+  max-width:94%;
+  padding:26px;
+  border-radius:24px;
+  background:linear-gradient(180deg,var(--card),#020617);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  background:radial-gradient(circle,var(--glow),transparent 60%);
+  opacity:.25;
+  animation:pulse 8s infinite linear;
+  pointer-events:none;
+  z-index:0;
+}
+
+@keyframes pulse{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+.card > *{
+  position:relative;
+  z-index:1;
+}
+
+/* ===== HEADER ===== */
+.header{
+  text-align:center;
+}
+
+.header h2{
+  margin:0;
+  font-size:22px;
+  letter-spacing:.3px;
+}
+
+.header p{
+  margin:6px 0 0;
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* ===== HERO IMAGE ===== */
+.hero{
+  margin:20px 0;
+  height:140px;
+  border-radius:18px;
+  background:
+    linear-gradient(120deg,rgba(0,0,0,.65),rgba(0,0,0,.1)),
+    url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80");
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+/* ===== INPUT ===== */
+label{
+  display:block;
+  margin-top:14px;
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+}
+
+input{
+  width:100%;
+  margin-top:10px;
+  padding:16px;
+  border-radius:16px;
+  border:none;
+  background:#020617;
+  color:var(--text);
+  font-size:20px;
+  text-align:center;
+  letter-spacing:8px;
+  outline:none;
+  transition:box-shadow .2s,transform .1s;
+}
+
+input:focus{
+  box-shadow:0 0 0 2px var(--glow);
+  transform:scale(1.01);
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  margin-top:22px;
+  padding:16px;
+  border-radius:18px;
+  border:none;
+  font-size:16px;
+  font-weight:800;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#022c22;
+  cursor:pointer;
+  transition:transform .12s,box-shadow .12s,opacity .12s;
+  box-shadow:0 12px 30px rgba(34,197,94,.45);
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 40px rgba(34,197,94,.6);
+}
+
+/* ===== RESULT ===== */
+.result{
+  margin-top:22px;
+  padding:18px;
+  border-radius:18px;
+  display:none;
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  animation:fade .25s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:none}
+}
+
+.ok{color:#4ade80}
+.err{color:#f87171}
+
+.result button{
+  margin-top:14px;
+  background:linear-gradient(135deg,#60a5fa,#3b82f6);
+  color:#020617;
+  box-shadow:0 12px 30px rgba(59,130,246,.45);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="header">
+    <h2>Pickup OTP Verification</h2>
+    <p>Restaurant partner terminal</p>
+  </div>
+
+  <div class="hero"></div>
+
+  <label>Enter 6-digit pickup OTP</label>
+  <input id="otp" maxlength="6" placeholder="••••••">
+
+  <button onclick="verify()">Verify OTP</button>
+
+  <div class="result" id="result"></div>
+
+  <div class="footer">
+    Powered by Last Plate • Secure pickup verification
+  </div>
+</div>
+
+<script>
+function verify(){
+  const otp=document.getElementById("otp").value.trim();
+  if(otp.length!==6){
+    alert("Invalid OTP");
+    return;
+  }
+
+  fetch("/restaurant/api/verify-otp",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({otp})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    const box=document.getElementById("result");
+    box.style.display="block";
+
+    if(d.success){
+      box.innerHTML=`
+        <div class="ok">
+          ✅ Order Verified<br><br>
+          <b>Food:</b> ${d.food}<br>
+          <b>Quantity:</b> ${d.quantity}<br>
+          <b>Customer:</b> ${d.customer}<br><br>
+          <button onclick="complete(${d.order_id})">
+            Mark as Picked Up
+          </button>
+        </div>`;
+    }else{
+      box.innerHTML=`<div class="err">❌ ${d.error}</div>`;
+    }
+  });
+}
+
+function complete(orderId){
+  fetch("/restaurant/api/complete-order",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({order_id:orderId})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success){
+      alert("Order completed successfully");
+      location.reload();
+    }else{
+      alert("Failed to complete order");
+    }
+  });
+}
+</script>
+
+</body>
+</html>
