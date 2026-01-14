@@ -133,13 +133,13 @@ def verify_payment():
     mysql.connection.commit()
 
     # 📧 EMAIL (ASYNC — SAFE)
-    send_email_async(
+    send_email(
         order["user_email"],
         "Your Last Plate Pickup OTP",
         f"<h2>Pickup OTP</h2><h1>{otp}</h1>"
     )
 
-    send_email_async(
+    send_email(
         "terminalplate@gmail.com",
         "New Order Received",
         f"<p>Food ID: {order['food_id']}<br>OTP: {otp}</p>"
