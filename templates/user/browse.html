@@ -1,244 +1,354 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Last Plate – Nearby Food</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Last Plate – Order</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: #0b0f14;
-      color: #e5e7eb;
-    }
+<style>
+:root{
+  --bg:#f3f4f6;
+  --panel:#ffffff;
+  --muted:#6b7280;
+  --text:#111827;
+  --accent:#16a34a;
+  --radius:22px;
+}
 
-    .hero {
-      height: 280px;
-      background-image: url("https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1920&auto=format&fit=crop");
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+*{box-sizing:border-box}
 
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        rgba(5, 8, 15, 0.85),
-        rgba(5, 8, 15, 0.95)
-      );
-    }
+body{
+  margin:0;
+  background:#1f2933;
+  font-family: Inter, system-ui, sans-serif;
+}
 
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-    }
+/* ===== APP ===== */
+.app{
+  max-width:1280px;
+  margin:30px auto;
+  background:var(--bg);
+  border-radius:32px;
+  padding:24px;
+}
 
-    .hero h1 {
-      font-size: 52px;
-      margin: 0;
-      font-weight: 800;
-    }
+/* ===== TOP BAR ===== */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--panel);
+  padding:16px 22px;
+  border-radius:var(--radius);
+}
 
-    .hero p {
-      margin-top: 12px;
-      font-size: 18px;
-      opacity: 0.85;
-    }
+.logo{
+  font-weight:800;
+  font-size:18px;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: -40px auto 40px;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 22px;
-    }
+.nav{
+  display:flex;
+  gap:18px;
+  font-size:14px;
+  color:var(--muted);
+}
 
-    .card {
-      position: relative;
-      border-radius: 18px;
-      padding: 18px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      transition: transform 0.25s ease;
-      background-size: cover;
-      background-position: center;
-    }
+.cart-btn{
+  background:#ef4444;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:600;
+}
 
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        rgba(10,12,15,0.65),
-        rgba(10,12,15,0.85)
-      );
-      z-index: 1;
-    }
+/* ===== GRID ===== */
+.content{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:220px 1fr 300px;
+  gap:24px;
+}
 
-    .card-content {
-      position: relative;
-      z-index: 2;
-    }
+/* ===== LEFT ===== */
+.left{
+  background:var(--panel);
+  border-radius:var(--radius);
+  padding:16px;
+}
 
-    .price {
-      font-size: 22px;
-      font-weight: 700;
-      color: #4ade80;
-    }
+.left h4{
+  margin:0 0 12px;
+}
 
-    .meta {
-      font-size: 14px;
-      opacity: 0.85;
-    }
+.pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
 
-    .card button {
-      margin-top: 14px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 14px;
-      border: none;
-      font-size: 15px;
-      font-weight: 600;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #062e14;
-      cursor: pointer;
-    }
+.pill{
+  padding:8px 14px;
+  border-radius:999px;
+  background:#f3f4f6;
+  font-size:13px;
+  cursor:pointer;
+}
 
-    .empty {
-      text-align: center;
-      opacity: 0.6;
-      margin: 80px auto;
-      font-size: 18px;
-    }
-  </style>
+.pill.active{
+  background:#111827;
+  color:#fff;
+}
+
+/* ===== CENTER ===== */
+.center{
+  background:var(--panel);
+  border-radius:var(--radius);
+  padding:22px;
+}
+
+.product{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:28px;
+}
+
+.product img{
+  width:100%;
+  border-radius:50%;
+}
+
+.product h1{
+  margin:0;
+  font-size:28px;
+}
+
+.desc{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:6px;
+}
+
+.meta{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.buy{
+  margin-top:24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.price{
+  font-size:20px;
+  font-weight:800;
+  color:var(--accent);
+}
+
+.buy button{
+  padding:12px 22px;
+  border:none;
+  border-radius:999px;
+  background:#111827;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ===== CART ===== */
+.cart{
+  background:var(--panel);
+  border-radius:var(--radius);
+  padding:18px;
+}
+
+.cart h4{
+  margin:0 0 12px;
+}
+
+.cart-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px dashed #e5e7eb;
+}
+
+.cart-item img{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.cart-item span{
+  font-size:13px;
+}
+
+.total{
+  margin-top:16px;
+  font-weight:700;
+}
+
+.checkout{
+  margin-top:14px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:999px;
+  background:#ef4444;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+</style>
 </head>
 
 <body>
 
-<section class="hero">
-  <div class="hero-content">
-    <h1>🍽️ Fud Edkate</h1>
-    <p>Late nights. Fresh food. Zero waste.</p>
-  </div>
-</section>
+<div class="app">
 
-<div class="container" id="foodList"></div>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">Last Plate</div>
+    <div class="nav">
+      <span>Main Dishes</span>
+      <span>Vegan</span>
+      <span>Street Food</span>
+      <span>Desserts</span>
+    </div>
+    <div class="cart-btn">Cart</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LEFT -->
+    <div class="left">
+      <h4>Meal Category</h4>
+      <div class="pills" id="categoryPills"></div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center" id="productView">
+      <div style="color:#999">Loading…</div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="cart">
+      <h4>My Order</h4>
+      <div id="cartItems"></div>
+      <div class="total" id="cartTotal">Total ₹0</div>
+      <button class="checkout" onclick="checkout()">Confirm Order</button>
+    </div>
+
+  </div>
+</div>
 
 <script>
-/* ================= FOOD IMAGE ENGINE ================= */
+let foods = [];
+let filteredFoods = [];
+let selectedFood = null;
+let cart = [];
 
-function normalize(name) {
-  return name
-    .toLowerCase()
-    .replace(/[-_]/g, " ")
-    .replace(/[^a-z\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+/* ===== IMAGE ENGINE (YOUR PROJECT STYLE) ===== */
+function normalize(name){
+  return name.toLowerCase();
 }
-
-function getFoodImage(name) {
+function getFoodImage(name){
   const n = normalize(name);
-
-  /* 🔥 AL FAHM */
-  if (
-    n.includes("alfahm") ||
-    n.includes("al fahm") ||
-    n.includes("fahm")
-  ) {
-    return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg";
-  }
-
-  /* 🍚 BIRYANI */
-  if (
-    n.includes("biryani") ||
-    n.includes("biriyani") ||
-    n.includes("briyani")
-  ) {
-    return "https://www.apnachef.com/wp-content/uploads/2023/12/chicken-biryani-50-people-wide.jpg";
-  }
-
-  /* 🍗 MANDHI */
-  if (n.includes("mandhi") || n.includes("mandy")) {
-    return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🫓 PAROTTA */
-  if (n.includes("parotta") || n.includes("porotta")) {
-    return "https://images.unsplash.com/photo-1631515242808-497c3fbd3972?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🌯 SHAWARMA */
-  if (n.includes("shawarma")) {
-    return "https://images.unsplash.com/photo-1604908554166-90a3f0e35318?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🍔 BURGER */
-  if (n.includes("burger")) {
-    return "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🍕 PIZZA */
-  if (n.includes("pizza")) {
-    return "https://images.unsplash.com/photo-1548365328-9f547fb09502?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🍟 FRIES */
-  if (n.includes("fries")) {
-    return "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🧆 CHAPATI / ROTI */
-  if (n.includes("chapati") || n.includes("roti")) {
-    return "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🍖 RIBS */
-  if (n.includes("ribs")) {
-    return "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80";
-  }
-
-  /* 🍽️ FALLBACK */
-  return "https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01?auto=format&fit=crop&w=900&q=80";
+  if(n.includes("biryani")) return "https://images.unsplash.com/photo-1600628422019-0d6d3c1fcb90";
+  if(n.includes("alfahm")) return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg";
+  if(n.includes("shawarma")) return "https://images.unsplash.com/photo-1604908554166-90a3f0e35318";
+  if(n.includes("mandhi")) return "https://images.unsplash.com/photo-1628294896516-344152572c7b";
+  return "https://images.unsplash.com/photo-1543352634-6c8e8b3a8e01";
 }
 
-/* ================= FETCH FOODS ================= */
-
+/* ===== FETCH FOODS ===== */
 fetch("/api/foods")
-  .then(res => res.json())
-  .then(data => {
-    const foodList = document.getElementById("foodList");
+.then(r=>r.json())
+.then(d=>{
+  foods = d.foods || [];
+  filteredFoods = foods;
+  buildCategories();
+  if(foods.length) selectFood(foods[0]);
+});
 
-    if (!data.foods || data.foods.length === 0) {
-      foodList.innerHTML = `<div class="empty">No food available 🌙</div>`;
-      return;
-    }
+/* ===== CATEGORIES ===== */
+function buildCategories(){
+  const pills = document.getElementById("categoryPills");
+  const cats = [...new Set(foods.map(f => f.name.split(" ")[0]))];
 
-    data.foods.forEach(food => {
-      const img = getFoodImage(food.name);
-
-      foodList.innerHTML += `
-        <div class="card" style="background-image:url('${img}')">
-          <div class="card-content">
-            <h3>${food.name}</h3>
-            <div class="meta">${food.restaurant_name}</div>
-            <div class="price">₹${food.price}</div>
-            <div class="meta">Available: ${food.available_quantity}</div>
-            <div class="meta">Pickup: ${food.pickup_start} – ${food.pickup_end}</div>
-
-            <a href="/checkout/${food.id}">
-              <button>Reserve quietly 🤍</button>
-            </a>
-          </div>
-        </div>
-      `;
-    });
+  pills.innerHTML = "";
+  cats.forEach((c,i)=>{
+    const el = document.createElement("div");
+    el.className = "pill" + (i===0?" active":"");
+    el.textContent = c;
+    el.onclick = () => {
+      document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
+      el.classList.add("active");
+      filteredFoods = foods.filter(f => f.name.toLowerCase().includes(c.toLowerCase()));
+      selectFood(filteredFoods[0]);
+    };
+    pills.appendChild(el);
   });
+}
+
+/* ===== PRODUCT VIEW ===== */
+function selectFood(food){
+  if(!food) return;
+  selectedFood = food;
+
+  document.getElementById("productView").innerHTML = `
+    <div class="product">
+      <img src="${getFoodImage(food.name)}">
+      <div>
+        <h1>${food.name}</h1>
+        <div class="desc">${food.restaurant_name}</div>
+        <div class="meta">Pickup ${food.pickup_start} – ${food.pickup_end}</div>
+        <div class="meta">Available ${food.available_quantity}</div>
+
+        <div class="buy">
+          <div class="price">₹${food.price}</div>
+          <button onclick="addToCart()">Add to order</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ===== CART ===== */
+function addToCart(){
+  cart.push(selectedFood);
+  renderCart();
+}
+
+function renderCart(){
+  const el = document.getElementById("cartItems");
+  el.innerHTML = "";
+  let total = 0;
+
+  cart.forEach(f=>{
+    total += f.price;
+    el.innerHTML += `
+      <div class="cart-item">
+        <img src="${getFoodImage(f.name)}">
+        <span>${f.name}</span>
+      </div>
+    `;
+  });
+
+  document.getElementById("cartTotal").textContent = "Total ₹" + total;
+}
+
+/* ===== CHECKOUT ===== */
+function checkout(){
+  if(cart.length === 0) return alert("Cart is empty");
+  window.location.href = "/checkout/" + cart[0].id;
+}
 </script>
 
 </body>
