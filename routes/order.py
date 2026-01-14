@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 from utils.db import mysql
 import MySQLdb.cursors
 import razorpay, os, random
-from utils.emailer import send_email_async
+from utils.emailer import send_email
 
 order_bp = Blueprint("order", __name__)
 
