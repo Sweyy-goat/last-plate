@@ -26,37 +26,54 @@ def food_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     cur.execute("""
-        SELECT
-            f.id,
-            f.name,
-            f.price,
-            f.available_quantity,
-            f.pickup_start,
-            f.pickup_end,
-            r.name AS restaurant_name,
+    SELECT
+        f.id,
+        f.name,
+        f.price,
+        f.available_quantity,
+        f.pickup_start,
+        f.pickup_end,
+        r.name AS restaurant_name,
 
-            TIMESTAMPDIFF(
-                MINUTE,
-                CONVERT_TZ(NOW(), '+00:00', '+05:30'),
-                TIMESTAMP(
-                    DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+        CASE
+            WHEN f.pickup_end >= f.pickup_start THEN
+                TIMESTAMPDIFF(
+                    MINUTE,
+                    TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
                     f.pickup_end
                 )
-            ) AS minutes_left
+            ELSE
+                TIMESTAMPDIFF(
+                    MINUTE,
+                    TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
+                    ADDTIME(f.pickup_end, '24:00:00')
+                )
+        END AS minutes_left
 
-        FROM foods f
-        JOIN restaurants r ON f.restaurant_id = r.id
+    FROM foods f
+    JOIN restaurants r ON f.restaurant_id = r.id
 
-        WHERE
-            f.is_active = 1
-            AND f.available_quantity > 0
-            AND TIMESTAMP(
-                DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30')),
-                f.pickup_end
-            ) > CONVERT_TZ(NOW(), '+00:00', '+05:30')
+    WHERE
+        f.is_active = 1
+        AND f.available_quantity > 0
+        AND (
+            (
+                f.pickup_start <= f.pickup_end
+                AND TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+                    BETWEEN f.pickup_start AND f.pickup_end
+            )
+            OR
+            (
+                f.pickup_start > f.pickup_end
+                AND (
+                    TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')) >= f.pickup_start
+                    OR TIME(CONVERT_TZ(NOW(), '+00:00', '+05:30')) <= f.pickup_end
+                )
+            )
+        )
 
-        ORDER BY minutes_left ASC;
-    """)
+    ORDER BY minutes_left ASC;
+""")
 
     rows = cur.fetchall()
     cur.close()
