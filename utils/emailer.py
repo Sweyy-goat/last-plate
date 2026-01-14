@@ -1,29 +1,30 @@
-# utils/emailer.py
 import os
-import smtplib
-import threading
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 
-
-SMTP_EMAIL = os.getenv("SMTP_EMAIL")        # your gmail
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")  # app password
-
+RESEND_API_KEY = os.getenv("EMAIL_API_KEY")
+FROM_EMAIL = os.getenv("EMAIL_FROM")
 
 def send_email(to, subject, html):
-    msg = MIMEMultipart()
-    msg["From"] = SMTP_EMAIL
-    msg["To"] = to
-    msg["Subject"] = subject
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": FROM_EMAIL,
+                "to": [to],
+                "subject": subject,
+                "html": html
+            },
+            timeout=10
+        )
 
-    msg.attach(MIMEText(html, "html"))
+        if response.status_code >= 400:
+            print("❌ EMAIL FAILED:", response.text)
+        else:
+            print(f"📧 Email sent to {to}")
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
-        smtp.login(SMTP_EMAIL, SMTP_PASSWORD)
-        smtp.send_message(msg)
-
-
-def send_email_async(*args, **kwargs):
-    t = threading.Thread(target=send_email, args=args, kwargs=kwargs)
-    t.daemon = True
-    t.start()
+    except Exception as e:
+        print("❌ EMAIL ERROR:", str(e))
