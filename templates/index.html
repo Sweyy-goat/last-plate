@@ -2,309 +2,327 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fud Edkate • Premium Food Rescue</title>
-
-  <link rel="stylesheet" href="/static/css/common.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --primary: #2ecc71;
+      --primary-glow: rgba(46, 204, 113, 0.4);
+      --bg-dark: #050608;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
     body {
-      background: #0e0f11;
+      background: var(--bg-dark);
       margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       overflow: hidden;
+      color: #ffffff;
     }
 
     /* ================= LOADER ================= */
     #loader {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at top, #141a22, #0b0f14);
+      background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .loader-box {
+    .loader-content {
       text-align: center;
-      animation: fadeIn 1.2s ease;
     }
 
     .loader-logo {
-      font-size: 42px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #2ecc71, #a8ff78);
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      background: linear-gradient(to right, #ffffff, var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-
-    .loader-hook {
-      padding-left: 10px;
-      font-size: 14px;
-      opacity: 0.75;
-      margin-bottom: 26px;
-      letter-spacing: 0.4px;
+      margin-bottom: 20px;
     }
 
     .loader-bar {
-      width: 290px;
-      height: 6px;
-      border-radius: 999px;
+      width: 200px;
+      height: 2px;
       background: rgba(255,255,255,0.1);
+      margin: 0 auto;
+      border-radius: 2px;
       overflow: hidden;
     }
 
-    .loader-bar span {
-     
-      display: block;
-      height: 100%;
+    .loader-progress {
       width: 0%;
-      background: linear-gradient(90deg, #2ecc71, #a8ff78);
-      animation: load 1.3s linear forwards;
+      height: 100%;
+      background: var(--primary);
+      animation: load 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
     }
 
-    @keyframes load {
-      to { width: 100%; }
-    }
+    @keyframes load { to { width: 100%; } }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ================= APP ================= */
+    /* ================= HERO SECTION ================= */
     #app {
-      display: none;
-    }
-
-    /* SNOW CANVAS */
-    #snow {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      height: 100vh;
       position: relative;
-      z-index: 1;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(14,15,17,0.85),
-          rgba(14,15,17,0.95)
-        ),
-        url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1600&q=80");
-      background-size: cover;
-      background-position: center;
+    }
+
+    .background-mesh {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 80% 20%, rgba(46, 204, 113, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(46, 204, 113, 0.05) 0%, transparent 40%);
+      z-index: 0;
+    }
+
+    .hero {
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
+      z-index: 10;
     }
 
-    /* GLASS CARD */
-    .glass {
-      position: relative;
-      z-index: 3;
-      width: 420px;
-      padding: 40px;
-      border-radius: 26px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(22px);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow:
-        0 40px 80px rgba(0,0,0,0.6),
-        inset 0 0 0.5px rgba(255,255,255,0.6);
+    .main-card {
+      width: 100%;
+      max-width: 480px;
+      padding: 50px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 40px;
       text-align: center;
-      animation: rise 1s ease forwards;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+      animation: cardEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
-    @keyframes rise {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(46, 204, 113, 0.1);
+      color: var(--primary);
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      border: 1px solid rgba(46, 204, 113, 0.2);
     }
 
     .logo {
-      font-size: 38px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #2ecc71, #a8ff78);
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -2.5px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 40%, var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .subtitle {
-      font-size: 15px;
-      line-height: 1.7;
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 10px;
+    .tagline {
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+      font-weight: 500;
     }
 
-    .hook {
-      font-size: 14px;
-      color: #a8ff78;
-      margin-bottom: 28px;
-      font-weight: 600;
+    /* BUTTONS */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      position: relative;
+      padding: 18px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
     }
 
     .btn-primary {
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 16px;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      color: #0e0f11;
-      box-shadow: 0 12px 30px rgba(46,204,113,0.35);
-      transition: 0.25s;
-      margin-bottom: 14px;
+      background: var(--primary);
+      color: #000;
+      box-shadow: 0 10px 30px var(--primary-glow);
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(46,204,113,0.5);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 40px var(--primary-glow);
     }
 
     .btn-secondary {
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      border-radius: 16px;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.25);
-      color: rgba(255,255,255,0.9);
-      cursor: pointer;
-      transition: 0.25s;
+      color: #fff;
+      border: 1px solid var(--glass-border);
     }
 
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.2);
     }
 
-    .footnote {
-      margin-top: 22px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.55);
+    .social-proof {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      opacity: 0.4;
+      filter: grayscale(1);
+      transition: 0.5s;
     }
 
+    .social-proof:hover { opacity: 0.8; filter: grayscale(0); }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    #snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* MOBILE OPTIMIZATION */
     @media (max-width: 480px) {
-      .glass {
-        width: 100%;
-        padding: 32px 24px;
-      }
-      .logo {
-        font-size: 32px;
-      }
+      .main-card { padding: 40px 24px; border-radius: 0; background: transparent; border: none; box-shadow: none; }
+      .logo { font-size: 38px; }
     }
   </style>
 </head>
-
 <body>
 
-<!-- LOADER -->
-<div id="loader">
-  <div class="loader-box">
-    <div class="loader-logo">🍽️ Fud Edkate</div>
-    <div class="loader-hook" style="color: aliceblue;">Up to 50% off before kitchens close 🔥</div>
-    <div class="loader-bar"><span></span></div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app">
-
-  <canvas id="snow"></canvas>
-
-  <div class="hero">
-    <div class="glass">
-
-      <div class="logo">Fud Edkate</div>
-
-      <div class="subtitle">
-        Late nights. Fresh food. Zero waste.
+  <div id="loader">
+    <div class="loader-content">
+      <div class="loader-logo">Fud Edkate</div>
+      <div class="loader-bar">
+        <div class="loader-progress"></div>
       </div>
-
-      <div class="hook">
-        Grab restaurant food at crazy discounts before it’s gone 👀
-      </div>
-
-      <a href="/browse-entry">
-        <button class="btn-primary">Browse Food Near You</button>
-      </a>
-
-      <a href="/restaurant/login">
-        <button class="btn-secondary">Restaurant Partner Login</button>
-      </a>
-
-      <div class="footnote">
-        ✨ Loved by night owls & smart restaurants
-      </div>
-
     </div>
   </div>
 
-</div>
+  <div id="app">
+    <div class="background-mesh"></div>
+    <canvas id="snow"></canvas>
 
-<script>
-/* SHOW APP AFTER 7s */
-setTimeout(() => {
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("app").style.display = "block";
-}, 2000);
+    <main class="hero">
+      <div class="main-card">
+        <div class="badge">Night Rescue Active 🌙</div>
+        
+        <h1 class="logo">Fud Edkate</h1>
+        <p class="tagline">Premium surplus food. <br>Exclusively after-hours.</p>
 
-/* SNOW EFFECT */
-const snowCanvas = document.getElementById('snow');
-const ctx = snowCanvas.getContext('2d');
+        <div class="btn-group">
+          <a href="/browse-entry">
+            <button class="btn btn-primary">Discover Near You</button>
+          </a>
+          <a href="/restaurant/login">
+            <button class="btn btn-secondary">Merchant Portal</button>
+          </a>
+        </div>
 
-function resize() {
-  snowCanvas.width = innerWidth;
-  snowCanvas.height = innerHeight;
-}
-resize();
-addEventListener('resize', resize);
+        <div class="social-proof">
+          <div class="proof-item">⚡ Instant Pickup</div>
+          <div class="proof-item">🌿 0kg Waste</div>
+          <div class="proof-item">💎 Top Rated</div>
+        </div>
 
-const flakes = [];
-for (let i = 0; i < 140; i++) {
-  flakes.push({
-    x: Math.random() * innerWidth,
-    y: Math.random() * innerHeight,
-    r: 1 + Math.random() * 1.6,
-    vy: 0.3 + Math.random() * 0.6,
-    vx: (Math.random() - 0.5) * 0.25
-  });
-}
+        <p style="font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 30px; letter-spacing: 1px;">
+          SECURE 256-BIT ENCRYPTED ACCESS
+        </p>
+      </div>
+    </main>
+  </div>
 
-function draw() {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
-  ctx.fillStyle = 'rgba(235,245,255,0.85)';
+  <script>
+    // Transition from Loader to App
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        const app = document.getElementById('app');
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+          app.style.opacity = '1';
+        }, 800);
+      }, 1600);
+    });
 
-  for (const f of flakes) {
-    f.y += f.vy;
-    f.x += f.vx;
+    // High Performance 3D Snow
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+    let width, height, flakes = [];
 
-    if (f.y > innerHeight) f.y = -10;
-    if (f.x > innerWidth) f.x = 0;
-    if (f.x < 0) f.x = innerWidth;
+    function init() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      flakes = [];
+      for(let i = 0; i < 120; i++) {
+        flakes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 0.5, // Varied size
+          d: Math.random() * 1, // Depth/Density
+          v: Math.random() * 0.5 + 0.2, // Velocity
+          o: Math.random() * 0.5 + 0.2 // Opacity
+        });
+      }
+    }
 
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      for(let f of flakes) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${f.o})`;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+        
+        f.y += f.v;
+        f.x += Math.sin(f.y / 50) * 0.2;
 
+        if(f.y > height) {
+          f.y = -10;
+          f.x = Math.random() * width;
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    draw();
+  </script>
 </body>
 </html>
