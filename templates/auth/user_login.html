@@ -2,200 +2,289 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User Login | Last Plate</title>
-
-  <link rel="stylesheet" href="/static/css/common.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Last Plate</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      background:
-        linear-gradient(
-          180deg,
-          rgba(14,15,17,0.85),
-          rgba(14,15,17,0.95)
-        ),
-        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80");
-      background-size: cover;
-      background-position: center;
+    :root {
+      --primary: #2ecc71;
+      --primary-glow: rgba(46, 204, 113, 0.35);
+      --bg: #050608;
+      --surface: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --text-muted: #94a3b8;
     }
 
-    .login-wrapper {
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Left Side: Immersive Brand Story */
+    .visual-side {
+      flex: 1.2;
+      position: relative;
+      background: linear-gradient(rgba(5, 6, 8, 0.4), rgba(5, 6, 8, 0.4)), 
+                  url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 60px;
+    }
+
+    .visual-side::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--bg) 5%, transparent 60%);
+    }
+
+    .visual-content {
+      position: relative;
+      z-index: 2;
+      max-width: 480px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    /* Right Side: High-Focus Form */
+    .form-side {
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 40px;
+      background: var(--bg);
     }
 
-    .login-card {
-      width: 400px;
-      padding: 38px;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-      animation: floatIn 0.8s ease forwards;
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes floatIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .logo-mark {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .title {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #2ecc71, #a8ff78);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    .h-title { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 0 0 10px 0; }
+    .h-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; line-height: 1.6; }
 
-    .subtitle {
-      text-align: center;
-      font-size: 14px;
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    label {
+    /* Modern Input Styling */
+    .field-group { margin-bottom: 24px; }
+    
+    .field-label {
+      display: block;
       font-size: 13px;
-      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
     }
 
     input {
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
-      color: white;
-    }
-
-    input::placeholder {
-      color: rgba(255,255,255,0.6);
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     input:focus {
       outline: none;
-      border-color: #2ecc71;
-      background: rgba(255,255,255,0.22);
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 0 4px var(--primary-glow);
     }
 
+    /* Action Button */
     .login-btn {
       width: 100%;
-      padding: 14px;
-      margin-top: 22px;
+      padding: 16px;
+      background: var(--primary);
+      color: #050608;
+      border: none;
       border-radius: 16px;
       font-size: 16px;
-      font-weight: 600;
-      border: none;
+      font-weight: 700;
       cursor: pointer;
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      color: #0e0f11;
-      box-shadow: 0 12px 30px rgba(46,204,113,0.4);
-      transition: all 0.25s ease;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
 
     .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(46,204,113,0.55);
+      box-shadow: 0 12px 24px var(--primary-glow);
+      filter: brightness(1.1);
     }
 
-    .signup-text {
-      margin-top: 20px;
+    .login-btn:active { transform: translateY(0); }
+
+    .signup-footer {
       text-align: center;
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
+      margin-top: 32px;
+      font-size: 14px;
+      color: var(--text-muted);
     }
 
-    .signup-text a {
-      color: #2ecc71;
-      font-weight: 600;
+    .signup-footer a {
+      color: var(--primary);
       text-decoration: none;
+      font-weight: 700;
     }
 
-    .signup-text a:hover {
-      text-decoration: underline;
+    /* Utilities */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .trust-note {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    @media (max-width: 480px) {
-      .login-card {
-        width: 100%;
-        padding: 30px 22px;
-      }
+    /* Mobile Design */
+    @media (max-width: 1000px) {
+      .visual-side { display: none; }
+      .form-side { background: radial-gradient(circle at top right, #111, #050608); }
     }
   </style>
 </head>
-
 <body>
 
-<div class="login-wrapper">
-  <div class="login-card">
-
-    <div class="title">Welcome Back</div>
-
-    <div class="subtitle">
-      Log in to discover <strong>fresh, unsold food</strong> at  
-      beautiful prices — and be part of a movement  
-      that saves food, one plate at a time 🍽️
+  <div class="visual-side">
+    <div class="visual-content">
+      <div style="background: var(--primary); width: 40px; height: 4px; border-radius: 2px; margin-bottom: 24px;"></div>
+      <h1 style="font-size: 44px; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1;">
+        The best meals are the ones <span style="color: var(--primary)">you save.</span>
+      </h1>
+      <p style="font-size: 18px; color: rgba(255,255,255,0.7); line-height: 1.6;">
+        Join 50,000+ people rescuing fresh food daily. High quality, lower prices, zero waste.
+      </p>
     </div>
-
-    <label>Mobile Number</label>
-    <input id="mobile" placeholder="Enter your mobile number">
-
-    <br><br>
-
-    <label>Password</label>
-    <input id="password" type="password" placeholder="••••••••">
-
-    <button id="loginBtn" class="login-btn">
-      Continue to Browse
-    </button>
-
-    <div class="signup-text">
-      New here?  
-      <a href="/signup">Create an account</a> and start saving food today
-    </div>
-
-    <div class="trust-note">
-      🔒 Your details are safe. We respect your privacy.
-    </div>
-
   </div>
-</div>
 
-<script>
-  document.getElementById("loginBtn").onclick = function () {
-    fetch("/api/user/login", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        mobile: document.getElementById("mobile").value,
-        password: document.getElementById("password").value
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.success ? "Login successful" : "Invalid credentials");
-      if (data.success) window.location.href = "/browse";
-    });
-  };
-</script>
+  <div class="form-side">
+    <div class="login-container">
+      <div class="logo-mark">🍽️ Last Plate</div>
+      
+      <h2 class="h-title">Welcome back</h2>
+      <p class="h-subtitle">Ready to discover tonight's rescue plates? Log in to your account below.</p>
+
+      <div class="field-group">
+        <label class="field-label">Mobile Number</label>
+        <input type="tel" id="mobile" placeholder="Enter mobile number" autocomplete="tel">
+      </div>
+
+      <div class="field-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="field-label" style="margin: 0;">Password</label>
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot?</a>
+        </div>
+        <input type="password" id="password" placeholder="••••••••">
+      </div>
+
+      <button id="loginBtn" class="login-btn">
+        <span>Continue to Browse</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+
+      <div class="signup-footer">
+        Don't have an account? <a href="/signup">Join the movement</a>
+      </div>
+
+      <div style="margin-top: 48px; display: flex; align-items: center; gap: 15px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
+        <div style="font-size: 20px;">🛡️</div>
+        <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+          Your connection is encrypted. We use 256-bit SSL security to protect your data and privacy.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginBtn = document.getElementById("loginBtn");
+    
+    loginBtn.onclick = async function () {
+      const mobile = document.getElementById("mobile").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!mobile || !password) {
+        showToast("Please enter both fields", "error");
+        return;
+      }
+
+      // World Class Loading State
+      loginBtn.disabled = true;
+      const originalContent = loginBtn.innerHTML;
+      loginBtn.innerHTML = `<span>Signing in...</span>`;
+      loginBtn.style.opacity = "0.7";
+
+      try {
+        const res = await fetch("/api/user/login", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ mobile, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          loginBtn.innerHTML = `<span>Redirecting...</span>`;
+          window.location.href = "/browse";
+        } else {
+          showToast(data.message || "Invalid credentials", "error");
+          resetBtn();
+        }
+      } catch (err) {
+        showToast("Connection failed", "error");
+        resetBtn();
+      }
+
+      function resetBtn() {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = originalContent;
+        loginBtn.style.opacity = "1";
+      }
+    };
+
+    function showToast(msg, type) {
+      const toast = document.createElement('div');
+      toast.style = `
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: ${type === 'error' ? '#ef4444' : '#2ecc71'};
+        color: white; padding: 12px 24px; border-radius: 12px; font-weight: 700;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; animation: fadeInUp 0.3s ease;
+      `;
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
 
 </body>
 </html>
