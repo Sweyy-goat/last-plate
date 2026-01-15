@@ -17,6 +17,7 @@
       --glass-saturate: 180%;
       --timer-warn: #ffb800;
       --timer-urgent: #ff4757;
+      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     body.light {
@@ -56,205 +57,83 @@
     }
 
     .logo {
-      font-weight: 800;
-      font-size: 24px;
-      letter-spacing: -1.5px;
+      font-weight: 800; font-size: 24px; letter-spacing: -1.5px;
       background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
     .profile-trigger {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      cursor: pointer;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.4s var(--spring);
     }
 
-    .profile-trigger:hover {
-      transform: rotate(5deg) scale(1.1);
-      border-color: var(--accent);
-      box-shadow: 0 0 25px var(--accent-glow);
-    }
+    .profile-trigger:hover { transform: rotate(5deg) scale(1.1); border-color: var(--accent); box-shadow: 0 0 25px var(--accent-glow); }
 
     /* ===== HERO SECTION ===== */
-    .hero { 
-      padding: 180px 20px 60px; 
-      text-align: center;
-      background: radial-gradient(circle at top, rgba(46, 204, 113, 0.05) 0%, transparent 70%);
-    }
-    .hero h1 { 
-      font-size: clamp(44px, 10vw, 84px); 
-      font-weight: 800; 
-      margin: 0; 
-      letter-spacing: -4px; 
-      line-height: 0.95;
-      animation: titleReveal 1s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes titleReveal {
-        from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
-        to { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-    .hero p { 
-      color: var(--muted); 
-      font-size: 19px; 
-      margin: 24px auto 0; 
-      max-width: 550px;
-      font-weight: 500;
-    }
+    .hero { padding: 180px 20px 60px; text-align: center; background: radial-gradient(circle at top, rgba(46, 204, 113, 0.05) 0%, transparent 70%); }
+    .hero h1 { font-size: clamp(44px, 10vw, 84px); font-weight: 800; margin: 0; letter-spacing: -4px; line-height: 0.95; animation: titleReveal 1s var(--spring); }
+    @keyframes titleReveal { from { opacity: 0; transform: translateY(30px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+    .hero p { color: var(--muted); font-size: 19px; margin: 24px auto 0; max-width: 550px; font-weight: 500; }
 
-    /* ===== SEARCH BAR 2.0 ===== */
+    /* ===== SEARCH BAR ===== */
     .search-container { max-width: 650px; margin: 50px auto 80px; padding: 0 20px; }
     .search-wrapper {
-      display: flex; align-items: center; 
-      background: var(--card);
-      border: 1px solid var(--border); 
-      padding: 18px 28px; 
-      border-radius: 30px;
-      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); padding: 18px 28px; border-radius: 30px; transition: all 0.5s var(--spring);
     }
-    .search-wrapper:focus-within {
-      background: rgba(255,255,255,0.05);
-      border-color: var(--accent);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 4px var(--accent-glow);
-      transform: translateY(-2px);
-    }
-    .search-wrapper input { 
-      background: transparent; border: none; 
-      color: var(--text); font-size: 17px; 
-      width: 100%; margin-left: 15px; 
-      font-family: inherit; font-weight: 500;
-    }
+    .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 4px var(--accent-glow); transform: translateY(-2px); }
+    .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 17px; width: 100%; margin-left: 15px; font-family: inherit; font-weight: 500; }
 
-    /* ===== LUXURY GRID ===== */
-    .container {
-      max-width: 1300px; margin: 0 auto 100px; padding: 0 30px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px;
-    }
+    /* ===== GRID ===== */
+    .container { max-width: 1300px; margin: 0 auto 50px; padding: 0 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px; }
 
-    /* ===== FOOD CARD 2.0 ===== */
-    .food-card {
-      background: var(--card); 
-      border-radius: 38px; 
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden; 
-      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-    }
-
-    .food-card:hover { 
-      transform: translateY(-15px) scale(1.02); 
-      border-color: var(--accent); 
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6); 
-    }
-
-    .card-img-wrapper {
-        position: relative;
-        overflow: hidden;
-        height: 260px;
-    }
-    .card-img { 
-      height: 100%; width: 100%; object-fit: cover; 
-      transition: transform 0.8s ease;
-    }
+    /* ===== FOOD CARD ===== */
+    .food-card { background: var(--card); border-radius: 38px; border: 1px solid var(--border); overflow: hidden; transition: all 0.5s var(--spring); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+    .food-card:hover { transform: translateY(-15px) scale(1.02); border-color: var(--accent); box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+    .card-img-wrapper { height: 260px; overflow: hidden; }
+    .card-img { height: 100%; width: 100%; object-fit: cover; transition: transform 0.8s ease; }
     .food-card:hover .card-img { transform: scale(1.1); }
-
     .card-body { padding: 30px; }
-
-    .tag-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .tag {
-      background: var(--accent-glow); padding: 7px 14px; border-radius: 12px;
-      font-size: 12px; font-weight: 800; color: var(--accent);
-      border: 1px solid rgba(46, 204, 113, 0.2);
-    }
-
-    .timer-badge {
-      display: flex; align-items: center; gap: 8px; font-size: 13px;
-      font-weight: 700; color: var(--timer-warn);
-    }
+    .tag { background: var(--accent-glow); padding: 7px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; color: var(--accent); }
+    .timer-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--timer-warn); }
     .timer-badge.urgent { color: var(--timer-urgent); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .price-tag { font-size: 28px; font-weight: 800; }
+    .reserve-btn { background: var(--accent); color: #000; padding: 14px 28px; border-radius: 18px; font-weight: 800; text-decoration: none; transition: 0.3s; box-shadow: 0 8px 20px var(--accent-glow); }
 
-    .food-name { font-size: 24px; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.5px; }
-    .rest-name { font-size: 15px; color: var(--muted); margin-bottom: 30px; font-weight: 500; }
-
-    .card-footer { 
-        display: flex; justify-content: space-between; align-items: center; 
-        border-top: 1px solid var(--border); padding-top: 25px; 
+    /* ===== INDUSTRY FOOTER (NEW) ===== */
+    .luxury-footer {
+      background: var(--card); border-top: 1px solid var(--border); padding: 80px 5% 40px; margin-top: 100px; backdrop-filter: blur(20px);
     }
-    .price-tag { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+    .footer-grid {
+      max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;
+    }
+    .footer-brand h2 { font-size: 28px; margin: 0 0 15px 0; font-weight: 800; letter-spacing: -1.5px; }
+    .footer-brand p { color: var(--muted); line-height: 1.6; }
     
-    .reserve-btn { 
-      background: var(--accent); color: #000; 
-      padding: 14px 28px; border-radius: 18px; 
-      font-weight: 800; text-decoration: none; 
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 20px var(--accent-glow);
+    .contact-hub { display: flex; flex-direction: column; gap: 15px; }
+    .contact-pill {
+      display: flex; align-items: center; gap: 15px; padding: 18px 25px; background: rgba(255,255,255,0.03); 
+      border-radius: 20px; border: 1px solid var(--border); text-decoration: none; color: var(--text);
+      transition: all 0.4s var(--spring);
     }
-    .reserve-btn:hover { 
-      filter: brightness(1.1);
-      transform: scale(1.05);
-      box-shadow: 0 12px 30px var(--accent-glow);
-    }
+    .contact-pill:hover { border-color: var(--accent); transform: translateX(10px); background: var(--accent-glow); }
+    .contact-pill svg { color: var(--accent); }
+    .pill-info span { display: block; font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+    .pill-info b { font-size: 15px; }
 
-    /* ===== ACCOUNT DRAWER ===== */
-    .profile-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px);
-      display: none; justify-content: flex-end; z-index: 2000;
-    }
-    .profile-drawer {
-      width: 100%; max-width: 450px; 
-      background: var(--bg); 
-      height: 100%;
-      padding: 50px; 
-      border-left: 1px solid var(--border); 
-      animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .copyright { text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
 
+    /* ===== DRAWER ===== */
+    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); display: none; justify-content: flex-end; z-index: 2000; }
+    .profile-drawer { width: 100%; max-width: 450px; background: var(--bg); height: 100%; padding: 50px; border-left: 1px solid var(--border); animation: slideIn 0.6s var(--spring); overflow-y: auto; }
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-    /* Custom Switch 2.0 */
-    .switch-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border);
-    }
-    .custom-switch { 
-        appearance: none; width: 50px; height: 28px; background: #2c313a; 
-        border-radius: 20px; position: relative; cursor: pointer; transition: 0.4s;
-    }
-    .custom-switch:checked { background: var(--accent); }
-    .custom-switch::before { 
-        content: ""; position: absolute; width: 22px; height: 22px; 
-        background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.4s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .custom-switch:checked::before { transform: translateX(22px); }
-
-    .empty-state {
-        grid-column: 1/-1; text-align: center; padding: 100px 0; opacity: 0.5;
-    }
-
-    /* ===== SKELETON LOADING ===== */
-    .skeleton {
-        background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
-        background-size: 200% 100%;
-        animation: loadingShimmer 1.5s infinite;
-        border-radius: 20px;
-    }
-    @keyframes loadingShimmer {
-        from { background-position: 200% 0; }
-        to { background-position: -200% 0; }
-    }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 100px 0; opacity: 0.5; }
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; border-radius: 20px; }
+    @keyframes loadingShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   </style>
 </head>
 <body>
@@ -281,31 +160,57 @@
 <main class="container" id="foodList">
     <div class="food-card" style="height: 450px; opacity:0.3;"><div class="skeleton" style="height:100%"></div></div>
     <div class="food-card" style="height: 450px; opacity:0.3;"><div class="skeleton" style="height:100%"></div></div>
-    <div class="food-card" style="height: 450px; opacity:0.3;"><div class="skeleton" style="height:100%"></div></div>
 </main>
+
+<footer class="luxury-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h2 class="logo">Last Plate</h2>
+      <p>Redefining late-night dining by connecting smart foodies with the best unsold meals in the city. High taste, zero waste.</p>
+      <div style="margin-top:25px; display:flex; gap:15px;">
+          <div style="width:40px; height:40px; background:var(--accent-glow); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--accent);">🌿</div>
+          <div style="width:40px; height:40px; background:var(--accent-glow); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--accent);">🌙</div>
+          <div style="width:40px; height:40px; background:var(--accent-glow); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--accent);">✨</div>
+      </div>
+    </div>
+    
+    <div class="contact-hub">
+      <h4 style="margin:0 0 10px 0; letter-spacing:1px; color:var(--muted)">CONTACT SUPPORT</h4>
+      <a href="mailto:terminalplate@gmail.com" class="contact-pill">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <div class="pill-info"><span>Write to us</span><b>terminalplate@gmail.com</b></div>
+      </a>
+      <a href="https://instagram.com/a_7hul_" target="_blank" class="contact-pill">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        <div class="pill-info"><span>Follow Developer</span><b>@a_7hul_</b></div>
+      </a>
+    </div>
+
+    <div class="contact-hub">
+        <h4 style="margin:0 0 10px 0; letter-spacing:1px; color:var(--muted)">HOTLINE</h4>
+        <a href="tel:9633890173" class="contact-pill"><div class="pill-info"><span>Primary Support</span><b>+91 9633890173</b></div></a>
+        <a href="tel:7025908832" class="contact-pill"><div class="pill-info"><span>Operations</span><b>+91 7025908832</b></div></a>
+        <a href="tel:6282682798" class="contact-pill"><div class="pill-info"><span>Logistics</span><b>+91 6282682798</b></div></a>
+    </div>
+  </div>
+  <div class="copyright">
+    &copy; 2026 Last Plate. Designed for a sustainable future.
+  </div>
+</footer>
 
 <div class="profile-overlay" id="profileOverlay">
   <div class="profile-drawer">
     <button id="closeProfile" style="background:none; border:none; color:var(--accent); font-weight:800; cursor:pointer; margin-bottom:30px; display:flex; align-items:center; gap:10px;">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5m7 7-7-7 7-7"/></svg>
-      BACK
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5m7 7-7-7 7-7"/></svg> BACK
     </button>
     <h2 style="font-size: 38px; letter-spacing: -2px; margin: 0 0 40px 0;">Account</h2>
-    
-    <div style="margin-bottom: 40px;">
-        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Verified Name</label>
-        <p id="p-name" style="font-size:24px; font-weight:700; margin:8px 0 0 0;"></p>
+    <div id="p-name" style="font-size:24px; font-weight:700; background:var(--card); padding:20px; border-radius:20px; border:1px solid var(--border);"></div>
+    <div style="margin-top:30px;" class="contact-hub">
+        <a href="mailto:terminalplate@gmail.com" class="contact-pill"><span>Email Support</span></a>
     </div>
-
-    <div class="switch-container">
-        <span style="font-weight:700">Light Appearance</span>
-        <input type="checkbox" id="themeToggle" class="custom-switch">
-    </div>
-
-    <h3 style="margin-top:50px; font-size:20px; font-weight:800;">Activity History</h3>
+    <h3 style="margin-top:50px; font-size:20px;">Activity History</h3>
     <div id="history"></div>
-
-    <button onclick="location.href='/logout'" style="width:100%; margin-top:50px; padding:20px; border-radius:22px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);">Sign Out</button>
+    <button onclick="location.href='/logout'" style="width:100%; margin-top:50px; padding:20px; border-radius:22px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer;">Sign Out</button>
   </div>
 </div>
 
@@ -314,112 +219,60 @@
 
   function formatTimeLeft(minutes) {
     if (minutes <= 0) return "Pickup Closed";
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
+    const h = Math.floor(minutes / 60); const m = minutes % 60;
     return h > 0 ? `${h}h ${m}m remaining` : `${m}m remaining`;
   }
 
   function getFoodImage(name) {
     const n = name.toLowerCase();
-    const map = {
-        'fahm': 'https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg',
-        'biry': 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000',
-        'burger': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000',
-        'pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000'
-    };
+    const map = { 'fahm': 'https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg', 'biry': 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000', 'burger': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000' };
     for(let key in map) if(n.includes(key)) return map[key];
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
   }
 
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
-    if (!foods.length) {
-      list.innerHTML = `<div class="empty-state"><h2>No plates found.</h2><p>Refine your search or wait for the next drop.</p></div>`;
-      return;
-    }
-    
-    list.innerHTML = foods.map((f, i) => {
-      const isUrgent = f.minutes_left < 30;
-      return `
-        <article class="food-card" style="animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s both">
-          <div class="card-img-wrapper">
-              <img src="${getFoodImage(f.name)}" class="card-img" loading="lazy">
-          </div>
+    if (!foods.length) { list.innerHTML = `<div class="empty-state"><h2>No plates found.</h2></div>`; return; }
+    list.innerHTML = foods.map((f, i) => `
+        <article class="food-card" style="animation: titleReveal 0.8s var(--spring) ${i * 0.1}s both">
+          <div class="card-img-wrapper"><img src="${getFoodImage(f.name)}" class="card-img" loading="lazy"></div>
           <div class="card-body">
-            <div class="tag-container">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <span class="tag">${f.available_quantity} UNITS LEFT</span>
-                <div class="timer-badge ${isUrgent ? 'urgent' : ''}">
+                <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                   <span class="countdown" data-id="${f.id}">${formatTimeLeft(f.minutes_left)}</span>
                 </div>
             </div>
-
             <h3 class="food-name">${f.name}</h3>
             <div class="rest-name">${f.restaurant_name}</div>
-            
-            <div class="card-footer">
-              <div class="price-tag">₹${f.price}</div>
-              <a href="/checkout/${f.id}" class="reserve-btn">Reserve Now</a>
-            </div>
+            <div class="card-footer"><div class="price-tag">₹${f.price}</div><a href="/checkout/${f.id}" class="reserve-btn">Reserve Now</a></div>
           </div>
         </article>
-      `;
-    }).join('');
+    `).join('');
   }
 
-  // Live Timer
   setInterval(() => {
-    allFoods.forEach(f => {
-      if (f.minutes_left > 0) {
-        f.minutes_left -= 1;
-        const el = document.querySelector(`.countdown[data-id="${f.id}"]`);
-        if (el) {
-          el.innerText = formatTimeLeft(f.minutes_left);
-          if (f.minutes_left < 30) el.parentElement.classList.add('urgent');
-        }
-      }
-    });
+    allFoods.forEach(f => { if (f.minutes_left > 0) { f.minutes_left -= 1; const el = document.querySelector(`.countdown[data-id="${f.id}"]`); if (el) el.innerText = formatTimeLeft(f.minutes_left); } });
   }, 60000);
 
-  // Fetch
-  fetch("/api/foods").then(r => r.json()).then(d => {
-    allFoods = d.foods || [];
-    setTimeout(() => renderFoods(allFoods), 800); // Small delay to show off shimmer
-  });
+  fetch("/api/foods").then(r => r.json()).then(d => { allFoods = d.foods || []; setTimeout(() => renderFoods(allFoods), 800); });
 
-  // Search
   document.getElementById("foodSearch").addEventListener("input", (e) => {
     const q = e.target.value.toLowerCase();
     renderFoods(allFoods.filter(f => f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q)));
   });
 
-  // Drawer
   const overlay = document.getElementById("profileOverlay");
   document.getElementById("openProfile").onclick = () => { overlay.style.display = "flex"; loadProfile(); };
   document.getElementById("closeProfile").onclick = () => { overlay.style.display = "none"; };
-  overlay.onclick = e => { if(e.target === overlay) overlay.style.display = "none"; };
 
   function loadProfile() {
-    fetch("/api/user/profile").then(r => r.json()).then(u => {
-      document.getElementById("p-name").innerText = u.name || "Collector";
-    });
+    fetch("/api/user/profile").then(r => r.json()).then(u => { document.getElementById("p-name").innerText = u.name || "Collector"; });
     fetch("/api/user/orders").then(r => r.json()).then(list => {
-      document.getElementById("history").innerHTML = list.length ? list.map(o => `
-        <div style="padding:20px; background:var(--card); border-radius:18px; margin-top:12px; border:1px solid var(--border);">
-          <div style="font-weight:700; font-size:16px;">${o.food}</div>
-          <div style="font-size:12px; color:var(--muted); margin-top:4px;">₹${o.total_amount} • <span style="color:var(--accent)">${o.status.toUpperCase()}</span></div>
-        </div>
-      `).join("") : "<p style='padding:20px; color:var(--muted)'>No history yet.</p>";
+      document.getElementById("history").innerHTML = list.length ? list.map(o => `<div style="padding:20px; background:var(--card); border-radius:18px; margin-top:12px; border:1px solid var(--border);">${o.food} • ₹${o.total_amount}</div>`).join("") : "<p>No history.</p>";
     });
   }
-
-  // Theme
-  const toggle = document.getElementById("themeToggle");
-  if(localStorage.theme === "light") { document.body.classList.add("light"); toggle.checked = true; }
-  toggle.onchange = () => { 
-    document.body.classList.toggle("light"); 
-    localStorage.theme = toggle.checked ? "light" : "dark"; 
-  };
 </script>
 
 </body>
