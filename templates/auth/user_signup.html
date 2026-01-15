@@ -2,234 +2,293 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Account | Last Plate</title>
-
-  <link rel="stylesheet" href="/static/css/common.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join the Movement | Last Plate</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      background:
-        linear-gradient(
-          180deg,
-          rgba(14,15,17,0.85),
-          rgba(14,15,17,0.95)
-        ),
-        url("https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80");
-      background-size: cover;
-      background-position: center;
+    :root {
+      --primary: #2ecc71;
+      --primary-dark: #27ae60;
+      --bg: #050608;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
     }
 
-    .signup-wrapper {
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Left Side: Visual/Impact */
+    .brand-side {
+      flex: 1.2;
+      position: relative;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                  url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 60px;
+    }
+
+    .brand-side::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--bg) 10%, transparent 90%);
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+    }
+
+    .impact-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      background: rgba(46, 204, 113, 0.2);
+      border: 1px solid var(--primary);
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    /* Right Side: Form */
+    .form-side {
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 40px;
+      background: var(--bg);
+      position: relative;
     }
 
     .signup-card {
-      width: 420px;
-      padding: 40px;
-      border-radius: 26px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-      animation: riseIn 0.9s ease forwards;
+      width: 100%;
+      max-width: 440px;
+      animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes riseIn {
-      from {
-        opacity: 0;
-        transform: translateY(35px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    .title {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #2ecc71, #a8ff78);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    .title { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+    .subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; line-height: 1.5; }
 
-    .subtitle {
-      text-align: center;
-      font-size: 14px;
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    label {
+    /* Input Styling */
+    .input-group { position: relative; margin-bottom: 20px; }
+    
+    .input-group label {
+      display: block;
       font-size: 13px;
-      color: rgba(255,255,255,0.75);
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      transition: color 0.3s;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      color: var(--text-muted);
     }
 
     input {
       width: 100%;
-      margin-top: 6px;
-      padding: 14px;
+      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 14px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
       color: white;
       font-size: 15px;
-    }
-
-    input::placeholder {
-      color: rgba(255,255,255,0.6);
+      transition: all 0.3s;
     }
 
     input:focus {
       outline: none;
-      border-color: #2ecc71;
-      background: rgba(255,255,255,0.22);
-    }
-
-    .helper {
-      font-size: 12px;
-      margin-top: 4px;
-      color: rgba(255,255,255,0.55);
+      border-color: var(--primary);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);
     }
 
     .signup-btn {
       width: 100%;
-      padding: 15px;
-      margin-top: 26px;
-      border-radius: 18px;
-      font-size: 16px;
-      font-weight: 600;
+      padding: 16px;
+      background: var(--primary);
+      color: #050608;
       border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      color: #0e0f11;
-      box-shadow: 0 12px 30px rgba(46,204,113,0.4);
-      transition: all 0.25s ease;
+      margin-top: 10px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .signup-btn:hover {
+      background: #34e07d;
       transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(46,204,113,0.55);
+      box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
     }
 
-    .login-text {
-      margin-top: 22px;
+    .login-link {
       text-align: center;
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--text-muted);
     }
 
-    .login-text a {
-      color: #2ecc71;
-      font-weight: 600;
+    .login-link a {
+      color: var(--primary);
       text-decoration: none;
+      font-weight: 700;
+      margin-left: 5px;
     }
 
-    .login-text a:hover {
-      text-decoration: underline;
-    }
+    .login-link a:hover { text-decoration: underline; }
 
-    .trust-note {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
+    /* Mobile Adaptability */
+    @media (max-width: 900px) {
+      .brand-side { display: none; }
+      .form-side { padding: 24px; }
     }
   </style>
 </head>
-
 <body>
 
-<div class="signup-wrapper">
-  <div class="signup-card">
-
-    <div class="title">Join Last Plate</div>
-
-    <div class="subtitle">
-      Create your account and unlock access to  
-      <strong>delicious unsold food</strong> at great prices —  
-      while helping reduce food waste 🌍
+  <div class="brand-side">
+    <div class="brand-content">
+      <div class="impact-badge">🌍 12,400+ Meals Saved This Month</div>
+      <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1;">
+        Eat Well.<br><span style="color: var(--primary)">Save Big.</span><br>Waste Less.
+      </h1>
+      <p style="font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6;">
+        Join thousands of night owls rescuing high-quality surplus food from your favorite local kitchens.
+      </p>
     </div>
-
-    <label>Your Name</label>
-    <input id="name" placeholder="Enter your name">
-
-    <br><br>
-
-    <label>Email Address</label>
-    <input id="email" type="email" placeholder="you@example.com">
-    <div class="helper">
-      📩 We send your pickup OTP & order receipt here
-    </div>
-
-    <br>
-
-    <label>Mobile Number (optional)</label>
-    <input id="mobile" placeholder="Enter mobile number">
-
-    <br><br>
-
-    <label>Password</label>
-    <input id="password" type="password" placeholder="Create a secure password">
-
-    <button id="signupBtn" class="signup-btn">
-      Create My Account
-    </button>
-
-    <div class="login-text">
-      Already part of the movement?  
-      <a href="/login">Login here</a>
-    </div>
-
-    <div class="trust-note">
-      🔒 Your email is used only for OTPs & receipts
-    </div>
-
   </div>
-</div>
 
-<script>
-document.getElementById("signupBtn").onclick = function () {
+  <div class="form-side">
+    <div class="signup-card">
+      <h2 class="title">Create Account</h2>
+      <p class="subtitle">Join the mission to end food waste while enjoying delicious meals at a fraction of the cost.</p>
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const mobile = document.getElementById("mobile").value.trim();
-  const password = document.getElementById("password").value;
+      <div class="input-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="John Doe">
+      </div>
 
-  if (!name || !email || !password) {
-    alert("Name, Email and Password are required");
-    return;
-  }
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="name@company.com">
+      </div>
 
-  if (!email.includes("@")) {
-    alert("Please enter a valid email address");
-    return;
-  }
+      <div class="input-group">
+        <label for="mobile">Mobile Number</label>
+        <input type="tel" id="mobile" placeholder="+1 (555) 000-0000">
+      </div>
 
-  fetch("/api/user/signup", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      name,
-      email,
-      mobile,
-      password
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.success ? "Signup successful 🎉" : data.message);
-    if (data.success) window.location.href = "/login";
-  });
-};
-</script>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••">
+      </div>
 
+      <button id="signupBtn" class="signup-btn">Get Started — It's Free</button>
+
+      <div class="login-link">
+        Already have an account? <a href="/login">Sign in</a>
+      </div>
+
+      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px;">🔒</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">We protect your data. Your email is only used for order updates and secure access.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("signupBtn").onclick = function() {
+      const btn = this;
+      const originalText = btn.innerText;
+      
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!name || !email || !password) {
+        showError("Please fill in all required fields.");
+        return;
+      }
+
+      // Visual Loading State
+      btn.innerText = "Creating Account...";
+      btn.style.opacity = "0.7";
+      btn.disabled = true;
+
+      fetch("/api/user/signup", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ name, email, mobile, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          btn.style.background = "#fff";
+          btn.innerText = "Success! Redirecting...";
+          setTimeout(() => window.location.href = "/login", 1000);
+        } else {
+          showError(data.message || "Something went wrong.");
+          btn.innerText = originalText;
+          btn.style.opacity = "1";
+          btn.disabled = false;
+        }
+      })
+      .catch(() => {
+        showError("Network error. Please try again.");
+        btn.innerText = originalText;
+        btn.style.opacity = "1";
+        btn.disabled = false;
+      });
+    };
+
+    function showError(msg) {
+      // Modern replacement for alert
+      const toast = document.createElement('div');
+      toast.style = `
+        position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+        padding: 12px 24px; border-radius: 10px; font-weight: 600; z-index: 10000;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;
+      `;
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
 </body>
 </html>
