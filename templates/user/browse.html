@@ -256,6 +256,11 @@
 </div>
 
 <script>
+  const pName = document.getElementById("p-name");
+const pEmail = document.getElementById("p-email");
+const pMobile = document.getElementById("p-mobile");
+const historyBox = document.getElementById("history");
+
   function normalize(name) {
   return name
     .toLowerCase()
@@ -344,18 +349,18 @@ overlay.onclick=e=>{
 
 function loadProfile(){
   fetch("/api/user/profile")
-    .then(r=>r.json())
-    .then(u=>{
-      p-name.innerText=u.name;
-      p-email.innerText=u.email||"—";
-      p-mobile.innerText=u.mobile;
+    .then(r => r.json())
+    .then(u => {
+      pName.innerText = u.name || "—";
+      pEmail.innerText = u.email || "—";
+      pMobile.innerText = u.mobile || "—";
     });
 
   fetch("/api/user/orders")
-    .then(r=>r.json())
-    .then(list=>{
-      history.innerHTML=list.length
-        ? list.map(o=>`
+    .then(r => r.json())
+    .then(list => {
+      historyBox.innerHTML = list.length
+        ? list.map(o => `
           <div class="order">
             <b>${o.food}</b><br>
             Qty: ${o.quantity} • ₹${o.total_amount}<br>
@@ -365,6 +370,7 @@ function loadProfile(){
         : "<i>No orders yet</i>";
     });
 }
+
 
 /* ===== THEME ===== */
 const toggle=document.getElementById("themeToggle");
