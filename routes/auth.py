@@ -19,6 +19,46 @@ def restaurant_login_page():
     return render_template("auth/restaurant_login.html")
 
 # ================= USER SIGNUP =================
+import MySQLdb.cursors
+
+# ================= USER PROFILE API =================
+@auth_bp.route("/api/user/profile")
+def user_profile():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("""
+        SELECT name, email, mobile
+        FROM users
+        WHERE id = %s
+    """, (session["user_id"],))
+
+    user = cur.fetchone()
+    return jsonify(user)
+
+
+# ================= USER ORDER HISTORY API =================
+@auth_bp.route("/api/user/orders")
+def user_orders():
+    if "user_id" not in session:
+        return jsonify([])
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("""
+        SELECT
+            f.name AS food,
+            o.quantity,
+            o.total_amount,
+            o.status
+        FROM orders o
+        JOIN foods f ON o.food_id = f.id
+        WHERE o.user_id = %s
+        ORDER BY o.id DESC
+    """, (session["user_id"],))
+
+    return jsonify(cur.fetchall())
+
 # ================= USER SIGNUP =================
 @auth_bp.route("/api/user/signup", methods=["POST"])
 def user_signup():
