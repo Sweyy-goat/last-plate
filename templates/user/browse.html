@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Last Plate – Premium Night Dining</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -15,6 +15,8 @@
       --accent-glow: rgba(34, 197, 94, 0.3);
       --glass: rgba(255, 255, 255, 0.03);
       --border: rgba(255, 255, 255, 0.08);
+      --timer-warn: #fbbf24;
+      --timer-urgent: #ef4444;
     }
 
     body.light {
@@ -26,7 +28,7 @@
       --border: rgba(0, 0, 0, 0.08);
     }
 
-    * { box-sizing: border-box; outline: none; }
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
     
     body {
       margin: 0;
@@ -52,12 +54,7 @@
       z-index: 1000;
     }
 
-    .logo {
-      font-weight: 800;
-      font-size: 24px;
-      letter-spacing: -1px;
-      cursor: pointer;
-    }
+    .logo { font-weight: 800; font-size: 24px; letter-spacing: -1px; cursor: pointer; }
 
     .profile-trigger {
       width: 48px; height: 48px;
@@ -66,9 +63,7 @@
       border: 1px solid var(--border);
       color: var(--text);
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -79,273 +74,78 @@
     }
 
     /* ===== HERO ===== */
-    .hero {
-      padding: 160px 20px 60px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: clamp(40px, 8vw, 72px);
-      font-weight: 800;
-      margin: 0;
-      line-height: 1;
-      letter-spacing: -3px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 18px;
-      margin: 20px auto 40px;
-      max-width: 600px;
-    }
+    .hero { padding: 160px 20px 60px; text-align: center; }
+    .hero h1 { font-size: clamp(40px, 8vw, 72px); font-weight: 800; margin: 0; letter-spacing: -3px; line-height: 1; }
+    .hero p { color: var(--muted); font-size: 18px; margin: 20px auto 40px; max-width: 600px; }
 
     /* ===== SEARCH ===== */
-    .search-container {
-      max-width: 600px;
-      margin: 0 auto 60px;
-      padding: 0 20px;
-    }
-
+    .search-container { max-width: 600px; margin: 0 auto 60px; padding: 0 20px; }
     .search-wrapper {
-      display: flex;
-      align-items: center;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 16px 24px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-      transition: 0.3s;
+      display: flex; align-items: center; background: var(--card);
+      border: 1px solid var(--border); padding: 16px 24px; border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); transition: 0.3s;
     }
-
-    .search-wrapper:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 25px var(--accent-glow);
-    }
-
-    .search-wrapper input {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 16px;
-      width: 100%;
-      margin-left: 12px;
-      font-family: inherit;
-    }
+    .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 16px; width: 100%; margin-left: 12px; font-family: inherit; }
 
     /* ===== GRID ===== */
     .container {
-      max-width: 1200px;
-      margin: 0 auto 100px;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 32px;
+      max-width: 1200px; margin: 0 auto 100px; padding: 0 24px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;
     }
 
-    /* ===== CARD & ANIMATIONS ===== */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
+    /* ===== FOOD CARD ===== */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    
     .food-card {
-      background: var(--card);
-      border-radius: 32px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: var(--card); border-radius: 32px; border: 1px solid var(--border);
+      overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       animation: fadeInUp 0.7s ease both;
     }
 
-    .food-card:hover {
-      transform: translateY(-12px);
-      border-color: var(--accent);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-    }
+    .food-card:hover { transform: translateY(-12px); border-color: var(--accent); box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
 
-    .card-img {
-      height: 240px;
-      width: 100%;
-      object-fit: cover;
-    }
-
-    .card-body {
-      padding: 24px;
-    }
+    .card-img { height: 240px; width: 100%; object-fit: cover; }
+    .card-body { padding: 24px; }
 
     .tag {
-      background: var(--glass);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent);
-      display: inline-block;
-      margin-bottom: 12px;
+      background: var(--glass); padding: 6px 12px; border-radius: 10px;
+      font-size: 11px; font-weight: 800; color: var(--accent); display: inline-block; margin-bottom: 12px;
     }
 
-    .food-name {
-      font-size: 22px;
-      font-weight: 700;
-      margin: 0 0 6px 0;
+    /* Timer Style */
+    .timer-badge {
+      display: flex; align-items: center; gap: 6px; font-size: 12px;
+      font-weight: 700; color: var(--timer-warn); margin: -8px 0 16px 0;
     }
+    .timer-badge.urgent { color: var(--timer-urgent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-    .rest-name {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .food-name { font-size: 22px; font-weight: 700; margin: 0 0 6px 0; }
+    .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 5px; }
 
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid var(--border);
-      padding-top: 20px;
-    }
-
-    .price-tag {
-      font-size: 26px;
-      font-weight: 800;
-    }
-
-    .reserve-btn {
-      background: var(--accent);
-      color: #022c22;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 16px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    .reserve-btn:hover {
-      transform: scale(1.05);
-      filter: brightness(1.1);
-    }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 20px; }
+    .price-tag { font-size: 26px; font-weight: 800; }
+    .reserve-btn { background: var(--accent); color: #022c22; padding: 12px 24px; border-radius: 16px; font-weight: 700; text-decoration: none; transition: 0.3s; }
 
     /* ===== PROFILE DRAWER ===== */
     .profile-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(12px);
-      display: none;
-      justify-content: flex-end;
-      z-index: 2000;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
+      display: none; justify-content: flex-end; z-index: 2000;
     }
-
     .profile-drawer {
-      width: 100%;
-      max-width: 420px;
-      background: var(--card);
-      height: 100%;
-      padding: 48px;
-      border-left: 1px solid var(--border);
-      animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow-y: auto;
+      width: 100%; max-width: 420px; background: var(--card); height: 100%;
+      padding: 40px; border-left: 1px solid var(--border); animation: slideIn 0.5s ease;
     }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-    @keyframes slideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
+    .back-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; padding: 0; margin-bottom: 20px; }
+    .custom-switch { appearance: none; width: 44px; height: 24px; background: #334155; border-radius: 20px; position: relative; cursor: pointer; }
+    .custom-switch:checked { background: var(--accent); }
+    .custom-switch::before { content: ""; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.3s; }
+    .custom-switch:checked::before { left: 23px; }
+    .logout-btn { width: 100%; margin-top: 40px; padding: 18px; border-radius: 20px; background: #ef4444; color: white; font-weight: 800; border: none; cursor: pointer; }
 
-    .order-item {
-      padding: 16px;
-      background: var(--glass);
-      border-radius: 16px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .empty-state {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 100px 20px;
-      color: var(--muted);
-    }
-    /* Back Button for Mobile */
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  color: var(--accent);
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 20px;
-  transition: transform 0.2s ease;
-}
-
-.back-btn:active {
-  transform: translateX(-5px);
-}
-
-.logout-btn {
-  width: 100%;
-  margin-top: 48px;
-  padding: 18px;
-  border-radius: 20px;
-  border: none;
-  background: #ef4444;
-  color: white;
-  font-weight: 800;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.logout-btn:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
-}
-
-/* Custom Checkbox Switch Look */
-.custom-switch {
-  appearance: none;
-  width: 44px;
-  height: 24px;
-  background: #334155;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.custom-switch:checked {
-  background: var(--accent);
-}
-
-.custom-switch::before {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  top: 3px;
-  left: 3px;
-  transition: 0.3s;
-}
-
-.custom-switch:checked::before {
-  left: 23px;
-}
-
-@media (max-width: 480px) {
-  .profile-drawer {
-    padding: 32px 24px;
-  }
-}
+    @media (max-width: 480px) { .profile-drawer { padding: 32px 24px; } .navbar { padding: 0 20px; } }
   </style>
 </head>
 <body>
@@ -359,7 +159,7 @@
 
 <header class="hero">
   <h1>The <span style="color:var(--accent)">Golden</span> Hour.</h1>
-  <p>Rescuing high-quality surplus meals from your favorite local kitchens at exclusive late-night prices.</p>
+  <p>Fresh meals, rescue prices. Help end food waste tonight.</p>
 </header>
 
 <div class="search-container">
@@ -374,116 +174,118 @@
 <div class="profile-overlay" id="profileOverlay">
   <div class="profile-drawer">
     <button class="back-btn" id="closeProfile">
-      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path d="M15 19l-7-7 7-7"/>
-      </svg>
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
       <span>Back</span>
     </button>
-
-    <h2 style="font-size: 32px; letter-spacing: -1px; margin: 20px 0 0 0;">My Account</h2>
-    
+    <h2 style="font-size: 32px; letter-spacing: -1px; margin: 0;">My Account</h2>
     <div style="margin: 40px 0;">
-        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Name</label>
+        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase;">Name</label>
         <p id="p-name" style="font-size:22px; font-weight:700; margin:4px 0 24px;"></p>
-        
-        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Email Address</label>
-        <p id="p-email" style="font-size:16px; margin:4px 0 24px; color:var(--text); opacity:0.8;"></p>
+        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase;">Email</label>
+        <p id="p-email" style="font-size:16px; margin:4px 0 24px; opacity:0.8;"></p>
     </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--glass); padding:20px; border-radius:24px; border: 1px solid var(--border);">
+    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--glass); padding:20px; border-radius:20px;">
         <span style="font-weight:700">Light Mode</span>
         <input type="checkbox" id="themeToggle" class="custom-switch">
     </div>
-
-    <h3 style="margin-top:48px; font-size:22px; font-weight:800;">Recent Orders</h3>
+    <h3 style="margin-top:48px; font-size:20px; font-weight:800;">Recent Orders</h3>
     <div id="history"></div>
-
     <button onclick="location.href='/logout'" class="logout-btn">Log Out</button>
   </div>
 </div>
 
 <script>
-  // Add this line with your other event listeners
-document.getElementById("closeProfile").onclick = () => {
-    overlay.style.display = "none";
-};
   let allFoods = [];
 
-  function normalize(name) {
-    return name.toLowerCase().replace(/[^a-z\s]/g, "").trim();
-  }
-
-  function getFoodImage(name) {
-    const n = normalize(name);
-    if (n.includes("fahm")) return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg";
-    if (n.includes("biry") || n.includes("biri")) return "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000&auto=format&fit=crop";
-    if (n.includes("mand")) return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
-    if (n.includes("burger")) return "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop";
-    if (n.includes("pizza")) return "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop";
-    if (n.includes("shawar")) return "https://images.unsplash.com/photo-1604908554166-90a3f0e35318?auto=format&fit=crop&w=900&q=80";
-    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop";
+  // --- TIME FORMATTING ---
+  function formatTimeLeft(minutes) {
+    if (minutes <= 0) return "Pickup Closed";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
   }
 
   // --- RENDERING ---
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
     if (!foods.length) {
-      list.innerHTML = `<div class="empty-state"><h2>No meals found</h2><p>Try a different search term.</p></div>`;
+      list.innerHTML = `<div class="empty-state"><h2>Everything's rescued!</h2><p>Check back in a few minutes.</p></div>`;
       return;
     }
     
-    list.innerHTML = foods.map((f, i) => `
-      <article class="food-card" style="animation-delay: ${i * 0.08}s">
-        <img src="${getFoodImage(f.name)}" class="card-img" alt="${f.name}">
-        <div class="card-body">
-          <span class="tag">⚡ Only ${f.available_quantity} Left</span>
-          <h3 class="food-name">${f.name}</h3>
-          <div class="rest-name">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            ${f.restaurant_name}
+    list.innerHTML = foods.map((f, i) => {
+      const isUrgent = f.minutes_left < 30;
+      return `
+        <article class="food-card" style="animation-delay: ${i * 0.08}s">
+          <img src="${getFoodImage(f.name)}" class="card-img" alt="${f.name}">
+          <div class="card-body">
+            <span class="tag">⚡ Only ${f.available_quantity} Left</span>
+            
+            <div class="timer-badge ${isUrgent ? 'urgent' : ''}">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span class="countdown" data-id="${f.id}">${formatTimeLeft(f.minutes_left)}</span>
+            </div>
+
+            <h3 class="food-name">${f.name}</h3>
+            <div class="rest-name">📍 ${f.restaurant_name}</div>
+            <div class="card-footer">
+              <div class="price-tag">₹${f.price}</div>
+              <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
+            </div>
           </div>
-          <div class="card-footer">
-            <div class="price-tag">₹${f.price}</div>
-            <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
-          </div>
-        </div>
-      </article>
-    `).join('');
+        </article>
+      `;
+    }).join('');
   }
 
-  // --- INITIAL FETCH ---
-  fetch("/api/foods")
-    .then(r => r.json())
-    .then(d => {
-      allFoods = d.foods || [];
-      renderFoods(allFoods);
+  // --- LIVE TIMER TICKER ---
+  setInterval(() => {
+    allFoods.forEach(f => {
+      if (f.minutes_left > 0) {
+        f.minutes_left -= 1;
+        const el = document.querySelector(`.countdown[data-id="${f.id}"]`);
+        if (el) {
+          el.innerText = formatTimeLeft(f.minutes_left);
+          if (f.minutes_left < 30) el.parentElement.classList.add('urgent');
+        }
+      }
     });
+  }, 60000);
 
-  // --- SEARCH ---
-  document.getElementById("foodSearch").addEventListener("input", (e) => {
-    const q = e.target.value.toLowerCase();
-    const filtered = allFoods.filter(f => 
-      f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q)
-    );
-    renderFoods(filtered);
+  // --- DATA FETCHING ---
+  function getFoodImage(name) {
+    const n = name.toLowerCase();
+    if (n.includes("fahm")) return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg";
+    if (n.includes("biry")) return "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000&auto=format&fit=crop";
+    if (n.includes("burger")) return "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop";
+    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop";
+  }
+
+  fetch("/api/foods").then(r => r.json()).then(d => {
+    allFoods = d.foods || [];
+    renderFoods(allFoods);
   });
 
-  // --- PROFILE LOGIC ---
+  document.getElementById("foodSearch").addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase();
+    renderFoods(allFoods.filter(f => f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q)));
+  });
+
+  // --- DRAWER CONTROLS ---
   const overlay = document.getElementById("profileOverlay");
-  document.getElementById("openProfile").onclick = () => {
-    overlay.style.display = "flex";
-    loadProfile();
-  };
+  document.getElementById("openProfile").onclick = () => { overlay.style.display = "flex"; loadProfile(); };
+  document.getElementById("closeProfile").onclick = () => { overlay.style.display = "none"; };
   overlay.onclick = e => { if(e.target === overlay) overlay.style.display = "none"; };
 
   function loadProfile() {
     fetch("/api/user/profile").then(r => r.json()).then(u => {
       document.getElementById("p-name").innerText = u.name || "Hungry User";
-      document.getElementById("p-email").innerText = u.email || "No email provided";
+      document.getElementById("p-email").innerText = u.email || "";
     });
     fetch("/api/user/orders").then(r => r.json()).then(list => {
-      const box = document.getElementById("history");
-      box.innerHTML = list.length ? list.map(o => `
+      document.getElementById("history").innerHTML = list.length ? list.map(o => `
         <div class="order-item">
           <div style="font-weight:700">${o.food}</div>
           <div style="font-size:12px; color:var(--muted); margin-top:4px;">₹${o.total_amount} • Status: <span style="color:var(--accent)">${o.status}</span></div>
@@ -494,14 +296,8 @@ document.getElementById("closeProfile").onclick = () => {
 
   // --- THEME ---
   const toggle = document.getElementById("themeToggle");
-  if(localStorage.theme === "light"){
-    document.body.classList.add("light");
-    toggle.checked = true;
-  }
-  toggle.onchange = () => {
-    document.body.classList.toggle("light");
-    localStorage.theme = toggle.checked ? "light" : "dark";
-  };
+  if(localStorage.theme === "light") { document.body.classList.add("light"); toggle.checked = true; }
+  toggle.onchange = () => { document.body.classList.toggle("light"); localStorage.theme = toggle.checked ? "light" : "dark"; };
 </script>
 
 </body>
