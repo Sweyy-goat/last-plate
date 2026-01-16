@@ -50,11 +50,19 @@
     }
     input:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.06); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1); }
 
-    /* Password Specific */
+    /* Prefix UI */
+    .prefix {
+        position: absolute; left: 16px; font-weight: 700; color: var(--primary);
+        font-size: 15px; pointer-events: none; border-right: 1px solid var(--border);
+        padding-right: 10px; z-index: 5;
+    }
+    .prefixed-input { padding-left: 60px !important; }
+
+    /* Password & Indicator Styles */
     .password-toggle { position: absolute; right: 14px; background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; }
     .password-toggle:hover { color: var(--primary); }
     
-    .match-indicator { font-size: 11px; margin-top: 6px; font-weight: 700; display: none; }
+    .indicator { font-size: 11px; margin-top: 6px; font-weight: 700; display: none; }
     .input-wrapper.error input { border-color: var(--error) !important; }
     .input-wrapper.success input { border-color: var(--primary) !important; }
 
@@ -77,14 +85,14 @@
   <div class="brand-side">
     <div class="brand-content">
       <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1;">Eat Well.<br><span style="color: var(--primary)">Save Big.</span><br>Waste Less.</h1>
-      <p style="font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6;">Rescuing surplus food from top restaurants.</p>
+      <p style="font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6;">Join thousands of night owls rescuing food.</p>
     </div>
   </div>
 
   <div class="form-side">
     <div class="signup-card">
       <h2 class="title">Create Account</h2>
-      <p class="subtitle">Join thousands of night owls saving food tonight.</p>
+      <p class="subtitle">Enter your details to start saving tonight.</p>
 
       <div class="input-group">
         <label for="name">Full Name</label>
@@ -98,7 +106,11 @@
 
       <div class="input-group">
         <label for="mobile">Mobile Number</label>
-        <input type="tel" id="mobile" placeholder="+91 00000 00000">
+        <div class="input-wrapper" id="mobile-wrapper">
+            <span class="prefix">+91</span>
+            <input type="tel" id="mobile" class="prefixed-input" placeholder="00000 00000" maxlength="10">
+        </div>
+        <div id="mobile-indicator" class="indicator"></div>
       </div>
 
       <div class="input-group">
@@ -106,7 +118,7 @@
         <div class="input-wrapper">
           <input type="password" id="password" placeholder="••••••••">
           <button type="button" class="password-toggle" onclick="togglePass('password', this)">
-            <svg class="eye-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
@@ -116,14 +128,13 @@
         <div class="input-wrapper" id="confirm-wrapper">
           <input type="password" id="confirm_password" placeholder="••••••••">
           <button type="button" class="password-toggle" onclick="togglePass('confirm_password', this)">
-            <svg class="eye-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
-        <div id="match-text" class="match-indicator"></div>
+        <div id="match-text" class="indicator"></div>
       </div>
 
       <button id="signupBtn" class="signup-btn">Create My Account</button>
-
       <div class="login-link">Already have an account? <a href="/login">Sign in</a></div>
     </div>
   </div>
@@ -133,7 +144,32 @@
     const confirmInput = document.getElementById('confirm_password');
     const confirmWrapper = document.getElementById('confirm-wrapper');
     const matchText = document.getElementById('match-text');
+    const mobileInput = document.getElementById('mobile');
+    const mobileWrapper = document.getElementById('mobile-wrapper');
+    const mobileIndicator = document.getElementById('mobile-indicator');
     const signupBtn = document.getElementById('signupBtn');
+
+    // MOBILE REAL-TIME VALIDATION
+    mobileInput.addEventListener('input', function() {
+        // Clean input: remove everything except digits
+        let val = this.value.replace(/[^0-9]/g, '');
+        this.value = val;
+
+        if (val.length === 0) {
+            mobileWrapper.className = 'input-wrapper';
+            mobileIndicator.style.display = 'none';
+        } else if (val.length < 10) {
+            mobileWrapper.className = 'input-wrapper error';
+            mobileIndicator.innerText = '× Enter 10-digit number';
+            mobileIndicator.style.color = 'var(--error)';
+            mobileIndicator.style.display = 'block';
+        } else if (val.length === 10) {
+            mobileWrapper.className = 'input-wrapper success';
+            mobileIndicator.innerText = '✓ Perfect (starting with +91)';
+            mobileIndicator.style.color = 'var(--primary)';
+            mobileIndicator.style.display = 'block';
+        }
+    });
 
     // Toggle Password Visibility
     function togglePass(id, btn) {
@@ -143,17 +179,11 @@
       btn.style.color = isPass ? 'var(--primary)' : 'var(--text-muted)';
     }
 
-    // Real-time Match Validation
+    // Passwords Match Validation
     function validatePasswords() {
       const p1 = passInput.value;
       const p2 = confirmInput.value;
-
-      if (!p2) {
-        confirmWrapper.className = 'input-wrapper';
-        matchText.style.display = 'none';
-        return false;
-      }
-
+      if (!p2) { confirmWrapper.className = 'input-wrapper'; matchText.style.display = 'none'; return false; }
       if (p1 === p2) {
         confirmWrapper.className = 'input-wrapper success';
         matchText.innerText = '✓ Passwords match';
@@ -175,25 +205,20 @@
     signupBtn.onclick = async function() {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const mobile = document.getElementById("mobile").value.trim();
+      const mobileVal = mobileInput.value;
       
-      if (!validatePasswords()) {
-        showError("Passwords must match.");
-        return;
-      }
+      if (mobileVal.length !== 10) { showError("Enter a valid 10-digit number."); return; }
+      if (!validatePasswords()) { showError("Passwords must match."); return; }
+      if (!name || !email) { showError("Please fill in all fields."); return; }
 
-      if (!name || !email || !mobile) {
-        showError("Please fill in all fields.");
-        return;
-      }
-
+      const finalMobile = "+91" + mobileVal;
       signupBtn.innerText = "Processing...";
       signupBtn.disabled = true;
 
       fetch("/api/user/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ name, email, mobile, password: passInput.value })
+        body: JSON.stringify({ name, email, mobile: finalMobile, password: passInput.value })
       })
       .then(res => res.json())
       .then(data => {
