@@ -217,30 +217,39 @@
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
   }
 
-  function renderFoods(foods) {
-    const list = document.getElementById("foodList");
-    if (!foods.length) { list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No meals found.</h2></div>`; return; }
+function renderFoods(foods) {
+  const list = document.getElementById("foodList");
+  
+  list.innerHTML = foods.map((f, i) => {
+    // Calculate actual discount percentage for the badge
+    const discountPercent = Math.round(((f.mrp - f.price) / f.mrp) * 100);
     
-    list.innerHTML = foods.map((f, i) => `
-        <article class="food-card" style="animation: fadeInUp 0.8s var(--spring) ${i * 0.1}s both">
-          <div class="card-img-container"><img src="${getFoodImage(f.name)}" class="card-img" loading="lazy"></div>
-          <div class="card-body">
-            <div class="card-header-meta">
-                <span class="tag">${f.available_quantity} LEFT</span>
-                <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">
-                  <span class="countdown" data-id="${f.id}">${formatTimeLeft(f.minutes_left)}</span>
-                </div>
-            </div>
-            <h3 class="food-name">${f.name}</h3>
-            <div class="rest-name">📍 ${f.restaurant_name}</div>
-            <div class="card-footer">
-                <div class="price-tag">₹${f.price}</div>
-                <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
+    return `
+      <article class="food-card" style="animation-delay: ${i * 0.08}s">
+        <img src="${getFoodImage(f.name)}" class="card-img" alt="${f.name}">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="tag">SAVE ${discountPercent}%</span>
+            <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">
+              <span class="countdown" data-id="${f.id}">${formatTimeLeft(f.minutes_left)}</span>
             </div>
           </div>
-        </article>
-    `).join('');
-  }
+          
+          <h3 class="food-name">${f.name}</h3>
+          <div class="rest-name">📍 ${f.restaurant_name}</div>
+          
+          <div class="card-footer">
+            <div class="price-container">
+              <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
+              <div class="price-tag">₹${f.price}</div>
+            </div>
+            <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}}
 
   setInterval(() => {
     allFoods.forEach(f => { if (f.minutes_left > 0) { f.minutes_left -= 1; const el = document.querySelector(`.countdown[data-id="${f.id}"]`); if (el) el.innerText = formatTimeLeft(f.minutes_left); } });
