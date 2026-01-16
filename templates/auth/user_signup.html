@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Join the Movement | Last Plate</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -16,187 +15,76 @@
       --border: rgba(255, 255, 255, 0.08);
       --text-main: #ffffff;
       --text-muted: #94a3b8;
+      --error: #ff4757;
     }
 
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { margin: 0; background-color: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-    body {
-      margin: 0;
-      background-color: var(--bg);
-      color: var(--text-main);
-      display: flex;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Left Side: Visual/Impact */
+    /* Left Brand Side */
     .brand-side {
-      flex: 1.2;
-      position: relative;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                  url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 60px;
+      flex: 1.2; position: relative;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80');
+      background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: flex-end; padding: 60px;
     }
+    .brand-side::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 10%, transparent 90%); }
+    .brand-content { position: relative; z-index: 2; max-width: 500px; }
 
-    .brand-side::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, var(--bg) 10%, transparent 90%);
-    }
+    /* Right Form Side */
+    .form-side { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; background: var(--bg); position: relative; }
+    .signup-card { width: 100%; max-width: 440px; animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
 
-    .brand-content {
-      position: relative;
-      z-index: 2;
-      max-width: 500px;
-    }
-
-    .impact-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 12px;
-      background: rgba(46, 204, 113, 0.2);
-      border: 1px solid var(--primary);
-      border-radius: 99px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-
-    /* Right Side: Form */
-    .form-side {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
-      background: var(--bg);
-      position: relative;
-    }
-
-    .signup-card {
-      width: 100%;
-      max-width: 440px;
-      animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(30px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
     .title { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
     .subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; line-height: 1.5; }
 
-    /* Input Styling */
+    /* Input Groups */
     .input-group { position: relative; margin-bottom: 20px; }
+    .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
     
-    .input-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      transition: color 0.3s;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-wrapper i {
-      position: absolute;
-      left: 16px;
-      color: var(--text-muted);
-    }
-
+    .input-wrapper { position: relative; display: flex; align-items: center; }
     input {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      color: white;
-      font-size: 15px;
-      transition: all 0.3s;
+      width: 100%; padding: 14px 16px; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; color: white; font-size: 15px; transition: all 0.3s;
     }
+    input:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.06); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1); }
 
-    input:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);
-    }
+    /* Password Specific */
+    .password-toggle { position: absolute; right: 14px; background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; }
+    .password-toggle:hover { color: var(--primary); }
+    
+    .match-indicator { font-size: 11px; margin-top: 6px; font-weight: 700; display: none; }
+    .input-wrapper.error input { border-color: var(--error) !important; }
+    .input-wrapper.success input { border-color: var(--primary) !important; }
 
     .signup-btn {
-      width: 100%;
-      padding: 16px;
-      background: var(--primary);
-      color: #050608;
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 10px;
+      width: 100%; padding: 16px; background: var(--primary); color: #050608; border: none;
+      border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    .signup-btn:hover:not(:disabled) { background: #34e07d; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3); }
+    .signup-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-    .signup-btn:hover {
-      background: #34e07d;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
-    }
+    .login-link { text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted); }
+    .login-link a { color: var(--primary); text-decoration: none; font-weight: 700; }
 
-    .login-link {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .login-link a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 700;
-      margin-left: 5px;
-    }
-
-    .login-link a:hover { text-decoration: underline; }
-
-    /* Mobile Adaptability */
-    @media (max-width: 900px) {
-      .brand-side { display: none; }
-      .form-side { padding: 24px; }
-    }
+    @media (max-width: 900px) { .brand-side { display: none; } .form-side { padding: 24px; } }
   </style>
 </head>
 <body>
 
   <div class="brand-side">
     <div class="brand-content">
-      <div class="impact-badge">🌍 12,400+ Meals Saved This Month</div>
-      <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1;">
-        Eat Well.<br><span style="color: var(--primary)">Save Big.</span><br>Waste Less.
-      </h1>
-      <p style="font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6;">
-        Join thousands of night owls rescuing high-quality surplus food from your favorite local kitchens.
-      </p>
+      <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1;">Eat Well.<br><span style="color: var(--primary)">Save Big.</span><br>Waste Less.</h1>
+      <p style="font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6;">Rescuing surplus food from top restaurants.</p>
     </div>
   </div>
 
   <div class="form-side">
     <div class="signup-card">
       <h2 class="title">Create Account</h2>
-      <p class="subtitle">Join the mission to end food waste while enjoying delicious meals at a fraction of the cost.</p>
+      <p class="subtitle">Join thousands of night owls saving food tonight.</p>
 
       <div class="input-group">
         <label for="name">Full Name</label>
@@ -205,86 +93,124 @@
 
       <div class="input-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" placeholder="name@company.com">
+        <input type="email" id="email" placeholder="name@example.com">
       </div>
 
       <div class="input-group">
         <label for="mobile">Mobile Number</label>
-        <input type="tel" id="mobile" placeholder="+1 (555) 000-0000">
+        <input type="tel" id="mobile" placeholder="+91 00000 00000">
       </div>
 
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••">
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="••••••••">
+          <button type="button" class="password-toggle" onclick="togglePass('password', this)">
+            <svg class="eye-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
 
-      <button id="signupBtn" class="signup-btn">Get Started — It's Free</button>
-
-      <div class="login-link">
-        Already have an account? <a href="/login">Sign in</a>
+      <div class="input-group">
+        <label for="confirm_password">Confirm Password</label>
+        <div class="input-wrapper" id="confirm-wrapper">
+          <input type="password" id="confirm_password" placeholder="••••••••">
+          <button type="button" class="password-toggle" onclick="togglePass('confirm_password', this)">
+            <svg class="eye-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div id="match-text" class="match-indicator"></div>
       </div>
 
-      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px;">
-        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px;">🔒</div>
-        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">We protect your data. Your email is only used for order updates and secure access.</p>
-      </div>
+      <button id="signupBtn" class="signup-btn">Create My Account</button>
+
+      <div class="login-link">Already have an account? <a href="/login">Sign in</a></div>
     </div>
   </div>
 
   <script>
-    document.getElementById("signupBtn").onclick = function() {
-      const btn = this;
-      const originalText = btn.innerText;
-      
+    const passInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirm_password');
+    const confirmWrapper = document.getElementById('confirm-wrapper');
+    const matchText = document.getElementById('match-text');
+    const signupBtn = document.getElementById('signupBtn');
+
+    // Toggle Password Visibility
+    function togglePass(id, btn) {
+      const el = document.getElementById(id);
+      const isPass = el.type === 'password';
+      el.type = isPass ? 'text' : 'password';
+      btn.style.color = isPass ? 'var(--primary)' : 'var(--text-muted)';
+    }
+
+    // Real-time Match Validation
+    function validatePasswords() {
+      const p1 = passInput.value;
+      const p2 = confirmInput.value;
+
+      if (!p2) {
+        confirmWrapper.className = 'input-wrapper';
+        matchText.style.display = 'none';
+        return false;
+      }
+
+      if (p1 === p2) {
+        confirmWrapper.className = 'input-wrapper success';
+        matchText.innerText = '✓ Passwords match';
+        matchText.style.color = 'var(--primary)';
+        matchText.style.display = 'block';
+        return true;
+      } else {
+        confirmWrapper.className = 'input-wrapper error';
+        matchText.innerText = '× Passwords do not match';
+        matchText.style.color = 'var(--error)';
+        matchText.style.display = 'block';
+        return false;
+      }
+    }
+
+    passInput.addEventListener('input', validatePasswords);
+    confirmInput.addEventListener('input', validatePasswords);
+
+    signupBtn.onclick = async function() {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const mobile = document.getElementById("mobile").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!name || !email || !password) {
-        showError("Please fill in all required fields.");
+      
+      if (!validatePasswords()) {
+        showError("Passwords must match.");
         return;
       }
 
-      // Visual Loading State
-      btn.innerText = "Creating Account...";
-      btn.style.opacity = "0.7";
-      btn.disabled = true;
+      if (!name || !email || !mobile) {
+        showError("Please fill in all fields.");
+        return;
+      }
+
+      signupBtn.innerText = "Processing...";
+      signupBtn.disabled = true;
 
       fetch("/api/user/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ name, email, mobile, password })
+        body: JSON.stringify({ name, email, mobile, password: passInput.value })
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          btn.style.background = "#fff";
-          btn.innerText = "Success! Redirecting...";
+          signupBtn.innerText = "Success! Redirecting...";
           setTimeout(() => window.location.href = "/login", 1000);
         } else {
-          showError(data.message || "Something went wrong.");
-          btn.innerText = originalText;
-          btn.style.opacity = "1";
-          btn.disabled = false;
+          showError(data.message || "Error during signup.");
+          signupBtn.innerText = "Create My Account";
+          signupBtn.disabled = false;
         }
-      })
-      .catch(() => {
-        showError("Network error. Please try again.");
-        btn.innerText = originalText;
-        btn.style.opacity = "1";
-        btn.disabled = false;
       });
     };
 
     function showError(msg) {
-      // Modern replacement for alert
       const toast = document.createElement('div');
-      toast.style = `
-        position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
-        padding: 12px 24px; border-radius: 10px; font-weight: 600; z-index: 10000;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;
-      `;
+      toast.style = `position: fixed; top: 20px; right: 20px; background: var(--error); color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; z-index: 10000; box-shadow: 0 10px 20px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;`;
       toast.innerText = msg;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
