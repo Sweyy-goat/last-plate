@@ -16,6 +16,7 @@
       --border: rgba(255, 255, 255, 0.08);
       --text: #ffffff;
       --text-muted: #94a3b8;
+      --error: #ef4444;
     }
 
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -98,6 +99,12 @@
       margin-bottom: 8px;
     }
 
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
     input {
       width: 100%;
       padding: 14px 18px;
@@ -116,6 +123,23 @@
       background: rgba(255, 255, 255, 0.06);
       box-shadow: 0 0 0 4px var(--primary-glow);
     }
+
+    /* Eye Toggle Button */
+    .eye-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .eye-btn:hover { color: var(--primary); }
 
     /* Action Button */
     .login-btn {
@@ -136,7 +160,7 @@
       gap: 10px;
     }
 
-    .login-btn:hover {
+    .login-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 12px 24px var(--primary-glow);
       filter: brightness(1.1);
@@ -157,6 +181,17 @@
       font-weight: 700;
     }
 
+    /* Error Shake Animation */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .input-error {
+      animation: shake 0.4s ease;
+      border-color: var(--error) !important;
+    }
+
     /* Utilities */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(40px); }
@@ -168,7 +203,6 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Mobile Design */
     @media (max-width: 1000px) {
       .visual-side { display: none; }
       .form-side { background: radial-gradient(circle at top right, #111, #050608); }
@@ -206,7 +240,15 @@
           <label class="field-label" style="margin: 0;">Password</label>
           <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot?</a>
         </div>
-        <input type="password" id="password" placeholder="••••••••">
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="••••••••">
+          <button type="button" class="eye-btn" id="togglePassword">
+            <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <button id="loginBtn" class="login-btn">
@@ -229,12 +271,34 @@
 
   <script>
     const loginBtn = document.getElementById("loginBtn");
-    
-    loginBtn.onclick = async function () {
-      const mobile = document.getElementById("mobile").value.trim();
-      const password = document.getElementById("password").value;
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+    const eyeIcon = document.getElementById("eyeIcon");
 
-      if (!mobile || !password) {
+    // Eye Button Toggle Logic
+    togglePassword.onclick = function() {
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      
+      // Update SVG Icon
+      if (type === "text") {
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    };
+
+    loginBtn.onclick = async function () {
+      const mobile = document.getElementById("mobile");
+      const password = document.getElementById("password");
+
+      if (!mobile.value.trim() || !password.value) {
         showToast("Please enter both fields", "error");
         return;
       }
@@ -249,7 +313,7 @@
         const res = await fetch("/api/user/login", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ mobile, password })
+          body: JSON.stringify({ mobile: mobile.value.trim(), password: password.value })
         });
         const data = await res.json();
 
@@ -258,6 +322,12 @@
           window.location.href = "/browse";
         } else {
           showToast(data.message || "Invalid credentials", "error");
+          mobile.classList.add("input-error");
+          password.classList.add("input-error");
+          setTimeout(() => {
+            mobile.classList.remove("input-error");
+            password.classList.remove("input-error");
+          }, 500);
           resetBtn();
         }
       } catch (err) {
