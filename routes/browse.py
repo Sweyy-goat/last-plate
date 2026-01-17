@@ -3,9 +3,14 @@ from utils.db import mysql
 import MySQLdb.cursors
 import math
 from datetime import datetime, timedelta
-
 browse_bp = Blueprint("browse", __name__)
-
+@browse_bp.route("/browse-entry")
+def browse_entry():
+    if "user_id" not in session:
+        return redirect("/login")
+    if session.get("role") != "user":
+        return redirect("/")
+    return redirect("/browse")
 @browse_bp.route("/browse")
 def browse_page():
     if "user_id" not in session or session.get("role") != "user":
