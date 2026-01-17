@@ -30,7 +30,7 @@ def food_list():
 
     cur.execute("""
     SELECT 
-        f.id, f.name, f.price, f.available_quantity, 
+        f.id, f.name, f.price, f.mrp, f.available_quantity, 
         f.pickup_start, f.pickup_end, r.name AS restaurant_name,
         CASE 
             WHEN f.pickup_end >= f.pickup_start THEN 
@@ -54,22 +54,19 @@ def food_list():
 
     foods = []
     for f in rows:
-        # 1. Get the base price set by restaurant
-        base_price = float(f["price"])
+        # RAW DATA FROM DB
+        restaurant_original_mrp = float(f["mrp"])
+        restaurant_discount_price = float(f["price"])
         
-        # 2. Add 15% Markup for "Last Plate" platform fee
-        # We use math.ceil to ensure we don't lose decimals (e.g., 99.2 becomes 100)
-        final_price = math.ceil(base_price * 1.15)
-        
-        # 3. Create a fake "Original Price" for UI strikethrough (Industry Standard)
-        # Usually 1.6x the base price looks like a realistic 40% discount
-        original_mrp = math.ceil(base_price * 1.6)
+        # APPLY 15% MARKUP (Your Profit Margin)
+        # Using math.ceil ensures you always round up to the next Rupee
+        final_platform_price = math.ceil(restaurant_discount_price * 1.15)
 
         foods.append({
             "id": f["id"],
             "name": f["name"],
-            "price": final_price,  # Marked up price
-            "mrp": original_mrp,   # Strikethrough price
+            "price": final_platform_price,  # This is what the user pays (Incl. your 15%)
+            "mrp": restaurant_original_mrp, # This is the real strikethrough price
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
             "minutes_left": max(0, int(f["minutes_left"]))
