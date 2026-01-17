@@ -38,7 +38,7 @@
       overflow-x: hidden;
     }
 
-    /* ===== WORLD CLASS DRAWER ANIMATION ===== */
+    /* 3D Content Shrink for Profile Open */
     #main-wrapper {
       transition: transform 0.6s var(--spring), filter 0.6s ease, border-radius 0.6s ease;
       transform-origin: center right;
@@ -81,7 +81,6 @@
     .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); transform: translateY(-2px); }
     .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 16px; width: 100%; margin-left: 12px; font-family: inherit; }
 
-    /* Dynamic Restaurant Filters */
     .filter-container {
       max-width: 1300px; margin: 0 auto 40px; padding: 0 25px;
       display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
@@ -119,7 +118,6 @@
 
     .timer-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--timer-warn); }
     .timer-badge.urgent { color: var(--timer-urgent); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
     .food-name { font-size: 22px; font-weight: 800; margin: 12px 0 4px 0; letter-spacing: -0.5px; }
     .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
@@ -136,9 +134,6 @@
     
     .back-btn { background: none; border: none; color: var(--accent); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 30px; font-size: 16px; font-family: inherit; }
 
-    .history-item { padding: 15px; background: var(--card); border-radius: 18px; border: 1px solid var(--border); margin-bottom: 12px; }
-
-    /* ===== SKELETON ===== */
     .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; height: 420px; border-radius: 32px; }
     @keyframes loadingShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   </style>
@@ -238,22 +233,36 @@
         list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>Nothing here tonight.</h2></div>`; 
         return; 
     }
+    
     list.innerHTML = foods.map((f, i) => {
+      // Logic Fixes
+      const originalPrice = parseFloat(f.mrp); // Restaurant's Original Price
+      const restaurantDiscounted = parseFloat(f.price); // Restaurant's entry price
+      
+      // Calculate Platform Markup: discountPrice + (discountPrice * 0.15)
+      const platformPrice = Math.round(restaurantDiscounted + (restaurantDiscounted * 0.15));
+      
+      // Calculate Real Savings Badge: Original vs Platform Price
+      const savePercent = Math.round(((originalPrice - platformPrice) / originalPrice) * 100);
+      
       const isLowStock = f.available_quantity <= 3;
+
       return `
         <article class="food-card" style="animation-delay: ${i * 0.1}s">
           <div class="card-img-container"><img src="${getFoodImage(f.name)}" class="card-img"></div>
           <div class="card-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="tag ${isLowStock ? 'low-stock' : ''}">${isLowStock ? '🔥 ' : ''}${f.available_quantity} LEFT</span>
+                <span class="tag ${isLowStock ? 'low-stock' : ''}">
+                  ${savePercent > 0 ? 'SAVE ' + savePercent + '% • ' : ''}${f.available_quantity} LEFT
+                </span>
                 <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">${formatTimeLeft(f.minutes_left)}</div>
             </div>
             <h3 class="food-name">${f.name}</h3>
             <span class="rest-name">📍 ${f.restaurant_name}</span>
             <div class="card-footer">
                 <div class="price-container">
-                  <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
-                  <div class="price-tag">₹${f.price}</div>
+                  <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${originalPrice}</div>
+                  <div class="price-tag">₹${platformPrice}</div>
                 </div>
                 <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
             </div>
@@ -291,7 +300,6 @@
     setTimeout(() => { renderFoods(allFoods); updateFilters(); }, 800); 
   });
 
-  // Drawer Controls
   const overlay = document.getElementById("profileOverlay");
   document.getElementById("openProfile").onclick = () => { document.body.classList.add("drawer-open"); overlay.classList.add("active"); loadProfile(); };
   document.getElementById("closeProfile").onclick = () => { document.body.classList.remove("drawer-open"); overlay.classList.remove("active"); };
