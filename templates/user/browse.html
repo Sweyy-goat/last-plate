@@ -38,7 +38,7 @@
       overflow-x: hidden;
     }
 
-    /* 3D Content Shrink for Profile Open */
+    /* ===== 3D CONTENT SHRINK ===== */
     #main-wrapper {
       transition: transform 0.6s var(--spring), filter 0.6s ease, border-radius 0.6s ease;
       transform-origin: center right;
@@ -47,7 +47,7 @@
     body.drawer-open { overflow: hidden; }
     body.drawer-open #main-wrapper {
       transform: scale(0.92) translateX(-30px);
-      filter: blur(4px) brightness(0.6);
+      filter: blur(8px) brightness(0.6);
       border-radius: 40px;
       pointer-events: none;
     }
@@ -69,7 +69,7 @@
     }
     .profile-trigger:hover { transform: scale(1.1) rotate(5deg); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
 
-    /* ===== HERO & FILTERS ===== */
+    /* ===== HERO & SEARCH ===== */
     .hero { padding: 140px 20px 20px; text-align: center; }
     .hero h1 { font-size: clamp(36px, 10vw, 68px); font-weight: 800; letter-spacing: -3px; margin: 0; line-height: 0.9; }
     
@@ -81,6 +81,7 @@
     .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); transform: translateY(-2px); }
     .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 16px; width: 100%; margin-left: 12px; font-family: inherit; }
 
+    /* ===== DYNAMIC RESTAURANT CHIPS ===== */
     .filter-container {
       max-width: 1300px; margin: 0 auto 40px; padding: 0 25px;
       display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
@@ -91,9 +92,9 @@
       border-radius: 50px; font-size: 13px; font-weight: 700; color: var(--muted);
       cursor: pointer; transition: 0.3s var(--spring); white-space: nowrap;
     }
-    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-    /* ===== GRID & CARDS ===== */
+    /* ===== GRID & FOOD CARDS ===== */
     .container {
       max-width: 1300px; margin: 0 auto 100px; padding: 0 25px;
       display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
@@ -113,11 +114,13 @@
     .food-card:hover .card-img { transform: scale(1.1); }
 
     .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+    
     .tag { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; color: var(--accent); background: var(--accent-glow); }
-    .tag.low-stock { color: var(--timer-warn); background: rgba(255, 184, 0, 0.1); animation: pulse 2s infinite; }
+    .tag.low-stock { color: var(--timer-warn); background: rgba(255, 184, 0, 0.1); animation: cardPulse 2s infinite; }
+    @keyframes cardPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
     .timer-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--timer-warn); }
-    .timer-badge.urgent { color: var(--timer-urgent); animation: pulse 1.5s infinite; }
+    .timer-badge.urgent { color: var(--timer-urgent); }
 
     .food-name { font-size: 22px; font-weight: 800; margin: 12px 0 4px 0; letter-spacing: -0.5px; }
     .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
@@ -134,6 +137,7 @@
     
     .back-btn { background: none; border: none; color: var(--accent); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 30px; font-size: 16px; font-family: inherit; }
 
+    /* ===== SKELETON ===== */
     .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; height: 420px; border-radius: 32px; }
     @keyframes loadingShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   </style>
@@ -150,18 +154,18 @@
 
     <header class="hero">
       <h1>Rescuing <span style="color:var(--accent)">Eats.</span></h1>
-      <p>Elite surplus meals, zero waste, golden-hour prices.</p>
+      <p>Premium surplus meals, zero waste, curated prices.</p>
     </header>
 
     <div class="search-container">
       <div class="search-wrapper">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="foodSearch" placeholder="Search dish or kitchen...">
+        <input type="text" id="foodSearch" placeholder="Crave something specific?">
       </div>
     </div>
 
     <div class="filter-container" id="restaurantFilters">
-        <div class="filter-chip active">All Kitchens</div>
+        <div class="filter-chip active" onclick="setFilter('all', this)">All Kitchens</div>
     </div>
 
     <main class="container" id="foodList">
@@ -170,17 +174,12 @@
         <div class="skeleton"></div>
     </main>
 
-    <footer class="luxury-footer" style="background:var(--card); border-top:1px solid var(--border); padding:80px 5% 40px; margin-top:80px;">
-      <div class="footer-grid" style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:40px;">
-        <div>
-          <h2 class="logo">Last Plate</h2>
-          <p style="color:var(--muted); line-height:1.6; font-size:14px;">Sustainability never tasted this good. High-quality surplus food delivered at exclusive prices.</p>
-        </div>
-        <div>
-          <h4 style="color:var(--muted); font-size:12px; letter-spacing:1px; margin-bottom:20px;">CONTACT HUB</h4>
-          <a href="mailto:terminalplate@gmail.com" style="color:var(--text); text-decoration:none; display:block; margin-bottom:10px; font-weight:600;">terminalplate@gmail.com</a>
+    <footer style="background:var(--card); border-top:1px solid var(--border); padding:60px 5%; margin-top:80px; text-align: center;">
+      <h2 class="logo" style="margin-bottom: 20px;">Last Plate</h2>
+      <p style="color:var(--muted); max-width: 600px; margin: 0 auto 30px;">Premium quality surplus food delivered at exclusive prices. Sustainability at your fingertips.</p>
+      <div style="display:flex; justify-content:center; gap:30px;">
+          <a href="mailto:terminalplate@gmail.com" style="color:var(--text); text-decoration:none; font-weight:600;">terminalplate@gmail.com</a>
           <a href="https://instagram.com/a_7hul_" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:700;">@a_7hul_</a>
-        </div>
       </div>
     </footer>
 </div>
@@ -193,7 +192,7 @@
     <h2 style="font-size: 32px; letter-spacing: -1.5px; margin-bottom:40px;">Account</h2>
     
     <div style="background:var(--card); padding:20px; border-radius:20px; border:1px solid var(--border);">
-        <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase;">User Token</label>
+        <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase;">Verified User</label>
         <p id="p-name" style="font-size:20px; font-weight:700; margin:5px 0 0 0;">Loading...</p>
     </div>
 
@@ -214,7 +213,7 @@
   let currentFilter = 'all';
 
   function formatTimeLeft(minutes) {
-    if (minutes <= 0) return "Pickup Closed";
+    if (minutes <= 0) return "Closed";
     const h = Math.floor(minutes / 60); const m = minutes % 60;
     return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
   }
@@ -230,20 +229,18 @@
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
     if (!foods.length) { 
-        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>Nothing here tonight.</h2></div>`; 
+        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No plates available.</h2></div>`; 
         return; 
     }
-    
+
     list.innerHTML = foods.map((f, i) => {
-      // Logic Fixes
-      const originalPrice = parseFloat(f.mrp); // Restaurant's Original Price
-      const restaurantDiscounted = parseFloat(f.price); // Restaurant's entry price
+      // THE PRICING FIX: Unique calculation per card
+      const originalPrice = parseFloat(f.mrp); // e.g. 288
+      const baseDiscountPrice = parseFloat(f.price); // e.g. 180
       
-      // Calculate Platform Markup: discountPrice + (discountPrice * 0.15)
-      const platformPrice = Math.round(restaurantDiscounted + (restaurantDiscounted * 0.15));
-      
-      // Calculate Real Savings Badge: Original vs Platform Price
-      const savePercent = Math.round(((originalPrice - platformPrice) / originalPrice) * 100);
+      // Mandatory 15% Markup logic
+      const finalDisplayPrice = Math.ceil(baseDiscountPrice * 1.15);
+      const savePercent = Math.round(((originalPrice - finalDisplayPrice) / originalPrice) * 100);
       
       const isLowStock = f.available_quantity <= 3;
 
@@ -253,7 +250,7 @@
           <div class="card-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span class="tag ${isLowStock ? 'low-stock' : ''}">
-                  ${savePercent > 0 ? 'SAVE ' + savePercent + '% • ' : ''}${f.available_quantity} LEFT
+                   ${savePercent > 0 ? 'SAVE ' + savePercent + '% • ' : ''}${f.available_quantity} LEFT
                 </span>
                 <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">${formatTimeLeft(f.minutes_left)}</div>
             </div>
@@ -262,7 +259,7 @@
             <div class="card-footer">
                 <div class="price-container">
                   <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${originalPrice}</div>
-                  <div class="price-tag">₹${platformPrice}</div>
+                  <div class="price-tag">₹${finalDisplayPrice}</div>
                 </div>
                 <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
             </div>
@@ -272,18 +269,23 @@
     }).join('');
   }
 
+  // Update Dynamic Category Chips
   function updateFilters() {
     const filterBar = document.getElementById("restaurantFilters");
     const uniqueRest = [...new Set(allFoods.map(f => f.restaurant_name))];
-    let html = `<div class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All Kitchens</div>`;
+    let html = `<div class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all', this)">All Kitchens</div>`;
     uniqueRest.forEach(r => {
-        html += `<div class="filter-chip ${currentFilter === r ? 'active' : ''}" onclick="setFilter('${r}')">${r}</div>`;
+        html += `<div class="filter-chip ${currentFilter === r ? 'active' : ''}" onclick="setFilter('${r}', this)">${r}</div>`;
     });
     filterBar.innerHTML = html;
   }
 
-  function setFilter(name) {
+  function setFilter(name, element) {
     currentFilter = name;
+    applyFilters();
+  }
+
+  function applyFilters() {
     const q = document.getElementById("foodSearch").value.toLowerCase();
     const filtered = allFoods.filter(f => 
         (currentFilter === 'all' || f.restaurant_name === currentFilter) &&
@@ -293,13 +295,15 @@
     renderFoods(filtered);
   }
 
-  document.getElementById("foodSearch").addEventListener("input", () => setFilter(currentFilter));
+  document.getElementById("foodSearch").addEventListener("input", applyFilters);
 
+  // Load Data
   fetch("/api/foods").then(r => r.json()).then(d => { 
     allFoods = d.foods || []; 
-    setTimeout(() => { renderFoods(allFoods); updateFilters(); }, 800); 
+    setTimeout(() => { applyFilters(); }, 800); 
   });
 
+  // Drawer Animation Logic
   const overlay = document.getElementById("profileOverlay");
   document.getElementById("openProfile").onclick = () => { document.body.classList.add("drawer-open"); overlay.classList.add("active"); loadProfile(); };
   document.getElementById("closeProfile").onclick = () => { document.body.classList.remove("drawer-open"); overlay.classList.remove("active"); };
