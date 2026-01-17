@@ -38,14 +38,17 @@
       overflow-x: hidden;
     }
 
-    /* 3D Content Shrink for Profile Open */
+    /* ===== WORLD CLASS DRAWER ANIMATION ===== */
     #main-wrapper {
-      transition: transform 0.6s var(--spring), filter 0.6s ease;
+      transition: transform 0.6s var(--spring), filter 0.6s ease, border-radius 0.6s ease;
       transform-origin: center right;
+      min-height: 100vh;
     }
+    body.drawer-open { overflow: hidden; }
     body.drawer-open #main-wrapper {
-      transform: scale(0.94) translateX(-30px);
-      filter: blur(8px) brightness(0.5);
+      transform: scale(0.92) translateX(-30px);
+      filter: blur(4px) brightness(0.6);
+      border-radius: 40px;
       pointer-events: none;
     }
 
@@ -66,13 +69,11 @@
     }
     .profile-trigger:hover { transform: scale(1.1) rotate(5deg); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
 
-    /* ===== HERO ===== */
-    .hero { padding: 160px 20px 40px; text-align: center; }
-    .hero h1 { font-size: clamp(40px, 10vw, 72px); font-weight: 800; letter-spacing: -4px; line-height: 1; margin: 0; }
-    .hero p { color: var(--muted); font-size: 18px; margin-top: 20px; font-weight: 500; }
-
-    /* ===== SEARCH ===== */
-    .search-container { max-width: 600px; margin: 40px auto 60px; padding: 0 20px; }
+    /* ===== HERO & FILTERS ===== */
+    .hero { padding: 140px 20px 20px; text-align: center; }
+    .hero h1 { font-size: clamp(36px, 10vw, 68px); font-weight: 800; letter-spacing: -3px; margin: 0; line-height: 0.9; }
+    
+    .search-container { max-width: 600px; margin: 40px auto 30px; padding: 0 20px; }
     .search-wrapper {
       display: flex; align-items: center; background: var(--card); border: 1px solid var(--border);
       padding: 16px 24px; border-radius: 20px; transition: all 0.4s var(--spring);
@@ -80,57 +81,65 @@
     .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); transform: translateY(-2px); }
     .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 16px; width: 100%; margin-left: 12px; font-family: inherit; }
 
-    /* ===== GRID ===== */
+    /* Dynamic Restaurant Filters */
+    .filter-container {
+      max-width: 1300px; margin: 0 auto 40px; padding: 0 25px;
+      display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-container::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      padding: 10px 20px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 50px; font-size: 13px; font-weight: 700; color: var(--muted);
+      cursor: pointer; transition: 0.3s var(--spring); white-space: nowrap;
+    }
+    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+
+    /* ===== GRID & CARDS ===== */
     .container {
       max-width: 1300px; margin: 0 auto 100px; padding: 0 25px;
       display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
     }
 
-    /* ===== FOOD CARD ===== */
     .food-card {
-      background: var(--card); border-radius: 30px; border: 1px solid var(--border);
-      display: flex; flex-direction: column; height: 100%; overflow: hidden;
+      background: var(--card); border-radius: 32px; border: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
       transition: all 0.5s var(--spring); backdrop-filter: blur(15px);
-      animation: cardEntrance 0.6s var(--spring) both;
+      animation: fadeInUp 0.6s var(--spring) both;
     }
-    @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
     .food-card:hover { transform: translateY(-12px); border-color: var(--accent); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-    .card-img-container { width: 100%; height: 220px; overflow: hidden; }
+    .card-img-container { width: 100%; height: 210px; overflow: hidden; }
     .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
     .food-card:hover .card-img { transform: scale(1.1); }
 
     .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-    
-    .tag { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; color: var(--accent); background: var(--accent-glow); margin-bottom: 12px; display: inline-block; }
-    .tag.low-stock { background: rgba(255, 184, 0, 0.15); color: var(--timer-warn); }
+    .tag { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; color: var(--accent); background: var(--accent-glow); }
+    .tag.low-stock { color: var(--timer-warn); background: rgba(255, 184, 0, 0.1); animation: pulse 2s infinite; }
 
     .timer-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--timer-warn); }
     .timer-badge.urgent { color: var(--timer-urgent); animation: pulse 1.5s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-    .food-name { font-size: 22px; font-weight: 800; margin: 5px 0 5px 0; letter-spacing: -0.5px; }
-    .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 25px; display: block; }
+    .food-name { font-size: 22px; font-weight: 800; margin: 12px 0 4px 0; letter-spacing: -0.5px; }
+    .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
 
     .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border); }
-    .price-tag { font-size: 26px; font-weight: 800; }
-    .reserve-btn { background: var(--accent); color: #000; padding: 12px 24px; border-radius: 15px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+    .price-tag { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+    .reserve-btn { background: var(--accent); color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; text-decoration: none; transition: 0.3s; }
 
-    /* ===== DRAWER ===== */
-    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); display: none; justify-content: flex-end; z-index: 2000; }
-    .profile-overlay.active { display: flex; }
-    .profile-drawer { width: 100%; max-width: 440px; background: var(--bg); height: 100%; padding: 40px; border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.5s var(--spring); overflow-y: auto; }
+    /* ===== DRAWER SYSTEM ===== */
+    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; justify-content: flex-end; z-index: 2000; opacity: 0; transition: 0.4s; }
+    .profile-overlay.active { display: flex; opacity: 1; }
+    .profile-drawer { width: 100%; max-width: 440px; background: var(--bg); height: 100%; padding: 40px; border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.6s var(--spring); overflow-y: auto; }
     .profile-overlay.active .profile-drawer { transform: translateX(0); }
     
     .back-btn { background: none; border: none; color: var(--accent); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 30px; font-size: 16px; font-family: inherit; }
 
-    /* ===== FOOTER ===== */
-    .luxury-footer { background: var(--card); border-top: 1px solid var(--border); padding: 80px 5% 40px; margin-top: 80px; }
-    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
-    .contact-pill { display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 18px; border: 1px solid var(--border); text-decoration: none; color: var(--text); margin-bottom: 10px; transition: 0.3s; }
-    .contact-pill:hover { border-color: var(--accent); transform: translateX(8px); }
+    .history-item { padding: 15px; background: var(--card); border-radius: 18px; border: 1px solid var(--border); margin-bottom: 12px; }
 
-    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; height: 400px; border-radius: 30px; }
+    /* ===== SKELETON ===== */
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; height: 420px; border-radius: 32px; }
     @keyframes loadingShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   </style>
 </head>
@@ -146,14 +155,18 @@
 
     <header class="hero">
       <h1>Rescuing <span style="color:var(--accent)">Eats.</span></h1>
-      <p>Elite kitchens, zero waste, golden-hour prices.</p>
+      <p>Elite surplus meals, zero waste, golden-hour prices.</p>
     </header>
 
     <div class="search-container">
       <div class="search-wrapper">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="foodSearch" placeholder="Search dish or restaurant...">
+        <input type="text" id="foodSearch" placeholder="Search dish or kitchen...">
       </div>
+    </div>
+
+    <div class="filter-container" id="restaurantFilters">
+        <div class="filter-chip active">All Kitchens</div>
     </div>
 
     <main class="container" id="foodList">
@@ -162,22 +175,16 @@
         <div class="skeleton"></div>
     </main>
 
-    <footer class="luxury-footer">
-      <div class="footer-grid">
+    <footer class="luxury-footer" style="background:var(--card); border-top:1px solid var(--border); padding:80px 5% 40px; margin-top:80px;">
+      <div class="footer-grid" style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:40px;">
         <div>
           <h2 class="logo">Last Plate</h2>
-          <p style="color:var(--muted); line-height:1.6;">Sustainability never tasted this good. High-quality surplus food from the best venues, delivered at exclusive prices.</p>
+          <p style="color:var(--muted); line-height:1.6; font-size:14px;">Sustainability never tasted this good. High-quality surplus food delivered at exclusive prices.</p>
         </div>
         <div>
-          <h4 style="color:var(--muted); margin-bottom:20px; font-size:12px; letter-spacing:1.5px;">CONTACT HUB</h4>
-          <a href="mailto:terminalplate@gmail.com" class="contact-pill"><b>terminalplate@gmail.com</b></a>
-          <a href="https://instagram.com/a_7hul_" target="_blank" class="contact-pill"><b>@a_7hul_</b></a>
-        </div>
-        <div>
-            <h4 style="color:var(--muted); margin-bottom:20px; font-size:12px; letter-spacing:1.5px;">SUPPORT HOTLINES</h4>
-            <a href="tel:9633890173" class="contact-pill"><b>+91 9633890173</b></a>
-            <a href="tel:7025908832" class="contact-pill"><b>+91 7025908832</b></a>
-            <a href="tel:6282682798" class="contact-pill"><b>+91 6282682798</b></a>
+          <h4 style="color:var(--muted); font-size:12px; letter-spacing:1px; margin-bottom:20px;">CONTACT HUB</h4>
+          <a href="mailto:terminalplate@gmail.com" style="color:var(--text); text-decoration:none; display:block; margin-bottom:10px; font-weight:600;">terminalplate@gmail.com</a>
+          <a href="https://instagram.com/a_7hul_" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:700;">@a_7hul_</a>
         </div>
       </div>
     </footer>
@@ -188,33 +195,33 @@
     <button id="closeProfile" class="back-btn">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5m7 7-7-7 7-7"/></svg> BACK
     </button>
-    
     <h2 style="font-size: 32px; letter-spacing: -1.5px; margin-bottom:40px;">Account</h2>
     
     <div style="background:var(--card); padding:20px; border-radius:20px; border:1px solid var(--border);">
-        <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase;">Verified Collector</label>
-        <p id="p-name" style="font-size:22px; font-weight:700; margin:5px 0 0 0;">Loading...</p>
+        <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase;">User Token</label>
+        <p id="p-name" style="font-size:20px; font-weight:700; margin:5px 0 0 0;">Loading...</p>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:20px; border-radius:20px; margin-top:20px; border:1px solid var(--border);">
-        <span style="font-weight:700">Light Appearance</span>
+        <span style="font-weight:700">Light Mode</span>
         <input type="checkbox" id="themeToggle" style="width:20px; height:20px; cursor:pointer;">
     </div>
 
-    <h3 style="margin-top:40px; font-size:18px;">Recent Activity</h3>
+    <h3 style="margin-top:40px; font-size:18px;">Recent Rescues</h3>
     <div id="history"></div>
 
-    <button onclick="location.href='/logout'" style="width:100%; margin-top:40px; padding:18px; border-radius:18px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);">Secure Logout</button>
+    <button onclick="location.href='/logout'" style="width:100%; margin-top:40px; padding:18px; border-radius:20px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer;">Sign Out</button>
   </div>
 </div>
 
 <script>
   let allFoods = [];
+  let currentFilter = 'all';
 
   function formatTimeLeft(minutes) {
     if (minutes <= 0) return "Pickup Closed";
     const h = Math.floor(minutes / 60); const m = minutes % 60;
-    return h > 0 ? `${h}h ${m}m remaining` : `${m}m remaining`;
+    return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
   }
 
   function getFoodImage(name) {
@@ -222,32 +229,24 @@
     if(n.includes('fahm')) return 'https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg';
     if(n.includes('biry')) return 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000';
     if(n.includes('burger')) return 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000';
-    if(n.includes('pizza')) return 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000';
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
   }
 
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
     if (!foods.length) { 
-        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No matches found.</h2><p>Try searching for something else.</p></div>`; 
+        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>Nothing here tonight.</h2></div>`; 
         return; 
     }
-    
     list.innerHTML = foods.map((f, i) => {
-      const discountPercent = Math.round(((f.mrp - f.price) / f.mrp) * 100);
       const isLowStock = f.available_quantity <= 3;
-      
       return `
-        <article class="food-card" style="animation-delay: ${i * 0.08}s">
-          <div class="card-img-container">
-            <img src="${getFoodImage(f.name)}" class="card-img" alt="${f.name}">
-          </div>
+        <article class="food-card" style="animation-delay: ${i * 0.1}s">
+          <div class="card-img-container"><img src="${getFoodImage(f.name)}" class="card-img"></div>
           <div class="card-body">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span class="tag ${isLowStock ? 'low-stock' : ''}">${isLowStock ? '🔥 ' : ''}${f.available_quantity} LEFT</span>
-                <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">
-                  <span class="countdown" data-id="${f.id}">${formatTimeLeft(f.minutes_left)}</span>
-                </div>
+                <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">${formatTimeLeft(f.minutes_left)}</div>
             </div>
             <h3 class="food-name">${f.name}</h3>
             <span class="rest-name">📍 ${f.restaurant_name}</span>
@@ -264,76 +263,49 @@
     }).join('');
   }
 
-  // Live Timer Ticker
-  setInterval(() => {
-    allFoods.forEach(f => { 
-      if (f.minutes_left > 0) { 
-        f.minutes_left -= 1; 
-        const el = document.querySelector(`.countdown[data-id="${f.id}"]`); 
-        if (el) el.innerText = formatTimeLeft(f.minutes_left); 
-      } 
+  function updateFilters() {
+    const filterBar = document.getElementById("restaurantFilters");
+    const uniqueRest = [...new Set(allFoods.map(f => f.restaurant_name))];
+    let html = `<div class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All Kitchens</div>`;
+    uniqueRest.forEach(r => {
+        html += `<div class="filter-chip ${currentFilter === r ? 'active' : ''}" onclick="setFilter('${r}')">${r}</div>`;
     });
-  }, 60000);
+    filterBar.innerHTML = html;
+  }
 
-  // Initial Fetch
-  fetch("/api/foods")
-    .then(r => r.json())
-    .then(d => { 
-      allFoods = d.foods || []; 
-      setTimeout(() => renderFoods(allFoods), 800); 
-    });
-
-  // Search Implementation
-  document.getElementById("foodSearch").addEventListener("input", (e) => {
-    const q = e.target.value.toLowerCase();
+  function setFilter(name) {
+    currentFilter = name;
+    const q = document.getElementById("foodSearch").value.toLowerCase();
     const filtered = allFoods.filter(f => 
-      f.name.toLowerCase().includes(q) || 
-      f.restaurant_name.toLowerCase().includes(q)
+        (currentFilter === 'all' || f.restaurant_name === currentFilter) &&
+        (f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q))
     );
+    updateFilters();
     renderFoods(filtered);
+  }
+
+  document.getElementById("foodSearch").addEventListener("input", () => setFilter(currentFilter));
+
+  fetch("/api/foods").then(r => r.json()).then(d => { 
+    allFoods = d.foods || []; 
+    setTimeout(() => { renderFoods(allFoods); updateFilters(); }, 800); 
   });
 
   // Drawer Controls
   const overlay = document.getElementById("profileOverlay");
-  const openBtn = document.getElementById("openProfile");
-  const closeBtn = document.getElementById("closeProfile");
-
-  openBtn.onclick = () => { 
-    document.body.classList.add("drawer-open");
-    overlay.classList.add("active");
-    loadProfile(); 
-  };
-
-  closeBtn.onclick = () => { 
-    document.body.classList.remove("drawer-open");
-    overlay.classList.remove("active"); 
-  };
-
-  overlay.onclick = e => { if(e.target === overlay) closeBtn.onclick(); };
+  document.getElementById("openProfile").onclick = () => { document.body.classList.add("drawer-open"); overlay.classList.add("active"); loadProfile(); };
+  document.getElementById("closeProfile").onclick = () => { document.body.classList.remove("drawer-open"); overlay.classList.remove("active"); };
 
   function loadProfile() {
-    fetch("/api/user/profile").then(r => r.json()).then(u => { 
-      document.getElementById("p-name").innerText = u.name || "Collector"; 
-    });
+    fetch("/api/user/profile").then(r => r.json()).then(u => { document.getElementById("p-name").innerText = u.name || "Collector"; });
     fetch("/api/user/orders").then(r => r.json()).then(list => {
-      document.getElementById("history").innerHTML = list.length ? list.map(o => `
-        <div class="history-item">
-            <b>${o.food}</b><br>
-            <span style="font-size:12px; color:var(--muted)">₹${o.total_amount} • ${o.status.toUpperCase()}</span>
-        </div>`).join("") : "<p style='color:var(--muted); margin-top:15px;'>No previous rescues.</p>";
+      document.getElementById("history").innerHTML = list.length ? list.map(o => `<div class="history-item"><b>${o.food}</b><br><small>₹${o.total_amount} • ${o.status}</small></div>`).join("") : "<p>No orders yet.</p>";
     });
   }
 
-  // Theme
-  const themeToggle = document.getElementById("themeToggle");
-  if(localStorage.theme === "light") { 
-    document.body.classList.add("light"); 
-    themeToggle.checked = true; 
-  }
-  themeToggle.onchange = () => { 
-    document.body.classList.toggle("light"); 
-    localStorage.theme = themeToggle.checked ? "light" : "dark"; 
-  };
+  const toggle = document.getElementById("themeToggle");
+  if(localStorage.theme === "light") { document.body.classList.add("light"); toggle.checked = true; }
+  toggle.onchange = () => { document.body.classList.toggle("light"); localStorage.theme = toggle.checked ? "light" : "dark"; };
 </script>
 
 </body>
