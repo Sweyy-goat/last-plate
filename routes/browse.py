@@ -3,7 +3,9 @@ from utils.db import mysql
 import MySQLdb.cursors
 import math
 from datetime import datetime, timedelta
+
 browse_bp = Blueprint("browse", __name__)
+
 @browse_bp.route("/browse-entry")
 def browse_entry():
     if "user_id" not in session:
@@ -11,6 +13,7 @@ def browse_entry():
     if session.get("role") != "user":
         return redirect("/")
     return redirect("/browse")
+
 @browse_bp.route("/browse")
 def browse_page():
     if "user_id" not in session or session.get("role") != "user":
@@ -21,15 +24,17 @@ def browse_page():
 def food_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 1. Manually calculate IST (UTC + 5.5) to ensure accuracy in India
+    # 1. Manually calculate IST (UTC + 5.5) for high accuracy in India
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     current_time_ist = ist_now.strftime('%H:%M:%S')
 
-    # 2. Optimized Query: Fetches mrp and handles cross-midnight windows
+    # 2. Updated Query: Fetches 'r.address' to support the new Location Filter Hub
     query = """
     SELECT 
         f.id, f.name, f.price, f.mrp, f.available_quantity,
-        f.pickup_start, f.pickup_end, r.name AS restaurant_name,
+        f.pickup_start, f.pickup_end, 
+        r.name AS restaurant_name,
+        r.address AS restaurant_address,
         CASE
             WHEN f.pickup_end >= f.pickup_start THEN 
                 TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
@@ -40,8 +45,10 @@ def food_list():
     JOIN restaurants r ON f.restaurant_id = r.id
     WHERE f.is_active = 1 AND f.available_quantity > 0
       AND (
+          -- Standard same-day window
           (f.pickup_start <= f.pickup_end AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
           OR
+          -- Cross-midnight window (e.g., 10 PM to 2 AM)
           (f.pickup_start > f.pickup_end AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
       )
     ORDER BY minutes_left ASC;
@@ -53,26 +60,28 @@ def food_list():
 
     foods = []
     for f in rows:
-        # 3. Pricing Logic
+        # 3. Pricing Logic for "Industry Hit" Standards
         raw_mrp = float(f["mrp"])
         restaurant_discount = float(f["price"])
 
-        # Fallback: If MRP is 0, make it equal to the discount price
+        # Data Sanitization: If MRP is 0, default it to the discounted price
         valid_mrp = raw_mrp if raw_mrp > 0 else restaurant_discount
         
-        # Platform price = (restaurant discounted price + 15% markup)
+        # Platform markup = (restaurant discounted price + 15%)
+        # math.ceil protects your profit margins by rounding up
         platform_price = math.ceil(restaurant_discount * 1.15)
 
-        # Ensure strikethrough is always higher than the platform price for UI appeal
+        # UI Enhancement: Ensure strikethrough is always higher than payment price
         display_mrp = valid_mrp if valid_mrp > platform_price else math.ceil(platform_price * 1.2)
 
         foods.append({
             "id": f["id"],
             "name": f["name"],
-            "price": platform_price,
-            "mrp": display_mrp,
+            "price": platform_price,  # Final price user pays
+            "mrp": display_mrp,       # Real/Adjusted strikethrough price
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
+            "restaurant_address": f["restaurant_address"], # NEW: Passed to frontend
             "minutes_left": max(0, int(f["minutes_left"]))
         })
 
