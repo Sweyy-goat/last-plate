@@ -28,7 +28,7 @@ def food_list():
     # 2. Optimized Query: Fetches mrp and handles cross-midnight windows
     query = """
     SELECT 
-        f.id, f.name, f.price, f.mrp, f.available_quantity,
+        f.id, f.name, f.price, f.mrp, f.available_quantity,r.address as restaurant_address
         f.pickup_start, f.pickup_end, r.name AS restaurant_name,
         CASE
             WHEN f.pickup_end >= f.pickup_start THEN 
