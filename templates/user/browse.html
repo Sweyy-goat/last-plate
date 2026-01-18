@@ -7,137 +7,57 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030406;
-      --card: rgba(17, 20, 27, 0.7);
-      --text: #ffffff;
-      --muted: #8e99a8;
-      --accent: #2ecc71;
-      --accent-glow: rgba(46, 204, 113, 0.25);
-      --border: rgba(255, 255, 255, 0.06);
-      --timer-warn: #ffb800;
-      --timer-urgent: #ff4757;
-      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --bg: #030406; --card: rgba(17, 20, 27, 0.7); --text: #ffffff;
+      --muted: #8e99a8; --accent: #2ecc71; --accent-glow: rgba(46, 204, 113, 0.25);
+      --border: rgba(255, 255, 255, 0.06); --timer-warn: #ffb800;
+      --timer-urgent: #ff4757; --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-
-    body.light {
-      --bg: #f5f7fa;
-      --card: rgba(255, 255, 255, 0.85);
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: rgba(0, 0, 0, 0.08);
-    }
-
+    body.light { --bg: #f5f7fa; --card: rgba(255, 255, 255, 0.85); --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.08); }
     * { box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-    
-    body {
-      margin: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      transition: background 0.5s ease;
-      overflow-x: hidden;
-    }
+    body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: background 0.5s ease; overflow-x: hidden; }
 
-    /* ===== 3D CONTENT SHRINK ===== */
-    #main-wrapper {
-      transition: transform 0.6s var(--spring), filter 0.6s ease, border-radius 0.6s ease;
-      transform-origin: center right;
-      min-height: 100vh;
-    }
+    #main-wrapper { transition: transform 0.6s var(--spring), filter 0.6s ease, border-radius 0.6s ease; transform-origin: center right; min-height: 100vh; }
     body.drawer-open { overflow: hidden; }
-    body.drawer-open #main-wrapper {
-      transform: scale(0.92) translateX(-30px);
-      filter: blur(8px) brightness(0.6);
-      border-radius: 40px;
-      pointer-events: none;
-    }
+    body.drawer-open #main-wrapper { transform: scale(0.92) translateX(-30px); filter: blur(8px) brightness(0.6); border-radius: 40px; pointer-events: none; }
 
-    /* ===== NAVIGATION ===== */
-    .navbar {
-      position: fixed; top: 0; left: 0; right: 0; height: 80px;
-      padding: 0 5%; display: flex; justify-content: space-between; align-items: center;
-      background: rgba(var(--bg), 0.5); backdrop-filter: blur(25px) saturate(180%);
-      border-bottom: 1px solid var(--border); z-index: 1000;
-    }
-
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: 80px; padding: 0 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(var(--bg), 0.5); backdrop-filter: blur(25px) saturate(180%); border-bottom: 1px solid var(--border); z-index: 1000; }
     .logo { font-weight: 800; font-size: 24px; letter-spacing: -1.5px; background: linear-gradient(135deg, #fff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .profile-trigger { width: 44px; height: 44px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.4s var(--spring); }
 
-    .profile-trigger {
-      width: 44px; height: 44px; border-radius: 14px; background: var(--card); border: 1px solid var(--border);
-      color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.4s var(--spring);
-    }
-    .profile-trigger:hover { transform: scale(1.1) rotate(5deg); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-
-    /* ===== HERO & SEARCH ===== */
     .hero { padding: 140px 20px 20px; text-align: center; }
     .hero h1 { font-size: clamp(36px, 10vw, 68px); font-weight: 800; letter-spacing: -3px; margin: 0; line-height: 0.9; }
     
-    .search-container { max-width: 600px; margin: 40px auto 30px; padding: 0 20px; }
-    .search-wrapper {
-      display: flex; align-items: center; background: var(--card); border: 1px solid var(--border);
-      padding: 16px 24px; border-radius: 20px; transition: all 0.4s var(--spring);
-    }
-    .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); transform: translateY(-2px); }
+    .search-container { max-width: 600px; margin: 40px auto 10px; padding: 0 20px; }
+    .search-wrapper { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); padding: 16px 24px; border-radius: 20px; transition: 0.4s var(--spring); }
     .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 16px; width: 100%; margin-left: 12px; font-family: inherit; }
 
-    /* ===== DYNAMIC RESTAURANT CHIPS ===== */
-    .filter-container {
-      max-width: 1300px; margin: 0 auto 40px; padding: 0 25px;
-      display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
-    }
-    .filter-container::-webkit-scrollbar { display: none; }
-    .filter-chip {
-      padding: 10px 20px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 50px; font-size: 13px; font-weight: 700; color: var(--muted);
-      cursor: pointer; transition: 0.3s var(--spring); white-space: nowrap;
-    }
-    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+    /* SMART FILTER HUB */
+    .filter-hub { max-width: 1300px; margin: 0 auto 40px; padding: 0 25px; }
+    .filter-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    
+    .filter-chip { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; transition: 0.3s var(--spring); white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+    .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    
+    #restaurant-sub-row { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 15px; display: none; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ===== GRID & FOOD CARDS ===== */
-    .container {
-      max-width: 1300px; margin: 0 auto 100px; padding: 0 25px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
-    }
-
-    .food-card {
-      background: var(--card); border-radius: 32px; border: 1px solid var(--border);
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: all 0.5s var(--spring); backdrop-filter: blur(15px);
-      animation: fadeInUp 0.6s var(--spring) both;
-    }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-    .food-card:hover { transform: translateY(-12px); border-color: var(--accent); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+    .container { max-width: 1300px; margin: 0 auto 100px; padding: 0 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+    .food-card { background: var(--card); border-radius: 32px; border: 1px solid var(--border); overflow: hidden; transition: 0.5s var(--spring); backdrop-filter: blur(15px); animation: fadeInUp 0.6s var(--spring) both; }
     .card-img-container { width: 100%; height: 210px; overflow: hidden; }
     .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
     .food-card:hover .card-img { transform: scale(1.1); }
-
-    .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-    
+    .card-body { padding: 25px; }
     .tag { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; color: var(--accent); background: var(--accent-glow); }
-    .tag.low-stock { color: var(--timer-warn); background: rgba(255, 184, 0, 0.1); animation: cardPulse 2s infinite; }
-    @keyframes cardPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-    .timer-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--timer-warn); }
-    .timer-badge.urgent { color: var(--timer-urgent); }
-
-    .food-name { font-size: 22px; font-weight: 800; margin: 12px 0 4px 0; letter-spacing: -0.5px; }
-    .rest-name { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
-
-    .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border); }
     .price-tag { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
     .reserve-btn { background: var(--accent); color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; text-decoration: none; transition: 0.3s; }
 
-    /* ===== DRAWER SYSTEM ===== */
-    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; justify-content: flex-end; z-index: 2000; opacity: 0; transition: 0.4s; }
-    .profile-overlay.active { display: flex; opacity: 1; }
+    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; justify-content: flex-end; z-index: 2000; }
+    .profile-overlay.active { display: flex; }
     .profile-drawer { width: 100%; max-width: 440px; background: var(--bg); height: 100%; padding: 40px; border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.6s var(--spring); overflow-y: auto; }
     .profile-overlay.active .profile-drawer { transform: translateX(0); }
-    
-    .back-btn { background: none; border: none; color: var(--accent); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 30px; font-size: 16px; font-family: inherit; }
+    .back-btn { background: none; border: none; color: var(--accent); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 30px; font-size: 16px; }
 
-    /* ===== SKELETON ===== */
     .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; height: 420px; border-radius: 32px; }
     @keyframes loadingShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
   </style>
@@ -160,12 +80,16 @@
     <div class="search-container">
       <div class="search-wrapper">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="foodSearch" placeholder="Crave something specific?">
+        <input type="text" id="foodSearch" placeholder="Search dish or kitchen...">
       </div>
     </div>
 
-    <div class="filter-container" id="restaurantFilters">
-        <div class="filter-chip active" onclick="setFilter('all', this)">All Kitchens</div>
+    <div class="filter-hub">
+        <div class="filter-row" id="location-row">
+            <div class="filter-chip active" id="reset-filter" onclick="resetFilters()">📍 All Kitchens</div>
+        </div>
+        <div class="filter-row" id="restaurant-sub-row">
+            </div>
     </div>
 
     <main class="container" id="foodList">
@@ -173,44 +97,23 @@
         <div class="skeleton"></div>
         <div class="skeleton"></div>
     </main>
-
-    <footer style="background:var(--card); border-top:1px solid var(--border); padding:60px 5%; margin-top:80px; text-align: center;">
-      <h2 class="logo" style="margin-bottom: 20px;">Last Plate</h2>
-      <p style="color:var(--muted); max-width: 600px; margin: 0 auto 30px;">Premium quality surplus food delivered at exclusive prices. Sustainability at your fingertips.</p>
-      <div style="display:flex; justify-content:center; gap:30px;">
-          <a href="mailto:terminalplate@gmail.com" style="color:var(--text); text-decoration:none; font-weight:600;">terminalplate@gmail.com</a>
-          <a href="https://instagram.com/a_7hul_" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:700;">@a_7hul_</a>
-      </div>
-    </footer>
 </div>
 
 <div class="profile-overlay" id="profileOverlay">
   <div class="profile-drawer">
-    <button id="closeProfile" class="back-btn">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5m7 7-7-7 7-7"/></svg> BACK
-    </button>
-    <h2 style="font-size: 32px; letter-spacing: -1.5px; margin-bottom:40px;">Account</h2>
-    
+    <button id="closeProfile" class="back-btn">BACK</button>
+    <h2 style="font-size: 32px; margin-bottom:40px;">Account</h2>
     <div style="background:var(--card); padding:20px; border-radius:20px; border:1px solid var(--border);">
-        <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase;">Verified User</label>
-        <p id="p-name" style="font-size:20px; font-weight:700; margin:5px 0 0 0;">Loading...</p>
+        <p id="p-name" style="font-size:20px; font-weight:700; margin:0;">Loading...</p>
     </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:20px; border-radius:20px; margin-top:20px; border:1px solid var(--border);">
-        <span style="font-weight:700">Light Mode</span>
-        <input type="checkbox" id="themeToggle" style="width:20px; height:20px; cursor:pointer;">
-    </div>
-
-    <h3 style="margin-top:40px; font-size:18px;">Recent Rescues</h3>
-    <div id="history"></div>
-
     <button onclick="location.href='/logout'" style="width:100%; margin-top:40px; padding:18px; border-radius:20px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer;">Sign Out</button>
   </div>
 </div>
 
 <script>
   let allFoods = [];
-  let currentFilter = 'all';
+  let currentLoc = 'all';
+  let currentRest = 'all';
 
   function formatTimeLeft(minutes) {
     if (minutes <= 0) return "Closed";
@@ -218,107 +121,111 @@
     return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
   }
 
-  function getFoodImage(name) {
-    const n = name.toLowerCase();
-    if(n.includes('fahm')) return 'https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg';
-    if(n.includes('biry')) return 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000';
-    if(n.includes('burger')) return 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000';
-    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
-  }
-
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
     if (!foods.length) { 
-        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No plates available.</h2></div>`; 
+        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>Nothing here tonight.</h2></div>`; 
         return; 
     }
-
     list.innerHTML = foods.map((f, i) => {
-      // THE PRICING FIX: Unique calculation per card
-      const originalPrice = parseFloat(f.mrp); // e.g. 288
-      const baseDiscountPrice = parseFloat(f.price); // e.g. 180
-      
-      // Mandatory 15% Markup logic
-      const finalDisplayPrice = Math.ceil(baseDiscountPrice * 1.15);
-      const savePercent = Math.round(((originalPrice - finalDisplayPrice) / originalPrice) * 100);
-      
-      const isLowStock = f.available_quantity <= 3;
-
+      const platformPrice = Math.ceil(parseFloat(f.price) * 1.15);
+      const savePercent = Math.round(((parseFloat(f.mrp) - platformPrice) / parseFloat(f.mrp)) * 100);
       return `
         <article class="food-card" style="animation-delay: ${i * 0.1}s">
-          <div class="card-img-container"><img src="${getFoodImage(f.name)}" class="card-img"></div>
           <div class="card-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="tag ${isLowStock ? 'low-stock' : ''}">
-                   ${savePercent > 0 ? 'SAVE ' + savePercent + '% • ' : ''}${f.available_quantity} LEFT
-                </span>
-                <div class="timer-badge ${f.minutes_left < 30 ? 'urgent' : ''}">${formatTimeLeft(f.minutes_left)}</div>
+                <span class="tag ${f.available_quantity <= 3 ? 'low-stock' : ''}">${savePercent > 0 ? 'SAVE ' + savePercent + '% • ' : ''}${f.available_quantity} LEFT</span>
+                <div style="font-size:12px; font-weight:700; color:var(--timer-warn);">${formatTimeLeft(f.minutes_left)}</div>
             </div>
             <h3 class="food-name">${f.name}</h3>
             <span class="rest-name">📍 ${f.restaurant_name}</span>
             <div class="card-footer">
                 <div class="price-container">
-                  <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${originalPrice}</div>
-                  <div class="price-tag">₹${finalDisplayPrice}</div>
+                  <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
+                  <div class="price-tag">₹${platformPrice}</div>
                 </div>
                 <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
             </div>
           </div>
-        </article>
-      `;
+        </article>`;
     }).join('');
   }
 
-  // Update Dynamic Category Chips
-  function updateFilters() {
-    const filterBar = document.getElementById("restaurantFilters");
-    const uniqueRest = [...new Set(allFoods.map(f => f.restaurant_name))];
-    let html = `<div class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all', this)">All Kitchens</div>`;
-    uniqueRest.forEach(r => {
-        html += `<div class="filter-chip ${currentFilter === r ? 'active' : ''}" onclick="setFilter('${r}', this)">${r}</div>`;
+  function buildLocationBar() {
+    const row = document.getElementById('location-row');
+    const resetBtn = document.getElementById('reset-filter');
+    row.innerHTML = '';
+    row.appendChild(resetBtn);
+
+    // Extract unique addresses from active foods
+    const locations = [...new Set(allFoods.map(f => f.restaurant_address).filter(a => a))];
+    
+    locations.forEach(loc => {
+      const chip = document.createElement('div');
+      chip.className = `filter-chip ${currentLoc === loc ? 'active' : ''}`;
+      chip.innerHTML = `🏢 ${loc}`;
+      chip.onclick = () => selectLocation(loc, chip);
+      row.appendChild(chip);
     });
-    filterBar.innerHTML = html;
   }
 
-  function setFilter(name, element) {
-    currentFilter = name;
-    applyFilters();
+  function selectLocation(loc, element) {
+    currentLoc = loc;
+    currentRest = 'all';
+    document.querySelectorAll('#location-row .filter-chip').forEach(c => c.classList.remove('active'));
+    element.classList.add('active');
+
+    const subRow = document.getElementById('restaurant-sub-row');
+    subRow.style.display = 'flex';
+    subRow.innerHTML = '';
+
+    const restaurantsInLoc = [...new Set(allFoods.filter(f => f.restaurant_address === loc).map(f => f.restaurant_name))];
+    
+    restaurantsInLoc.forEach(name => {
+      const chip = document.createElement('div');
+      chip.className = 'filter-chip';
+      chip.innerHTML = `🍳 ${name}`;
+      chip.onclick = () => {
+        currentRest = name;
+        document.querySelectorAll('#restaurant-sub-row .filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        filterData();
+      };
+      subRow.appendChild(chip);
+    });
+    filterData();
   }
 
-  function applyFilters() {
+  function resetFilters() {
+    currentLoc = 'all';
+    currentRest = 'all';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('reset-filter').classList.add('active');
+    document.getElementById('restaurant-sub-row').style.display = 'none';
+    filterData();
+  }
+
+  function filterData() {
     const q = document.getElementById("foodSearch").value.toLowerCase();
-    const filtered = allFoods.filter(f => 
-        (currentFilter === 'all' || f.restaurant_name === currentFilter) &&
-        (f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q))
-    );
-    updateFilters();
+    const filtered = allFoods.filter(f => {
+      const matchesLoc = currentLoc === 'all' || f.restaurant_address === currentLoc;
+      const matchesRest = currentRest === 'all' || f.restaurant_name === currentRest;
+      const matchesSearch = f.name.toLowerCase().includes(q) || f.restaurant_name.toLowerCase().includes(q);
+      return matchesLoc && matchesRest && matchesSearch;
+    });
     renderFoods(filtered);
   }
 
-  document.getElementById("foodSearch").addEventListener("input", applyFilters);
+  document.getElementById("foodSearch").addEventListener("input", filterData);
 
-  // Load Data
   fetch("/api/foods").then(r => r.json()).then(d => { 
     allFoods = d.foods || []; 
-    setTimeout(() => { applyFilters(); }, 800); 
+    setTimeout(() => { buildLocationBar(); filterData(); }, 800); 
   });
 
-  // Drawer Animation Logic
   const overlay = document.getElementById("profileOverlay");
-  document.getElementById("openProfile").onclick = () => { document.body.classList.add("drawer-open"); overlay.classList.add("active"); loadProfile(); };
+  document.getElementById("openProfile").onclick = () => { document.body.classList.add("drawer-open"); overlay.classList.add("active"); fetch("/api/user/profile").then(r => r.json()).then(u => { document.getElementById("p-name").innerText = u.name; }); };
   document.getElementById("closeProfile").onclick = () => { document.body.classList.remove("drawer-open"); overlay.classList.remove("active"); };
-
-  function loadProfile() {
-    fetch("/api/user/profile").then(r => r.json()).then(u => { document.getElementById("p-name").innerText = u.name || "Collector"; });
-    fetch("/api/user/orders").then(r => r.json()).then(list => {
-      document.getElementById("history").innerHTML = list.length ? list.map(o => `<div class="history-item"><b>${o.food}</b><br><small>₹${o.total_amount} • ${o.status}</small></div>`).join("") : "<p>No orders yet.</p>";
-    });
-  }
-
-  const toggle = document.getElementById("themeToggle");
-  if(localStorage.theme === "light") { document.body.classList.add("light"); toggle.checked = true; }
-  toggle.onchange = () => { document.body.classList.toggle("light"); localStorage.theme = toggle.checked ? "light" : "dark"; };
 </script>
-
 </body>
 </html>
