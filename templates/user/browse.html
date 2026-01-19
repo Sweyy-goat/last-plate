@@ -163,48 +163,37 @@
     document.body.classList.toggle('light');
     localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
   };
-    function resolveDivineImage(name) {
-    const n = name.toLowerCase();
-    const map = {
-        'biryani': 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=1000',
-        'burger': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000',
-        'fahm': 'https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg',
-        'cake': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000',
-        'pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000',
-        'mandhi': 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=1000',
-        'juice': 'https://images.unsplash.com/photo-1536935338218-84247582316c?q=80&w=1000'
-    };
-    for (let key in map) { if (n.includes(key)) return map[key]; }
-    // Luxury Default if no keyword matches
-    return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000';
-  }
 
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
-    list.innerHTML = foods.length ? foods.map((f, i) => `
-        <article class="card" style="animation: slideUp 0.8s var(--spring) ${i*0.1}s both;">
-            <div class="card-img-box">
-                <img src="${resolveDivineImage(f.name)}" class="card-img">
-                <div style="position:absolute; top:30px; left:30px; background:var(--accent); color:#000; padding:6px 15px; border-radius:12px; font-weight:900; font-size:10px;">${f.available_quantity} REMAINING</div>
+    if (!foods.length) { 
+        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No plates available.</h2></div>`; 
+        return; 
+    }
+    list.innerHTML = foods.map(f => {
+      const platformPrice = Math.ceil(f.price);
+      return `
+        <article class="food-card">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000" class="card-img">
+          <div class="card-body">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span class="tag">${f.available_quantity} LEFT</span>
+                <span style="color:var(--timer-warn); font-size:12px; font-weight:700;">${f.minutes_left}m left</span>
             </div>
-            <div class="card-body">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <small style="color:var(--muted); font-weight:800; letter-spacing:1px;">SYNC ID #${f.id}</small>
-                    <small style="color:var(--accent); font-weight:800;">${f.minutes_left}M TO VOID</small>
+            <h3 style="margin:0 0 5px 0;">${f.name}</h3>
+            <div style="color:var(--muted); font-size:13px; margin-bottom:20px;">📍 ${f.restaurant_name}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:15px;">
+                <div>
+                    <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
+                    <div class="price-tag">₹${platformPrice}</div>
                 </div>
-                <h3 style="font-size:28px; font-weight:800; letter-spacing:-2px; margin:15px 0 5px;">${f.name.toUpperCase()}</h3>
-                <div style="color:var(--muted); font-weight:600; font-size:14px; margin-bottom:30px;">📍 ${f.restaurant_name}</div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--border); padding-top:30px;">
-                    <div>
-                        <div style="font-size:14px; opacity:0.3; text-decoration:line-through;">₹${f.mrp}</div>
-                        <div class="price-tag">₹${Math.ceil(f.price)}</div>
-                    </div>
-                    <a href="/checkout/${f.id}" class="reserve-btn">RESCUE</a>
-                </div>
+                <a href="/checkout/${f.id}" class="reserve-btn">Reserve</a>
             </div>
-        </article>`).join('') : `<h2>THE VOID IS SILENT</h2>`;
+          </div>
+        </article>`;
+    }).join('');
   }
-  
+
   function buildLocationFilters() {
     const locRow = document.getElementById('location-row');
     const resetBtn = document.getElementById('reset-btn');
