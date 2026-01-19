@@ -39,13 +39,21 @@
     #restaurant-sub-row { margin-top: 15px; padding: 15px; border-radius: 20px; display: none; background: rgba(255,255,255,0.02); border: 1px dashed var(--border); animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .container { max-width: 1300px; margin: 0 auto 100px; padding: 0 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+    .container { max-width: 1300px; margin: 0 auto 60px; padding: 0 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
     .food-card { background: var(--card); border-radius: 32px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; transition: 0.4s var(--spring); }
     .food-card:hover { transform: translateY(-10px); border-color: var(--accent); }
     .card-img { width: 100%; height: 210px; object-fit: cover; }
     .card-body { padding: 25px; flex-grow: 1; }
     .price-tag { font-size: 26px; font-weight: 800; }
     .reserve-btn { background: var(--accent); color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; text-decoration: none; }
+
+    /* SUPPORT SECTION */
+    .support-sanctuary { max-width: 1200px; margin: 100px auto; padding: 80px 40px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); text-align: center; }
+    .support-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 50px; }
+    .support-pill { padding: 30px; background: rgba(255,255,255,0.02); border-radius: 25px; border: 1px solid var(--border); text-decoration: none; color: inherit; transition: 0.4s var(--spring); display: block; }
+    .support-pill:hover { border-color: var(--accent); transform: translateY(-10px); background: var(--accent-glow); }
+    .support-pill b { display: block; font-size: 18px; margin-bottom: 5px; }
+    .support-pill span { color: var(--muted); font-size: 14px; }
 
     /* DRAWER */
     .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; justify-content: flex-end; z-index: 2000; }
@@ -91,6 +99,29 @@
     <main class="container" id="foodList">
         <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
     </main>
+
+    <section class="support-sanctuary">
+        <h2 style="font-size: 38px; letter-spacing: -1.5px;">The Support Sanctuary</h2>
+        <p style="color:var(--muted); font-size: 16px;">We are here to ensure your rescue mission is flawless.</p>
+        <div class="support-grid">
+            <a href="mailto:terminalplate@gmail.com" class="support-pill">
+                <b>Email Support</b>
+                <span>terminalplate@gmail.com</span>
+            </a>
+            <a href="https://instagram.com/a_7hul_" target="_blank" class="support-pill">
+                <b>Instagram</b>
+                <span>@a_7hul_</span>
+            </a>
+            <a href="tel:9633890173" class="support-pill">
+                <b>Help Hotline</b>
+                <span>+91 9633890173</span>
+            </a>
+        </div>
+    </section>
+
+    <footer style="padding: 60px; text-align: center; color: var(--muted); font-size: 13px; letter-spacing: 2px;">
+        EST. 2024 — RESCUING THE FUTURE
+    </footer>
 </div>
 
 <div class="profile-overlay" id="profileOverlay">
@@ -108,6 +139,9 @@
         <input type="checkbox" id="themeToggle" style="width:20px; height:20px; cursor:pointer;">
     </div>
 
+    <h3 style="margin-top:40px; font-size:18px;">Quick Help</h3>
+    <a href="mailto:terminalplate@gmail.com" style="color:var(--accent); text-decoration:none; font-weight:600; display:block; margin-bottom:10px;">Contact Sanctuary</a>
+
     <h3 style="margin-top:30px; font-size:18px;">Recent Rescues</h3>
     <div id="history"></div>
 
@@ -120,7 +154,6 @@
   let currentLoc = 'all';
   let currentRest = 'all';
 
-  // THEME INITIALIZATION
   const themeToggle = document.getElementById("themeToggle");
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light');
@@ -229,7 +262,6 @@
     applyAllFilters(); 
   });
 
-  // PROFILE LOGIC
   const overlay = document.getElementById("profileOverlay");
   document.getElementById("openProfile").onclick = () => { 
     document.body.classList.add("drawer-open"); 
@@ -242,12 +274,10 @@
   };
 
   async function loadProfileData() {
-    // Fetch Name
     const uRes = await fetch("/api/user/profile");
     const uData = await uRes.json();
     document.getElementById("p-name").innerText = uData.name || "Collector";
 
-    // Fetch History
     const oRes = await fetch("/api/user/orders");
     const oData = await oRes.json();
     const hist = document.getElementById("history");
