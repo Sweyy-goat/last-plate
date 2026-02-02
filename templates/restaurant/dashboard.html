@@ -1,233 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Restaurant Dashboard – Last Plate</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Command | Last Plate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background: #f8fafc;
-      font-family: Inter, system-ui, sans-serif;
-      color: #0f172a;
+    :root {
+      --bg: #020202;
+      --card: rgba(20, 20, 20, 0.6);
+      --accent: #00ffa3;
+      --accent-glow: rgba(0, 255, 163, 0.2);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --text-dim: #888888;
+      --danger: #ff4757;
+      --spring: cubic-bezier(0.15, 0.85, 0.35, 1.2);
+    }
+
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    body { 
+      margin: 0; background: var(--bg); color: var(--text); 
+      font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden;
+    }
+
+    /* ✨ Mesmerizing Background */
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background: radial-gradient(circle at 10% 10%, #111 0%, transparent 40%),
+                  radial-gradient(circle at 90% 90%, #0a0a05 0%, transparent 40%);
+      z-index: -1;
     }
 
     header {
-      padding: 20px;
-      background: #0f172a;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 30px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.3); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
     }
 
-    header h2 {
-      margin: 0;
-    }
+    .logo-area h2 { margin: 0; font-weight: 800; letter-spacing: -1px; font-size: 24px; }
+    .logo-area span { color: var(--accent); }
 
-    header a {
-      background: #22c55e;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
+    .nav-btns { display: flex; gap: 15px; }
+    .btn-main {
+      padding: 12px 24px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; transition: 0.4s var(--spring);
+      display: flex; align-items: center; gap: 8px; border: 1px solid transparent;
     }
+    .btn-primary { background: var(--accent); color: #000; box-shadow: 0 10px 20px var(--accent-glow); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 30px var(--accent-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-    .container {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 0 20px;
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 24px; }
+
+    /* 📊 Quick Stats Bar */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; margin-bottom: 50px;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); padding: 25px;
+      border-radius: 24px; backdrop-filter: blur(10px);
     }
+    .stat-card small { color: var(--text-dim); text-transform: uppercase; font-weight: 800; font-size: 10px; letter-spacing: 1px; }
+    .stat-card div { font-size: 28px; font-weight: 800; margin-top: 5px; color: var(--accent); }
 
-    th, td {
-      padding: 14px;
-      text-align: left;
-      font-size: 14px;
+    /* 🍱 Modern List View */
+    .section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 25px;
     }
+    .section-title h3 { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .live-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite; }
+    
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-    th {
-      background: #f1f5f9;
-      text-transform: uppercase;
-      opacity: 0.7;
+    .food-list { display: grid; gap: 15px; }
+
+    .food-item {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 20px 30px; border-radius: 24px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr;
+      align-items: center; transition: 0.4s;
     }
+    .food-item:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); }
 
-    tr:not(:last-child) {
-      border-bottom: 1px solid #e5e7eb;
-    }
+    .food-info b { font-size: 18px; display: block; margin-bottom: 4px; }
+    .food-info span { color: var(--text-dim); font-size: 13px; font-weight: 500; }
 
-    .status {
-      font-weight: 600;
-      font-size: 13px;
-    }
+    .price-badge { font-weight: 800; font-size: 18px; }
 
-    .active {
-      color: #16a34a;
-    }
-
-    .inactive {
-      color: #dc2626;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .btn-cancel {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .btn-update {
-      background: #e0f2fe;
-      color: #0369a1;
-    }
-
+    .qty-control { display: flex; align-items: center; gap: 10px; }
     .qty-input {
-      width: 60px;
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
+      width: 60px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: #fff; padding: 10px; border-radius: 12px; text-align: center; font-weight: 700;
     }
 
-    .empty {
-      text-align: center;
-      padding: 40px;
-      opacity: 0.6;
+    .status-tag {
+      padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800;
+      text-transform: uppercase; text-align: center; width: fit-content;
+    }
+    .active-tag { background: rgba(0, 255, 163, 0.1); color: var(--accent); border: 1px solid rgba(0, 255, 163, 0.2); }
+    .inactive-tag { background: rgba(255, 71, 87, 0.1); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.2); }
+
+    .action-group { display: flex; gap: 10px; justify-content: flex-end; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-save:hover { background: var(--accent); color: #000; }
+    .btn-del:hover { background: var(--danger); color: #fff; }
+
+    /* 📁 Archive Toggle */
+    .archive-section { margin-top: 60px; opacity: 0.5; transition: 0.5s; }
+    .archive-section.visible { opacity: 1; }
+    .toggle-archive {
+      width: 100%; padding: 20px; background: none; border: 1px dashed var(--border);
+      border-radius: 20px; color: var(--text-dim); cursor: pointer; font-weight: 700;
+      margin-bottom: 30px; transition: 0.3s;
+    }
+    .toggle-archive:hover { color: #fff; border-color: #fff; }
+
+    @media (max-width: 900px) {
+      .food-item { grid-template-columns: 1fr; gap: 20px; text-align: center; }
+      .action-group { justify-content: center; }
+      .qty-control { justify-content: center; }
+      .status-tag { margin: 0 auto; }
     }
   </style>
 </head>
-
 <body>
 
 <header>
-  <h2>Restaurant Dashboard</h2>
-
-  <div style="display:flex; gap:12px;">
-    <a href="/restaurant/verify-otp"
-       style="
-         background:#0ea5e9;
-         color:white;
-         padding:10px 16px;
-         border-radius:10px;
-         text-decoration:none;
-         font-weight:600;
-       ">
-      🔐 Verify Pickup OTP
-    </a>
-
-    <a href="/restaurant/add-food">
-      ➕ Add Food
-    </a>
+  <div class="logo-area">
+    <h2>Last<span>Plate</span> Partner</h2>
+  </div>
+  <div class="nav-btns">
+    <a href="/restaurant/verify-otp" class="btn-main btn-secondary">🔐 Verify OTP</a>
+    <a href="/restaurant/add-food" class="btn-main btn-primary">➕ Add Food</a>
   </div>
 </header>
 
-
 <div class="container">
-  <table>
-    <thead>
-      <tr>
-        <th>Food</th>
-        <th>Price</th>
-        <th>Qty</th>
-        <th>Pickup Window</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="foodTable"></tbody>
-  </table>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <small>Live Plates</small>
+      <div id="stat-live">0</div>
+    </div>
+    <div class="stat-card">
+      <small>Total Rescues</small>
+      <div id="stat-total">0</div>
+    </div>
+    <div class="stat-card" style="border-color: var(--accent);">
+      <small>Revenue (Today)</small>
+      <div id="stat-revenue">₹0</div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h3><span class="live-dot"></span> LIVE LISTINGS</h3>
+  </div>
+  <div class="food-list" id="activeList">
+      </div>
+
+  <div class="archive-section">
+    <button class="toggle-archive" onclick="toggleArchive()">📁 VIEW EXPIRED ARCHIVE</button>
+    <div id="archiveContainer" style="display: none;">
+        <div class="food-list" id="inactiveList"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-function loadFoods() {
-  fetch("/restaurant/api/my-foods")
-    .then(res => res.json())
-    .then(data => {
-      const table = document.getElementById("foodTable");
-      table.innerHTML = "";
+async function loadFoods() {
+  const res = await fetch("/restaurant/api/my-foods");
+  const data = await res.json();
+  
+  const activeList = document.getElementById("activeList");
+  const inactiveList = document.getElementById("inactiveList");
+  
+  activeList.innerHTML = "";
+  inactiveList.innerHTML = "";
 
-      if (!data || data.length === 0) {
-        table.innerHTML = `
-          <tr>
-            <td colspan="6" class="empty">No food added yet</td>
-          </tr>`;
-        return;
-      }
+  let liveCount = 0;
+  let todayRevenue = 0;
 
-      data.forEach(food => {
-        table.innerHTML += `
-          <tr>
-            <td>${food.name}</td>
-            <td>₹${food.price}</td>
-            <td>
-              <input
-                type="number"
-                min="0"
-                value="${food.available_quantity}"
-                class="qty-input"
-                id="qty-${food.id}"
-              >
-            </td>
-            <td>${food.pickup_start} – ${food.pickup_end}</td>
-            <td class="status ${food.is_active ? "active" : "inactive"}">
-              ${food.is_active ? "ACTIVE" : "INACTIVE"}
-            </td>
-            <td>
-              <div class="actions">
-                <button
-                  class="btn btn-update"
-                  onclick="updateQty(${food.id})">
-                  Update
-                </button>
+  if (!data || data.length === 0) {
+    activeList.innerHTML = `<div style="text-align:center; padding:60px; color:var(--text-dim);">No active listings. Start by adding food.</div>`;
+    return;
+  }
 
-                <button
-                  class="btn btn-cancel"
-                  onclick="cancelFood(${food.id})">
-                  Cancel
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      });
-    });
+  data.forEach(food => {
+    const itemHtml = `
+      <div class="food-item">
+        <div class="food-info">
+          <b>${food.name}</b>
+          <span>⏰ ${food.pickup_start} – ${food.pickup_end}</span>
+        </div>
+        <div class="price-badge">₹${food.price}</div>
+        <div class="qty-control">
+          <input type="number" min="0" value="${food.available_quantity}" class="qty-input" id="qty-${food.id}">
+        </div>
+        <div class="status-tag ${food.is_active ? 'active-tag' : 'inactive-tag'}">
+          ${food.is_active ? '● Active' : 'Expired'}
+        </div>
+        <div class="action-group">
+          <button class="icon-btn btn-save" title="Update" onclick="updateQty(${food.id})">💾</button>
+          <button class="icon-btn btn-del" title="Cancel" onclick="cancelFood(${food.id})">✕</button>
+        </div>
+      </div>
+    `;
+
+    if (food.is_active) {
+      activeList.innerHTML += itemHtml;
+      liveCount++;
+      todayRevenue += (food.price * (food.original_quantity - food.available_quantity || 0));
+    } else {
+      inactiveList.innerHTML += itemHtml;
+    }
+  });
+
+  // Update Stats
+  document.getElementById('stat-live').innerText = liveCount;
+  document.getElementById('stat-revenue').innerText = `₹${todayRevenue}`;
+  document.getElementById('stat-total').innerText = data.length;
 }
 
-function updateQty(foodId) {
-  const qty = document.getElementById(`qty-${foodId}`).value;
+function toggleArchive() {
+    const container = document.getElementById('archiveContainer');
+    const btn = document.querySelector('.toggle-archive');
+    if (container.style.display === "none") {
+        container.style.display = "block";
+        btn.innerText = "🔼 HIDE ARCHIVE";
+    } else {
+        container.style.display = "none";
+        btn.innerText = "📁 VIEW EXPIRED ARCHIVE";
+    }
+}
 
-  fetch(`/restaurant/api/update-food-quantity/${foodId}`, {
+async function updateQty(foodId) {
+  const qty = document.getElementById(`qty-${foodId}`).value;
+  await fetch(`/restaurant/api/update-food-quantity/${foodId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ quantity: qty })
-  }).then(() => loadFoods());
+  });
+  loadFoods();
 }
 
-function cancelFood(foodId) {
-  if (!confirm("Cancel this food listing?")) return;
-
-  fetch(`/restaurant/api/cancel-food/${foodId}`, {
-    method: "POST"
-  }).then(() => loadFoods());
+async function cancelFood(foodId) {
+  if (!confirm("Permanently remove this listing from the feed?")) return;
+  await fetch(`/restaurant/api/cancel-food/${foodId}`, { method: "POST" });
+  loadFoods();
 }
 
 loadFoods();
