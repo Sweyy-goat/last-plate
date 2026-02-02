@@ -29,30 +29,33 @@ def food_list():
     current_time_ist = ist_now.strftime('%H:%M:%S')
 
     # 2. Updated Query: Fetches 'r.address' to support the new Location Filter Hub
-    query = """
-    SELECT 
-        f.id, f.name, f.price, f.mrp, f.available_quantity,
-        f.pickup_start, f.pickup_end, 
-        r.name AS restaurant_name,
-        r.address AS restaurant_address,
-        CASE
-            WHEN f.pickup_end >= f.pickup_start THEN 
-                TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
-            ELSE
-                TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), ADDTIME(f.pickup_end, '24:00:00'))
-        END AS minutes_left
-    FROM foods f
-    JOIN restaurants r ON f.restaurant_id = r.id
-    WHERE f.is_active = 1 AND f.available_quantity > 0
-      AND (
-          -- Standard same-day window
-          (f.pickup_start <= f.pickup_end AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
-          OR
-          -- Cross-midnight window (e.g., 10 PM to 2 AM)
-          (f.pickup_start > f.pickup_end AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
-      )
-    ORDER BY minutes_left ASC;
-    """
+query = """
+SELECT 
+    f.id, f.name, f.price, f.mrp, f.available_quantity,
+    f.pickup_start, f.pickup_end, 
+    r.name AS restaurant_name,
+    r.address AS restaurant_address,
+    CASE
+        WHEN f.pickup_end >= f.pickup_start THEN 
+            TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
+        ELSE
+            TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), ADDTIME(f.pickup_end, '24:00:00'))
+    END AS minutes_left
+FROM foods f
+JOIN restaurants r ON f.restaurant_id = r.id
+WHERE f.is_active = 1 
+  AND f.available_quantity > 0
+  AND DATE(f.created_at) = DATE(%s)   -- ⭐ NEW: Only today’s food
+  AND (
+      (f.pickup_start <= f.pickup_end 
+        AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
+      OR
+      (f.pickup_start > f.pickup_end 
+        AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
+  )
+ORDER BY minutes_left ASC;
+"""
+
 
     cur.execute(query, (current_time_ist, current_time_ist, current_time_ist, current_time_ist, current_time_ist))
     rows = cur.fetchall()
