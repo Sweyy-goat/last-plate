@@ -24,67 +24,66 @@ def browse_page():
 def food_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 1. Manually calculate IST (UTC + 5.5) for high accuracy in India
+    # IST time
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     current_time_ist = ist_now.strftime('%H:%M:%S')
+    today_ist = ist_now.date()
 
-    # 2. Updated Query: Fetches 'r.address' to support the new Location Filter Hub
-query = """
-SELECT 
-    f.id, f.name, f.price, f.mrp, f.available_quantity,
-    f.pickup_start, f.pickup_end, 
-    r.name AS restaurant_name,
-    r.address AS restaurant_address,
-    CASE
-        WHEN f.pickup_end >= f.pickup_start THEN 
-            TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
-        ELSE
-            TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), ADDTIME(f.pickup_end, '24:00:00'))
-    END AS minutes_left
-FROM foods f
-JOIN restaurants r ON f.restaurant_id = r.id
-WHERE f.is_active = 1 
-  AND f.available_quantity > 0
-  AND DATE(f.created_at) = DATE(%s)   -- ⭐ NEW: Only today’s food
-  AND (
-      (f.pickup_start <= f.pickup_end 
-        AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
-      OR
-      (f.pickup_start > f.pickup_end 
-        AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
-  )
-ORDER BY minutes_left ASC;
-"""
+    query = """
+    SELECT 
+        f.id, f.name, f.price, f.mrp, f.available_quantity,
+        f.pickup_start, f.pickup_end, 
+        r.name AS restaurant_name,
+        r.address AS restaurant_address,
+        CASE
+            WHEN f.pickup_end >= f.pickup_start THEN 
+                TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
+            ELSE
+                TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), ADDTIME(f.pickup_end, '24:00:00'))
+        END AS minutes_left
+    FROM foods f
+    JOIN restaurants r ON f.restaurant_id = r.id
+    WHERE f.is_active = 1 
+      AND f.available_quantity > 0
+      AND DATE(f.created_at) = %s
+      AND (
+          (f.pickup_start <= f.pickup_end AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
+          OR
+          (f.pickup_start > f.pickup_end AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
+      )
+    ORDER BY minutes_left ASC;
+    """
 
+    # ⭐ CORRECTED INDENTATION BELOW ⭐
+    cur.execute(query, (
+        current_time_ist,
+        current_time_ist,
+        today_ist,
+        current_time_ist,
+        current_time_ist,
+        current_time_ist
+    ))
 
-    cur.execute(query, (current_time_ist, current_time_ist, current_time_ist, current_time_ist, current_time_ist))
     rows = cur.fetchall()
     cur.close()
 
     foods = []
     for f in rows:
-        # 3. Pricing Logic for "Industry Hit" Standards
         raw_mrp = float(f["mrp"])
         restaurant_discount = float(f["price"])
-
-        # Data Sanitization: If MRP is 0, default it to the discounted price
         valid_mrp = raw_mrp if raw_mrp > 0 else restaurant_discount
         
-        # Platform markup = (restaurant discounted price + 15%)
-        # math.ceil protects your profit margins by rounding up
         platform_price = math.ceil(restaurant_discount * 1.15)
-
-        # UI Enhancement: Ensure strikethrough is always higher than payment price
         display_mrp = valid_mrp if valid_mrp > platform_price else math.ceil(platform_price * 1.2)
 
         foods.append({
             "id": f["id"],
             "name": f["name"],
-            "price": platform_price,  # Final price user pays
-            "mrp": display_mrp,       # Real/Adjusted strikethrough price
+            "price": platform_price,
+            "mrp": display_mrp,
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
-            "restaurant_address": f["restaurant_address"], # NEW: Passed to frontend
+            "restaurant_address": f["restaurant_address"],
             "minutes_left": max(0, int(f["minutes_left"]))
         })
 
