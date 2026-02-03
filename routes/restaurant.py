@@ -46,19 +46,20 @@ def add_food():
 
     cur = mysql.connection.cursor()
     cur.execute("""
-        INSERT INTO foods
-        (restaurant_id, name, original_price, price,
-         available_quantity, pickup_start, pickup_end, is_active)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,1)
-    """, (
-        restaurant_id,
-        data["name"],
-        original_price,
-        price,
-        quantity,
-        data["pickup_start"],
-        data["pickup_end"]
-    ))
+    INSERT INTO foods
+    (restaurant_id, name, original_price, price,
+     available_quantity, pickup_start, pickup_end, is_active, created_at)
+    VALUES (%s,%s,%s,%s,%s,%s,%s,1, NOW())
+""", (
+    restaurant_id,
+    data["name"],
+    original_price,
+    price,
+    quantity,
+    data["pickup_start"],
+    data["pickup_end"]
+))
+
     mysql.connection.commit()
 
     return jsonify({"success": True})
