@@ -1,3 +1,4 @@
+# browse.py
 from flask import Blueprint, render_template, session, redirect, jsonify
 from utils.db import mysql
 import MySQLdb.cursors
@@ -22,17 +23,17 @@ def browse_page():
 
 @browse_bp.route("/api/foods")
 def food_list():
+
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # IST time
+    # Convert UTC → IST
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     current_time_ist = ist_now.strftime('%H:%M:%S')
-    today_ist = ist_now.date()
 
     query = """
     SELECT 
         f.id, f.name, f.price, f.mrp, f.available_quantity,
-        f.pickup_start, f.pickup_end, 
+        f.pickup_start, f.pickup_end,
         r.name AS restaurant_name,
         r.address AS restaurant_address,
         CASE
@@ -43,22 +44,21 @@ def food_list():
         END AS minutes_left
     FROM foods f
     JOIN restaurants r ON f.restaurant_id = r.id
-    WHERE f.is_active = 1 
+    WHERE f.is_active = 1
       AND f.available_quantity > 0
-      AND DATE(f.created_at) = %s
       AND (
           (f.pickup_start <= f.pickup_end AND CAST(%s AS TIME) BETWEEN f.pickup_start AND f.pickup_end)
           OR
-          (f.pickup_start > f.pickup_end AND (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end))
+          (f.pickup_start > f.pickup_end AND 
+                (CAST(%s AS TIME) >= f.pickup_start OR CAST(%s AS TIME) <= f.pickup_end)
+          )
       )
     ORDER BY minutes_left ASC;
     """
 
-    # ⭐ CORRECTED INDENTATION BELOW ⭐
     cur.execute(query, (
         current_time_ist,
         current_time_ist,
-        today_ist,
         current_time_ist,
         current_time_ist,
         current_time_ist
@@ -72,7 +72,7 @@ def food_list():
         raw_mrp = float(f["mrp"])
         restaurant_discount = float(f["price"])
         valid_mrp = raw_mrp if raw_mrp > 0 else restaurant_discount
-        
+
         platform_price = math.ceil(restaurant_discount * 1.15)
         display_mrp = valid_mrp if valid_mrp > platform_price else math.ceil(platform_price * 1.2)
 
@@ -88,3 +88,4 @@ def food_list():
         })
 
     return jsonify({"foods": foods})
+
