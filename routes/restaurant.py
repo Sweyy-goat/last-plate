@@ -40,14 +40,6 @@ def send_otp():
 # -----------------------------
 # VERIFY OTP PAGE (STEP 3)
 # -----------------------------
-@restaurant_bp.route("/verify-otp", methods=["GET"])
-def verify_otp_page():
-    return render_template("restaurant/verify_otp.html")
-
-
-# -----------------------------
-# VERIFY OTP API (STEP 4)
-# -----------------------------
 @restaurant_bp.route("/api/verify-otp", methods=["POST"])
 def verify_pickup_otp():
     otp = request.json.get("otp")
