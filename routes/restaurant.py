@@ -49,36 +49,50 @@ def verify_otp_page():
 # VERIFY OTP API (STEP 4)
 # -----------------------------
 @restaurant_bp.route("/api/verify-otp", methods=["POST"])
-def verify_otp():
-    user_otp = request.json.get("otp")
+def verify_pickup_otp():
+    otp = request.json.get("otp")
 
-    if str(user_otp) != str(session.get("otp")):
-        return jsonify({"success": False, "error": "Invalid OTP"}), 400
-
-    phone = session.get("otp_mobile")
+    if not otp:
+        return jsonify({"success": False, "error": "OTP required"}), 400
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # Check if restaurant already exists
-    cur.execute("SELECT id FROM restaurants WHERE mobile=%s", (phone,))
-    row = cur.fetchone()
+    # 1. Find order with this OTP and restaurant
+    cur.execute("""
+        SELECT 
+            id AS order_id,
+            food_id,
+            quantity,
+            user_id
+        FROM orders
+        WHERE pickup_otp = %s
+          AND status = 'PENDING'
+          AND picked_up = 0
+        LIMIT 1
+    """, (otp,))
 
-    if not row:
-        # Create new restaurant
-        cur.execute("""
-            INSERT INTO restaurants (name, mobile, is_active)
-            VALUES (%s, %s, 1)
-        """, ("Restaurant", phone))
-        mysql.connection.commit()
-        restaurant_id = cur.lastrowid
-    else:
-        restaurant_id = row["id"]
+    order = cur.fetchone()
 
-    # LOGIN SUCCESS
-    session["restaurant_id"] = restaurant_id
-    session["role"] = "restaurant"
+    if not order:
+        return jsonify({"success": False, "error": "Invalid or already used OTP"}), 400
 
-    return jsonify({"success": True})
+    order_id = order["order_id"]
+
+    # 2. Mark order as completed & invalidate OTP
+    cur.execute("""
+        UPDATE orders
+        SET status = 'COMPLETED',
+            pickup_otp = NULL,
+            picked_up = 1
+        WHERE id = %s
+    """, (order_id,))
+    mysql.connection.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Pickup verified successfully",
+        "order_id": order_id
+    })
 
 
 # -----------------------------
