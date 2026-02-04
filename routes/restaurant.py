@@ -57,7 +57,7 @@ def verify_pickup_otp():
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # 1. Find order with this OTP and restaurant
+    # FIXED: USE status = CONFIRMED
     cur.execute("""
         SELECT 
             id AS order_id,
@@ -66,7 +66,7 @@ def verify_pickup_otp():
             user_id
         FROM orders
         WHERE pickup_otp = %s
-          AND status = 'PENDING'
+          AND status = 'CONFIRMED'
           AND picked_up = 0
         LIMIT 1
     """, (otp,))
@@ -78,21 +78,22 @@ def verify_pickup_otp():
 
     order_id = order["order_id"]
 
-    # 2. Mark order as completed & invalidate OTP
+    # Mark order as picked up + invalidate OTP
     cur.execute("""
         UPDATE orders
-        SET status = 'COMPLETED',
+        SET picked_up = 1,
             pickup_otp = NULL,
-            picked_up = 1
+            status = 'COMPLETED'
         WHERE id = %s
     """, (order_id,))
     mysql.connection.commit()
 
     return jsonify({
         "success": True,
-        "message": "Pickup verified successfully",
+        "message": "Order pickup verified successfully",
         "order_id": order_id
     })
+
 
 
 # -----------------------------
