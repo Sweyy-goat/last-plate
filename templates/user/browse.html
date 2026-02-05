@@ -190,43 +190,69 @@
   };
 
   // DYNAMIC IMAGE LOGIC
-  function getFoodImage(foodName) {
+  // DYNAMIC IMAGE LOGIC — FINAL FIXED VERSION
+function getFoodImage(foodName) {
     const query = encodeURIComponent(foodName.toLowerCase());
-    return `https://source.unsplash.com/featured/800x600?${query},food,meal`;
-  }
+    const seed = Math.floor(Math.random() * 999999);  
+    return `https://source.unsplash.com/featured/800x600?${query},indian,authentic,restaurant,food,meal&sig=${seed}`;
+}
 
-  // RENDER CARDS
-  function renderFoods(foods) {
+// RENDER CARDS — FIXED IMAGE VERSION
+function renderFoods(foods) {
     const list = document.getElementById("foodList");
-    if (!foods.length) { 
-        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);"><h2>No plates available.</h2></div>`; 
-        return; 
+
+    if (!foods.length) {
+        list.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--muted);">
+                <h2>No plates available.</h2>
+            </div>`;
+        return;
     }
+
     list.innerHTML = foods.map(f => {
-      const platformPrice = Math.ceil(f.price);
-      const foodImg = getFoodImage(f.name);
-      return `
+        const platformPrice = Math.ceil(f.price);
+        const foodImg = getFoodImage(f.name);
+
+        return `
         <article class="food-card" onclick="openFoodModal(${JSON.stringify(f).replace(/"/g, '&quot;')})">
           <img src="${foodImg}" class="card-img" loading="lazy">
+
           <div class="card-body">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span style="color:var(--accent); font-weight:800; font-size:12px;">${f.available_quantity} LEFT</span>
-                <span style="color:var(--timer-warn); font-size:12px; font-weight:700;">${f.minutes_left}m left</span>
+                <span style="color:var(--accent); font-weight:800; font-size:12px;">
+                  ${f.available_quantity} LEFT
+                </span>
+                <span style="color:var(--timer-warn); font-size:12px; font-weight:700;">
+                  ${f.minutes_left}m left
+                </span>
             </div>
+
             <h3 style="margin:0 0 5px 0;">${f.name}</h3>
-            <div style="color:var(--muted); font-size:13px; margin-bottom:20px;">📍 ${f.restaurant_name}</div>
+            <div style="color:var(--muted); font-size:13px; margin-bottom:20px;">
+                📍 ${f.restaurant_name}
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:15px;">
                 <div>
-                    <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
+                    <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">
+                        ₹${f.mrp}
+                    </div>
                     <div class="price-tag">₹${platformPrice}</div>
                 </div>
-                <a href="/checkout/${f.id}" class="reserve-btn" onclick="event.stopPropagation()">Reserve</a>
+                <a href="/checkout/${f.id}"
+                   class="reserve-btn"
+                   onclick="event.stopPropagation()">
+                   Reserve
+                </a>
             </div>
           </div>
         </article>`;
     }).join('');
-  }
+}
 
+
+  // RENDER CARDS
+ 
   // MODAL FUNCTIONS
   function openFoodModal(food) {
     const modal = document.getElementById("foodModal");
