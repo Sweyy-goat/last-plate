@@ -192,9 +192,36 @@
   // DYNAMIC IMAGE LOGIC
   // DYNAMIC IMAGE LOGIC — FINAL FIXED VERSION
 function getFoodImage(foodName) {
-    const query = encodeURIComponent(foodName.toLowerCase());
-    return `https://loremflickr.com/800/600/${query},food,indian`;
+    const n = foodName.toLowerCase();
+
+    // BIRIYANI
+    if (n.includes("biriyani") || n.includes("briyani") || n.includes("biryani"))
+        return "https://www.apnachef.com/wp-content/uploads/2023/12/chicken-biryani-50-people-wide.jpg";
+
+    // MANDHI
+    if (n.includes("mandhi") || n.includes("mandi") || n.includes("mandy"))
+        return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
+
+    // POROTTA
+    if (n.includes("porotta") || n.includes("parotta") || n.includes("barotta"))
+        return "https://images.unsplash.com/photo-1628294897771-b7b6c75d1e33?auto=format&fit=crop&w=900&q=80";
+
+    // CHAPATI / ROTI
+    if (n.includes("chapati") || n.includes("chappati") || n.includes("roti"))
+        return "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80";
+
+    // AL FAHM
+    if (n.includes("al fahm") || n.includes("fahm") || n.includes("alfaham"))
+        return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg/photos/4x3/photo.jpg";
+
+    // RIBS
+    if (n.includes("ribs"))
+        return "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80";
+
+    // FALLBACK RANDOM FOOD IMG
+    return "https://loremflickr.com/800/600/food,india";
 }
+
 
 
 // RENDER CARDS — FIXED IMAGE VERSION
