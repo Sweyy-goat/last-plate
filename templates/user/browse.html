@@ -193,9 +193,9 @@
   // DYNAMIC IMAGE LOGIC — FINAL FIXED VERSION
 function getFoodImage(foodName) {
     const query = encodeURIComponent(foodName.toLowerCase());
-    const seed = Math.floor(Math.random() * 999999);  
-    return `https://source.unsplash.com/featured/800x600?${query},indian,authentic,restaurant,food,meal&sig=${seed}`;
+    return `https://loremflickr.com/800/600/${query},food,indian`;
 }
+
 
 // RENDER CARDS — FIXED IMAGE VERSION
 function renderFoods(foods) {
