@@ -44,50 +44,48 @@ def send_otp():
 def verify_otp_page():
     return render_template("restaurant/verify_otp.html")
 
+# 1. Verification Route (Only checks and returns info)
 @restaurant_bp.route("/api/verify-otp", methods=["POST"])
 def verify_pickup_otp():
     otp = request.json.get("otp")
-    if not otp:
-        return jsonify({"success": False, "error": "OTP required"}), 400
-
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
+    
     cur.execute("""
-        SELECT 
-            o.id AS order_id,
-            o.quantity,
-            u.name AS customer_name,
-            f.name AS food_name
+        SELECT o.id, o.quantity, u.name as customer_name, f.name as food_name
         FROM orders o
         JOIN users u ON o.user_id = u.id
         JOIN foods f ON o.food_id = f.id
-        WHERE o.pickup_otp = %s
-          AND o.status = 'CONFIRMED'
-          AND o.picked_up = 0
+        WHERE o.pickup_otp = %s AND o.status = 'CONFIRMED' AND o.picked_up = 0
         LIMIT 1
     """, (otp,))
-
     order = cur.fetchone()
 
     if not order:
-        return jsonify({"success": False, "error": "Invalid or already used OTP"}), 400
-
-    # Mark as picked up
-    cur.execute("""
-        UPDATE orders
-        SET picked_up = 1,
-            pickup_otp = NULL
-        WHERE id = %s
-    """, (order["order_id"],))
-    mysql.connection.commit()
+        return jsonify({"success": False, "error": "Invalid or expired OTP"}), 400
 
     return jsonify({
         "success": True,
-        "order_id": order["order_id"],
+        "order_id": order["id"],
         "food": order["food_name"],
         "quantity": order["quantity"],
         "customer": order["customer_name"]
     })
+
+# 2. Final Handover Route (Updates the DB)
+@restaurant_bp.route("/api/complete-order", methods=["POST"])
+def complete_order():
+    order_id = request.json.get("order_id")
+    cur = mysql.connection.cursor()
+    
+    # Mark as picked up and clear the OTP so it can't be reused
+    cur.execute("""
+        UPDATE orders 
+        SET picked_up = 1, pickup_otp = NULL 
+        WHERE id = %s
+    """, (order_id,))
+    
+    mysql.connection.commit()
+    return jsonify({"success": True})
 
 # -----------------------------
 # DASHBOARD
