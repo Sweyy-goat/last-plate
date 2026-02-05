@@ -7,157 +7,69 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030406; 
-      --card: rgba(17, 20, 27, 0.6); 
-      --text: #ffffff;
-      --muted: #8e99a8; 
-      --accent: #2ecc71; 
-      --accent-glow: rgba(46, 204, 113, 0.15);
-      --border: rgba(255, 255, 255, 0.08); 
-      --timer-warn: #ffb800;
-      --timer-urgent: #ff4757; 
-      --spring: cubic-bezier(0.2, 1, 0.3, 1);
+      --bg: #030406; --card: rgba(17, 20, 27, 0.6); --text: #ffffff;
+      --muted: #8e99a8; --accent: #2ecc71; --accent-glow: rgba(46, 204, 113, 0.15);
+      --border: rgba(255, 255, 255, 0.08); --timer-warn: #ffb800;
+      --timer-urgent: #ff4757; --spring: cubic-bezier(0.2, 1, 0.3, 1);
     }
-
-    body.light { 
-      --bg: #f8fafc; 
-      --card: rgba(255, 255, 255, 0.8); 
-      --text: #0f172a; 
-      --muted: #64748b; 
-      --border: rgba(0, 0, 0, 0.05); 
-    }
-
+    body.light { --bg: #f8fafc; --card: rgba(255, 255, 255, 0.85); --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.06); }
+    
     * { box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-    
-    body { 
-      margin: 0; 
-      font-family: 'Plus Jakarta Sans', sans-serif; 
-      background: var(--bg); 
-      color: var(--text); 
-      transition: background 0.5s ease; 
-      overflow-x: hidden; 
-    }
+    body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: background 0.5s ease; overflow-x: hidden; }
 
-    /* --- GOD LEVEL WRAPPER --- */
-    #main-wrapper { 
-      transition: transform 0.8s var(--spring), filter 0.8s ease, border-radius 0.8s ease; 
-      transform-origin: center right; 
-      min-height: 100vh; 
-      background: radial-gradient(circle at top right, rgba(46, 204, 113, 0.05), transparent 400px);
-    }
-    
-    body.drawer-open #main-wrapper { 
-      transform: scale(0.9) translateX(-40px); 
-      filter: blur(8px) brightness(0.5); 
-      border-radius: 50px; 
-      pointer-events: none; 
-    }
+    /* Main Wrapper Animation */
+    #main-wrapper { transition: transform 0.8s var(--spring), filter 0.8s ease, border-radius 0.8s ease; transform-origin: center right; min-height: 100vh; }
+    body.drawer-open { overflow: hidden; }
+    body.drawer-open #main-wrapper { transform: scale(0.9) translateX(-40px); filter: blur(10px) brightness(0.5); border-radius: 50px; pointer-events: none; }
 
-    /* --- NAV & HERO --- */
-    .navbar { 
-      position: fixed; top: 0; left: 0; right: 0; height: 90px; padding: 0 6%; 
-      display: flex; justify-content: space-between; align-items: center; 
-      background: rgba(var(--bg), 0.2); backdrop-filter: blur(30px); 
-      border-bottom: 1px solid var(--border); z-index: 1000; 
-    }
-    .logo { 
-      font-weight: 800; font-size: 26px; letter-spacing: -1.5px; 
-      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%); 
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-    }
+    /* Navbar */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: 90px; padding: 0 6%; display: flex; justify-content: space-between; align-items: center; background: rgba(var(--bg), 0.2); backdrop-filter: blur(30px); border-bottom: 1px solid var(--border); z-index: 1000; }
+    .logo { font-weight: 800; font-size: 26px; letter-spacing: -1.5px; background: linear-gradient(135deg, #fff 30%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
+    /* Hero & Search */
     .hero { padding: 160px 20px 40px; text-align: center; }
     .hero h1 { font-size: clamp(40px, 12vw, 84px); font-weight: 800; letter-spacing: -4px; margin: 0; line-height: 0.9; }
-
-    /* --- FILTERS --- */
     .search-container { max-width: 650px; margin: 20px auto 40px; padding: 0 20px; }
-    .search-wrapper { 
-      display: flex; align-items: center; background: var(--card); 
-      border: 1px solid var(--border); padding: 18px 28px; border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2); transition: 0.3s;
-    }
-    .search-wrapper:focus-within { border-color: var(--accent); transform: translateY(-2px); }
+    .search-wrapper { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); padding: 18px 28px; border-radius: 24px; transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .search-wrapper input { background: transparent; border: none; color: var(--text); font-size: 17px; width: 100%; margin-left: 15px; }
 
+    /* Filters */
     .filter-hub { max-width: 1300px; margin: 0 auto 50px; padding: 0 25px; }
     .filter-row { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; }
-    .filter-chip { 
-      padding: 12px 26px; background: var(--card); border: 1px solid var(--border); 
-      border-radius: 18px; font-size: 14px; font-weight: 700; color: var(--muted); 
-      cursor: pointer; transition: 0.4s var(--spring); white-space: nowrap; 
-    }
-    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip { padding: 12px 26px; background: var(--card); border: 1px solid var(--border); border-radius: 18px; font-size: 14px; font-weight: 700; color: var(--muted); cursor: pointer; transition: 0.4s var(--spring); white-space: nowrap; }
     .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 10px 20px var(--accent-glow); }
 
-    /* --- GOD LEVEL FOOD CARDS --- */
-    .container { 
-      max-width: 1300px; margin: 0 auto 80px; padding: 0 25px; 
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 35px; 
-    }
-    .food-card { 
-      background: var(--card); border-radius: 38px; border: 1px solid var(--border); 
-      overflow: hidden; display: flex; flex-direction: column; 
-      transition: 0.5s var(--spring); cursor: pointer; position: relative;
-      backdrop-filter: blur(10px);
-    }
-    .food-card:hover { 
-      transform: translateY(-12px) scale(1.02); 
-      border-color: rgba(46, 204, 113, 0.4); 
-      box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
-    }
+    /* God-Level Cards */
+    .container { max-width: 1300px; margin: 0 auto 80px; padding: 0 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 35px; }
+    .food-card { background: var(--card); border-radius: 38px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; transition: 0.5s var(--spring); cursor: pointer; position: relative; backdrop-filter: blur(10px); }
+    .food-card:hover { transform: translateY(-12px) scale(1.02); border-color: rgba(46, 204, 113, 0.4); box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow); }
     .card-img-wrapper { position: relative; width: 100%; height: 240px; overflow: hidden; }
     .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s var(--spring); }
     .food-card:hover .card-img { transform: scale(1.1); }
     
-    .status-badge {
-      position: absolute; top: 20px; left: 20px; right: 20px;
-      display: flex; justify-content: space-between; z-index: 2;
-    }
-    .badge-pill { 
-      padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; 
-      backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
-    }
-    .badge-qty { background: rgba(46, 204, 113, 0.8); color: #000; }
+    .status-badge { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 2; }
+    .badge-pill { padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    .badge-qty { background: var(--accent); color: #000; }
     .badge-time { background: rgba(0, 0, 0, 0.6); color: #fff; }
 
     .card-body { padding: 30px; flex-grow: 1; }
-    .card-body h3 { font-size: 24px; margin: 0 0 8px 0; letter-spacing: -0.5px; }
-    
-    .price-section { 
-      display: flex; justify-content: space-between; align-items: flex-end; 
-      margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);
-    }
     .price-tag { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
-    .reserve-btn { 
-      background: var(--accent); color: #000; padding: 14px 28px; 
-      border-radius: 20px; font-weight: 800; text-decoration: none; 
-      transition: 0.3s; box-shadow: 0 10px 20px var(--accent-glow);
-    }
-    .reserve-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+    .reserve-btn { background: var(--accent); color: #000; padding: 14px 28px; border-radius: 20px; font-weight: 800; text-decoration: none; transition: 0.3s; }
 
-    /* --- MODALS & PROFILE --- */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
-    .modal-overlay.active { display: flex; }
-    .modal-content { 
-      background: var(--bg); width: 100%; max-width: 520px; border-radius: 40px; 
-      border: 1px solid var(--border); overflow: hidden; position: relative; 
-      animation: modalPop 0.6s var(--spring); 
-    }
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { background: var(--bg); width: 100%; max-width: 520px; border-radius: 40px; border: 1px solid var(--border); overflow: hidden; position: relative; animation: modalPop 0.6s var(--spring); }
     @keyframes modalPop { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    .profile-drawer { 
-      width: 100%; max-width: 460px; background: var(--bg); height: 100%; 
-      padding: 50px; border-left: 1px solid var(--border); transform: translateX(100%); 
-      transition: 0.6s var(--spring); overflow-y: auto; box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-    }
+    /* Profile Drawer */
+    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; justify-content: flex-end; z-index: 2000; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.5s ease; }
+    .profile-overlay.active { display: flex; opacity: 1; }
+    .profile-drawer { width: 100%; max-width: 460px; background: var(--bg); height: 100%; padding: 50px; border-left: 1px solid var(--border); transform: translateX(100%); transition: 0.6s var(--spring); overflow-y: auto; }
     .profile-overlay.active .profile-drawer { transform: translateX(0); }
 
-    .skeleton { height: 450px; background: var(--card); border-radius: 38px; animation: pulse 1.5s infinite; border: 1px solid var(--border); }
+    .skeleton { height: 450px; background: var(--card); border-radius: 38px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 50% { opacity: 0.4; } }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
   </style>
 </head>
 <body>
@@ -176,7 +88,6 @@
 
     <div class="search-container">
       <div class="search-wrapper">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="3"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" id="foodSearch" placeholder="Cravings? Search here...">
       </div>
     </div>
@@ -185,8 +96,8 @@
         <div class="filter-row" id="location-row">
             <div class="filter-chip active" id="reset-btn" onclick="resetFilters()">📍 All Kitchens</div>
         </div>
-        <div id="restaurant-sub-row" style="margin-top: 20px; padding: 20px; border-radius: 24px; display: none; background: rgba(255,255,255,0.02); border: 1px dashed var(--border); animation: slideIn 0.4s ease;">
-            <small style="color:var(--accent); font-weight:800; display:block; margin-bottom:12px; letter-spacing: 1px;">KITCHENS NEARBY</small>
+        <div id="restaurant-sub-row" style="margin-top: 20px; padding: 20px; border-radius: 24px; display: none; background: rgba(255,255,255,0.02); border: 1px dashed var(--border);">
+            <small style="color:var(--accent); font-weight:800; display:block; margin-bottom:12px;">KITCHENS NEARBY</small>
             <div class="filter-row" id="restaurant-chips"></div>
         </div>
     </div>
@@ -195,25 +106,6 @@
         <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
     </main>
 
-    <section class="support-sanctuary" style="max-width: 1200px; margin: 100px auto; padding: 80px 40px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); text-align: center;">
-        <h2 style="font-size: 42px; letter-spacing: -2px; margin-bottom: 10px;">The Support Sanctuary</h2>
-        <p style="color:var(--muted); font-size: 18px; margin-bottom: 50px;">Need a hand with your rescue mission?</p>
-        <div class="support-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-            <a href="mailto:terminalplate@gmail.com" class="filter-chip" style="padding: 40px; border-radius: 30px; display: block;">
-                <b style="font-size: 18px; display: block; margin-bottom: 5px;">Email Support</b>
-                <span style="opacity: 0.6;">terminalplate@gmail.com</span>
-            </a>
-            <a href="https://instagram.com/a_7hul_" target="_blank" class="filter-chip" style="padding: 40px; border-radius: 30px; display: block;">
-                <b style="font-size: 18px; display: block; margin-bottom: 5px;">Instagram</b>
-                <span style="opacity: 0.6;">@a_7hul_</span>
-            </a>
-            <a href="tel:9633890173" class="filter-chip" style="padding: 40px; border-radius: 30px; display: block;">
-                <b style="font-size: 18px; display: block; margin-bottom: 5px;">Help Hotline</b>
-                <span style="opacity: 0.6;">+91 9633890173</span>
-            </a>
-        </div>
-    </section>
-
     <footer style="padding: 80px; text-align: center; color: var(--muted); font-size: 12px; letter-spacing: 4px; opacity: 0.5;">
         EST. 2024 — REDEFINING THE SURPLUS
     </footer>
@@ -221,15 +113,14 @@
 
 <div class="modal-overlay" id="foodModal">
     <div class="modal-content">
-        <button class="close-modal" onclick="closeFoodModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 10; backdrop-filter: blur(10px);">✕</button>
-        <img id="modalImg" src="" class="modal-img" style="width: 100%; height: 300px; object-fit: cover;">
+        <button onclick="closeFoodModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer;">✕</button>
+        <img id="modalImg" src="" style="width: 100%; height: 300px; object-fit: cover;">
         <div class="modal-details" style="padding: 40px;">
-            <span id="modalTag" style="color:var(--accent); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing: 1px;"></span>
-            <h2 id="modalTitle" style="margin: 15px 0; font-size:32px; letter-spacing: -1px;"></h2>
-            <p id="modalKitchen" style="color:var(--muted); margin-bottom:25px; font-weight:600; font-size: 16px;"></p>
+            <span id="modalTag" style="color:var(--accent); font-weight:800; font-size:12px; text-transform:uppercase;"></span>
+            <h2 id="modalTitle" style="margin: 15px 0; font-size:32px;"></h2>
+            <p id="modalKitchen" style="color:var(--muted); margin-bottom:25px; font-weight:600;"></p>
             <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:24px; border:1px solid var(--border); margin-bottom:30px;">
-                <label style="color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase; display:block; margin-bottom:8px;">Rescue Note</label>
-                <span id="modalDesc" style="font-size:15px; line-height:1.6; opacity: 0.9;">Help us reduce waste! This meal is perfectly prepared and waiting for you.</span>
+                <span id="modalDesc" style="font-size:15px; line-height:1.6; opacity: 0.9;">Rescue mission active. Perfectly good food waiting for a home.</span>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
@@ -242,165 +133,137 @@
     </div>
 </div>
 
-<div class="profile-overlay" id="profileOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; justify-content: flex-end; z-index: 2000; backdrop-filter: blur(4px);">
-  <div class="profile-drawer" id="profileDrawer">
-    <button id="closeProfile" style="background:none; border:none; color:var(--accent); cursor:pointer; font-weight:800; margin-bottom:30px; font-size: 16px;">← BACK</button>
-    <h2 style="font-size: 38px; letter-spacing: -2px; margin-bottom: 30px;">Account</h2>
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-drawer">
+    <button id="closeProfile" style="background:none; border:none; color:var(--accent); cursor:pointer; font-weight:800; margin-bottom:30px;">← BACK</button>
+    <h2 style="font-size: 38px; letter-spacing: -2px; margin-bottom: 30px;">Profile</h2>
     
-    <div style="background:var(--card); padding:30px; border-radius:24px; border:1px solid var(--border); margin-bottom:20px;">
-        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing: 1px;">Verified Member</label>
-        <p id="p-name" style="font-size:24px; font-weight:700; margin:8px 0 0 0;">Collector</p>
+    <div style="background:var(--card); padding:30px; border-radius:24px; border:1px solid var(--border); margin-bottom:15px;">
+        <label style="color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase;">Authenticated User</label>
+        <p id="p-name" style="font-size:24px; font-weight:700; margin:8px 0 0 0;">Syncing...</p>
     </div>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:25px; border-radius:24px; border:1px solid var(--border);">
-        <span style="font-weight:700; font-size: 16px;">Light Mode</span>
-        <input type="checkbox" id="themeToggle" style="width:24px; height:24px; accent-color: var(--accent); cursor:pointer;">
+    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:25px; border-radius:24px; border:1px solid var(--border); margin-bottom:40px;">
+        <span style="font-weight:700;">Light Mode</span>
+        <input type="checkbox" id="themeToggle" style="width:24px; height:24px; cursor:pointer;">
     </div>
 
-    <h3 style="margin-top:50px; font-size:20px; letter-spacing: -0.5px;">Rescue History</h3>
-    <div id="history" style="margin-top: 20px;"></div>
+    <h3 style="font-size:20px; margin-bottom:15px;">Rescue History</h3>
+    <div id="history"></div>
 
-    <button onclick="location.href='/logout'" style="width:100%; margin-top:50px; padding:20px; border-radius:24px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer; font-size: 16px; transition: 0.3s;">Sign Out</button>
+    <button onclick="location.href='/logout'" style="width:100%; margin-top:50px; padding:20px; border-radius:24px; background:#ff4757; color:white; font-weight:800; border:none; cursor:pointer;">Sign Out</button>
   </div>
 </div>
 
 <script>
-  // -- ALL ORIGINAL LOGIC PRESERVED --
   let allFoods = [];
   let currentLoc = 'all';
   let currentRest = 'all';
 
+  // --- THEME ---
   const themeToggle = document.getElementById("themeToggle");
-  if(localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light');
-    themeToggle.checked = true;
-  }
+  if(localStorage.getItem('theme') === 'light') { document.body.classList.add('light'); themeToggle.checked = true; }
   themeToggle.onchange = () => {
     document.body.classList.toggle('light');
     localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
   };
 
-  function getFoodImage(foodName) {
-    const n = foodName.toLowerCase();
-    if (n.includes("biriyani") || n.includes("briyani") || n.includes("biryani"))
-        return "https://www.apnachef.com/wp-content/uploads/2023/12/chicken-biryani-50-people-wide.jpg";
-    if (n.includes("mandhi") || n.includes("mandi") || n.includes("mandy"))
-        return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
-    if (n.includes("porotta") || n.includes("parotta") || n.includes("barotta"))
-        return "https://images.unsplash.com/photo-1628294897771-b7b6c75d1e33?auto=format&fit=crop&w=900&q=80";
-    if (n.includes("chapati") || n.includes("chappati") || n.includes("roti"))
-        return "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80";
-    if (n.includes("al fahm") || n.includes("fahm") || n.includes("alfaham"))
-        return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg/photos/4x3/photo.jpg";
-    if (n.includes("ribs"))
-        return "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80";
+  // --- IMAGE LOGIC ---
+  function getFoodImage(name) {
+    const n = name.toLowerCase();
+    if (n.includes("biriyani") || n.includes("biryani")) return "https://www.apnachef.com/wp-content/uploads/2023/12/chicken-biryani-50-people-wide.jpg";
+    if (n.includes("mandhi") || n.includes("mandi")) return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
+    if (n.includes("porotta") || n.includes("parotta")) return "https://images.unsplash.com/photo-1628294897771-b7b6c75d1e33?auto=format&fit=crop&w=900&q=80";
+    if (n.includes("al fahm") || n.includes("alfaham")) return "https://img.onmanorama.com/content/dam/mm/en/food/recipe/images/2021/2/14/alfaham.jpg/photos/4x3/photo.jpg";
     return "https://loremflickr.com/800/600/food,india";
   }
 
+  // --- RENDERING ---
   function renderFoods(foods) {
     const list = document.getElementById("foodList");
     if (!foods.length) {
-        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:120px; color:var(--muted);">
-            <h2 style="font-size: 32px; letter-spacing: -1px;">All clear. No plates to rescue right now.</h2>
-        </div>`;
+        list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; opacity:0.5;"><h2>No plates available.</h2></div>`;
         return;
     }
-
-    list.innerHTML = foods.map(f => {
-        const platformPrice = Math.ceil(f.price);
-        const foodImg = getFoodImage(f.name);
-        return `
-        <article class="food-card" onclick="openFoodModal(${JSON.stringify(f).replace(/"/g, '&quot;')})">
+    list.innerHTML = foods.map(f => `
+        <article class="food-card" onclick='openFoodModal(${JSON.stringify(f).replace(/'/g, "&apos;")})'>
           <div class="card-img-wrapper">
              <div class="status-badge">
                 <span class="badge-pill badge-qty">${f.available_quantity} LEFT</span>
-                <span class="badge-pill badge-time" style="border-color:${f.minutes_left < 20 ? 'var(--timer-urgent)' : 'transparent'}">${f.minutes_left}m left</span>
+                <span class="badge-pill badge-time">${f.minutes_left}m left</span>
              </div>
-             <img src="${foodImg}" class="card-img" loading="lazy">
+             <img src="${getFoodImage(f.name)}" class="card-img" loading="lazy">
           </div>
           <div class="card-body">
-            <h3 title="${f.name}">${f.name}</h3>
-            <div style="color:var(--muted); font-size:14px; font-weight:600;">
-                📍 ${f.restaurant_name}
-            </div>
-            <div class="price-section">
+            <h3 style="margin:0; font-size:24px;">${f.name}</h3>
+            <div style="color:var(--muted); font-size:14px; margin-top:5px;">📍 ${f.restaurant_name}</div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
                 <div>
-                    <div style="font-size:13px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
-                    <div class="price-tag">₹${platformPrice}</div>
+                    <div style="font-size:12px; color:var(--muted); text-decoration:line-through;">₹${f.mrp}</div>
+                    <div class="price-tag">₹${Math.ceil(f.price)}</div>
                 </div>
-                <a href="/checkout/${f.id}" class="reserve-btn" onclick="event.stopPropagation()">Reserve</a>
+                <div class="reserve-btn">Reserve</div>
             </div>
           </div>
-        </article>`;
-    }).join('');
+        </article>`).join('');
   }
 
-  function openFoodModal(food) {
-    const modal = document.getElementById("foodModal");
-    document.getElementById("modalImg").src = getFoodImage(food.name);
-    document.getElementById("modalTitle").innerText = food.name;
-    document.getElementById("modalKitchen").innerText = "📍 " + food.restaurant_name;
-    document.getElementById("modalTag").innerText = food.available_quantity + " PLATES LEFT • " + food.minutes_left + "M REMAINING";
-    document.getElementById("modalMrp").innerText = "Original Price: ₹" + food.mrp;
-    document.getElementById("modalPrice").innerText = "₹" + Math.ceil(food.price);
-    document.getElementById("modalReserveLink").href = `/checkout/${food.id}`;
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
+  // --- MODAL ---
+  function openFoodModal(f) {
+    const m = document.getElementById("foodModal");
+    document.getElementById("modalImg").src = getFoodImage(f.name);
+    document.getElementById("modalTitle").innerText = f.name;
+    document.getElementById("modalKitchen").innerText = "📍 " + f.restaurant_name;
+    document.getElementById("modalTag").innerText = f.available_quantity + " PLATES • " + f.minutes_left + "M LEFT";
+    document.getElementById("modalMrp").innerText = "MRP: ₹" + f.mrp;
+    document.getElementById("modalPrice").innerText = "₹" + Math.ceil(f.price);
+    document.getElementById("modalReserveLink").href = `/checkout/${f.id}`;
+    m.style.display = "flex";
+    setTimeout(() => m.classList.add("active"), 10);
   }
 
   function closeFoodModal() {
-    document.getElementById("foodModal").classList.remove("active");
-    document.body.style.overflow = "auto";
+    const m = document.getElementById("foodModal");
+    m.classList.remove("active");
+    setTimeout(() => m.style.display = "none", 400);
   }
 
-  window.onclick = function(event) { if (event.target == document.getElementById("foodModal")) closeFoodModal(); }
-
-  function buildLocationFilters() {
-    const locRow = document.getElementById('location-row');
-    const resetBtn = document.getElementById('reset-btn');
-    locRow.innerHTML = ''; locRow.appendChild(resetBtn);
-    const addresses = [...new Set(allFoods.map(f => f.restaurant_address).filter(a => a))];
-    addresses.forEach(addr => {
-      const chip = document.createElement('div');
-      chip.className = `filter-chip ${currentLoc === addr ? 'active' : ''}`;
-      chip.innerHTML = addr;
-      chip.onclick = () => selectLocation(addr, chip);
-      locRow.appendChild(chip);
-    });
+  // --- PROFILE LOGIC (FIXED) ---
+  async function toggleProfile(show) {
+    const ov = document.getElementById("profileOverlay");
+    if (show) {
+        document.body.classList.add("drawer-open");
+        ov.style.display = "flex";
+        setTimeout(() => ov.classList.add("active"), 10);
+        await loadProfileData();
+    } else {
+        ov.classList.remove("active");
+        document.body.classList.remove("drawer-open");
+        setTimeout(() => ov.style.display = "none", 600);
+    }
   }
 
-  function selectLocation(addr, element) {
-    currentLoc = addr; currentRest = 'all';
-    document.querySelectorAll('#location-row .filter-chip').forEach(c => c.classList.remove('active'));
-    element.classList.add('active');
-    const subRow = document.getElementById('restaurant-sub-row');
-    const kitchenContainer = document.getElementById('restaurant-chips');
-    subRow.style.display = 'block';
-    kitchenContainer.innerHTML = '';
-    const kitchens = [...new Set(allFoods.filter(f => f.restaurant_address === addr).map(f => f.restaurant_name))];
-    kitchens.forEach(k => {
-      const chip = document.createElement('div');
-      chip.className = 'filter-chip';
-      chip.innerHTML = k;
-      chip.onclick = () => {
-        currentRest = k;
-        document.querySelectorAll('#restaurant-chips .filter-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        applyAllFilters();
-      };
-      kitchenContainer.appendChild(chip);
-    });
-    applyAllFilters();
+  async function loadProfileData() {
+    const pName = document.getElementById("p-name");
+    const hist = document.getElementById("history");
+    try {
+        const [uRes, oRes] = await Promise.all([
+            fetch("/api/user/profile").catch(() => null),
+            fetch("/api/user/orders").catch(() => null)
+        ]);
+        const uData = uRes && uRes.ok ? await uRes.json() : { name: "Rescue Agent" };
+        const oData = oRes && oRes.ok ? await oRes.json() : [];
+
+        pName.innerText = uData.name || "Agent";
+        hist.innerHTML = oData.length ? oData.map(o => `
+            <div style="padding:15px; background:rgba(255,255,255,0.03); border-radius:15px; margin-bottom:10px; border:1px solid var(--border);">
+                <div style="font-weight:700;">${o.food}</div>
+                <div style="font-size:12px; opacity:0.6;">₹${o.total_amount} • ${o.status}</div>
+            </div>`).join('') : `<p style="opacity:0.5; font-size:13px;">No history found.</p>`;
+    } catch(e) { pName.innerText = "Guest"; }
   }
 
-  function resetFilters() {
-    currentLoc = 'all'; currentRest = 'all';
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    document.getElementById('reset-btn').classList.add('active');
-    document.getElementById('restaurant-sub-row').style.display = 'none';
-    applyAllFilters();
-  }
-
+  // --- FILTERS ---
   function applyAllFilters() {
     const q = document.getElementById("foodSearch").value.toLowerCase();
     const filtered = allFoods.filter(f => {
@@ -412,60 +275,39 @@
     renderFoods(filtered);
   }
 
-  document.getElementById("foodSearch").addEventListener("input", applyAllFilters);
+  function resetFilters() {
+    currentLoc = 'all'; currentRest = 'all';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('reset-btn').classList.add('active');
+    document.getElementById('restaurant-sub-row').style.display = 'none';
+    applyAllFilters();
+  }
 
-  fetch("/api/foods").then(r => r.json()).then(d => { 
-    allFoods = d.foods || []; 
-    buildLocationFilters(); 
-    applyAllFilters(); 
-  }).catch(() => {
-      // Demo fallback if API fails
-      renderFoods([]);
+  // --- INIT ---
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("openProfile").onclick = () => toggleProfile(true);
+    document.getElementById("closeProfile").onclick = () => toggleProfile(false);
+    document.getElementById("foodSearch").oninput = applyAllFilters;
+
+    fetch("/api/foods").then(r => r.json()).then(d => {
+        allFoods = d.foods || [];
+        // Dynamic Location Filters
+        const locRow = document.getElementById('location-row');
+        [...new Set(allFoods.map(f => f.restaurant_address))].filter(Boolean).forEach(addr => {
+            const chip = document.createElement('div');
+            chip.className = 'filter-chip';
+            chip.innerText = addr;
+            chip.onclick = () => {
+                currentLoc = addr;
+                document.querySelectorAll('#location-row .filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                applyAllFilters();
+            };
+            locRow.appendChild(chip);
+        });
+        applyAllFilters();
+    });
   });
-
-  const overlay = document.getElementById("profileOverlay");
-  document.getElementById("openProfile").onclick = () => { 
-    document.body.classList.add("drawer-open"); 
-    overlay.classList.add("active"); 
-    loadProfileData();
-  };
-  document.getElementById("closeProfile").onclick = () => { 
-    document.body.classList.remove("drawer-open"); 
-    overlay.classList.remove("active"); 
-  };
-
-  async function loadProfileData() {
-    try {
-        const uRes = await fetch("/api/user/profile");
-        const uData = await uRes.json();
-
-        document.getElementById("p-name").innerText =
-            uData.user?.name || "Collector";
-
-        const oRes = await fetch("/api/user/orders");
-        const oJson = await oRes.json();
-        const orders = oJson.orders || [];
-
-        const hist = document.getElementById("history");
-
-        hist.innerHTML = orders.length
-            ? orders
-                .map(o => `
-                    <div class="history-item">
-                        <div style="font-weight:700;">${o.food_name}</div>
-                        <div style="font-size:12px; color:var(--muted);">
-                            ₹${o.total_amount} • ${o.status}
-                        </div>
-                    </div>
-                `)
-                .join("")
-            : "<p style='color:var(--muted); font-size:14px;'>No orders yet.</p>";
-
-    } catch (e) {
-        console.log("Profile error:", e);
-    }
-}
-
 </script>
 </body>
 </html>
