@@ -46,60 +46,48 @@ def verify_otp_page():
 
 @restaurant_bp.route("/api/verify-otp", methods=["POST"])
 def verify_pickup_otp():
-    try:
-        print(">>> OTP API HIT <<<")
-        print("JSON received:", request.json)
+    otp = request.json.get("otp")
+    if not otp:
+        return jsonify({"success": False, "error": "OTP required"}), 400
 
-        otp = request.json.get("otp")
-        print("OTP received:", otp)
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-        if not otp:
-            return jsonify({"success": False, "error": "OTP required"}), 400
+    cur.execute("""
+        SELECT 
+            o.id AS order_id,
+            o.quantity,
+            u.name AS customer_name,
+            f.name AS food_name
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN foods f ON o.food_id = f.id
+        WHERE o.pickup_otp = %s
+          AND o.status = 'CONFIRMED'
+          AND o.picked_up = 0
+        LIMIT 1
+    """, (otp,))
 
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    order = cur.fetchone()
 
-        cur.execute("""
-            SELECT 
-                id AS order_id,
-                food_id,
-                quantity,
-                user_id
-            FROM orders
-            WHERE pickup_otp = %s
-              AND status = 'CONFIRMED'
-              AND picked_up = 0
-            LIMIT 1
-        """, (otp,))
+    if not order:
+        return jsonify({"success": False, "error": "Invalid or already used OTP"}), 400
 
-        order = cur.fetchone()
-        print("Matched order:", order)
+    # Mark as picked up
+    cur.execute("""
+        UPDATE orders
+        SET picked_up = 1,
+            pickup_otp = NULL
+        WHERE id = %s
+    """, (order["order_id"],))
+    mysql.connection.commit()
 
-        if not order:
-            return jsonify({"success": False, "error": "Invalid or already used OTP"}), 400
-
-        order_id = order["order_id"]
-
-        cur.execute("""
-            UPDATE orders
-            SET picked_up = 1,
-                pickup_otp = NULL
-            WHERE id = %s
-        """, (order_id,))
-        mysql.connection.commit()
-
-        print(">>> ORDER UPDATED SUCCESSFULLY <<<")
-
-        return jsonify({
-            "success": True,
-            "message": "Pickup Verified",
-            "order_id": order_id
-        })
-
-    except Exception as e:
-        print("🔥 ERROR in verify_pickup_otp:", str(e))
-        return jsonify({"success": False, "error": "Server error", "details": str(e)}), 500
-
-
+    return jsonify({
+        "success": True,
+        "order_id": order["order_id"],
+        "food": order["food_name"],
+        "quantity": order["quantity"],
+        "customer": order["customer_name"]
+    })
 
 # -----------------------------
 # DASHBOARD
