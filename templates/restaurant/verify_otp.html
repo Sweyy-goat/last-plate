@@ -222,8 +222,21 @@ function verify(){
   .then(r => r.json())
   .then(d => {
     if(d.success){
-      alert("Pickup Verified. Order Completed.");
-      location.reload();
+  const box = document.getElementById("result");
+  box.style.display = "block";
+
+  box.innerHTML = `
+    <div class="ok">
+      ✅ Pickup OTP Verified<br><br>
+      <b>Food:</b> ${d.food}<br>
+      <b>Quantity:</b> ${d.quantity}<br>
+      <b>Customer:</b> ${d.customer}<br><br>
+
+      <button onclick="complete(${d.order_id})">
+        Mark as Picked Up
+      </button>
+    </div>
+  `;
     } else {
       alert(d.error);
     }
