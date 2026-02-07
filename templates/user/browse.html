@@ -223,6 +223,7 @@
   // --- IMAGE LOGIC ---
   function getFoodImage(name) {
     const n = name.toLowerCase();
+    if (n.includes("Butter chicken") || n.includes("butter")) return "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnV0dGVyJTIwY2hpY2tlbnxlbnwwfHwwfHx8MA%3D%3D";
     if (n.includes("chapatti") || n.includes("chappa")) return "https://5.imimg.com/data5/SELLER/Default/2024/11/464543505/IP/LE/CM/2837532/500g-insta-foods-frozen-chapati-500x500.jpeg";
     if (n.includes("biriyani") || n.includes("briyani")) return "https://i.pinimg.com/564x/c5/d2/62/c5d262f3377da91a7229772026a2ec5c.jpg";
     if (n.includes("mandhi") || n.includes("mandi")) return "https://images.unsplash.com/photo-1628294896516-344152572c7b?auto=format&fit=crop&w=900&q=80";
