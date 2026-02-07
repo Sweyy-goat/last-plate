@@ -11,8 +11,9 @@
       --muted: #8e99a8; --accent: #2ecc71; --accent-glow: rgba(46, 204, 113, 0.15);
       --border: rgba(255, 255, 255, 0.08); --timer-warn: #ffb800;
       --timer-urgent: #ff4757; --spring: cubic-bezier(0.2, 1, 0.3, 1);
+      --toggle-bg: #1e252e;
     }
-    body.light { --bg: #f8fafc; --card: rgba(255, 255, 255, 0.85); --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.06); }
+    body.light { --bg: #f8fafc; --card: rgba(255, 255, 255, 0.85); --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.06); --toggle-bg: #e2e8f0; }
     
     * { box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
     body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: background 0.5s ease; overflow-x: hidden; }
@@ -39,7 +40,7 @@
     .filter-chip { padding: 12px 26px; background: var(--card); border: 1px solid var(--border); border-radius: 18px; font-size: 14px; font-weight: 700; color: var(--muted); cursor: pointer; transition: 0.4s var(--spring); white-space: nowrap; }
     .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 10px 20px var(--accent-glow); }
 
-    /* God-Level Cards */
+    /* Cards */
     .container { max-width: 1300px; margin: 0 auto 80px; padding: 0 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 35px; }
     .food-card { background: var(--card); border-radius: 38px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; transition: 0.5s var(--spring); cursor: pointer; position: relative; backdrop-filter: blur(10px); }
     .food-card:hover { transform: translateY(-12px) scale(1.02); border-color: rgba(46, 204, 113, 0.4); box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow); }
@@ -56,18 +57,23 @@
     .price-tag { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
     .reserve-btn { background: var(--accent); color: #000; padding: 14px 28px; border-radius: 20px; font-weight: 800; text-decoration: none; transition: 0.3s; }
 
-    /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-content { background: var(--bg); width: 100%; max-width: 520px; border-radius: 40px; border: 1px solid var(--border); overflow: hidden; position: relative; animation: modalPop 0.6s var(--spring); }
-    @keyframes modalPop { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-    /* Profile Drawer */
+    /* Profile Drawer & Toggle */
     .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; justify-content: flex-end; z-index: 2000; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.5s ease; }
     .profile-overlay.active { display: flex; opacity: 1; }
     .profile-drawer { width: 100%; max-width: 460px; background: var(--bg); height: 100%; padding: 50px; border-left: 1px solid var(--border); transform: translateX(100%); transition: 0.6s var(--spring); overflow-y: auto; }
     .profile-overlay.active .profile-drawer { transform: translateX(0); }
 
+    .custom-toggle { width: 56px; height: 32px; background: var(--toggle-bg); border-radius: 100px; position: relative; cursor: pointer; transition: 0.3s var(--spring); border: 1px solid var(--border); }
+    .toggle-knob { position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; background: var(--text); border-radius: 50%; transition: 0.3s var(--spring); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .custom-toggle.active { background: var(--accent); border-color: var(--accent); }
+    .custom-toggle.active .toggle-knob { left: calc(100% - 26px); background: #000; }
+    .custom-toggle:active { transform: scale(0.92); }
+
+    /* Rest of UI */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { background: var(--bg); width: 100%; max-width: 520px; border-radius: 40px; border: 1px solid var(--border); overflow: hidden; position: relative; animation: modalPop 0.6s var(--spring); }
+    @keyframes modalPop { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .skeleton { height: 450px; background: var(--card); border-radius: 38px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 50% { opacity: 0.4; } }
     .support-sanctuary { max-width: 1200px; margin: 100px auto; padding: 80px 40px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); text-align: center; }
@@ -98,7 +104,7 @@
 
     <div class="filter-hub">
         <div class="filter-row" id="location-row">
-            <div class="filter-chip active" id="reset-btn" onclick="resetFilters()">📍 All Kitchens</div>
+            <div class="filter-chip active" id="reset-btn" onclick="resetFilters()">☕︎ All Kitchens</div>
         </div>
         <div id="restaurant-sub-row" style="margin-top: 20px; padding: 20px; border-radius: 24px; display: none; background: rgba(255,255,255,0.02); border: 1px dashed var(--border);">
             <small style="color:var(--accent); font-weight:800; display:block; margin-bottom:12px;">KITCHENS NEARBY</small>
@@ -111,7 +117,7 @@
     </main>
 
     <section class="support-sanctuary">
-        <h2 style="font-size: 38px; letter-spacing: -1.5px;">The Support Sanctuary</h2>
+        <h2 style="font-size: 38px; letter-spacing: -1.5px;">The Support Sanctuary🍁</h2>
         <p style="color:var(--muted); font-size: 16px;">We are here to ensure your rescue mission is flawless.</p>
         <div class="support-grid">
             <a href="mailto:terminalplate@gmail.com" class="support-pill">
@@ -166,8 +172,10 @@
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:25px; border-radius:24px; border:1px solid var(--border); margin-bottom:40px;">
-        <span style="font-weight:700;">Light Mode</span>
-        <input type="checkbox" id="themeToggle" style="width:24px; height:24px; cursor:pointer;">
+        <span id="themeLabel" style="font-weight:700;">Light Mode</span>
+        <div class="custom-toggle" id="themeToggle">
+            <div class="toggle-knob"></div>
+        </div>
     </div>
 
     <h3 style="font-size:20px; margin-bottom:15px;">Rescue History</h3>
@@ -182,12 +190,34 @@
   let currentLoc = 'all';
   let currentRest = 'all';
 
-  // --- THEME ---
+  // --- THEME LOGIC (UPDATED) ---
   const themeToggle = document.getElementById("themeToggle");
-  if(localStorage.getItem('theme') === 'light') { document.body.classList.add('light'); themeToggle.checked = true; }
-  themeToggle.onchange = () => {
-    document.body.classList.toggle('light');
-    localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  const themeLabel = document.getElementById("themeLabel");
+
+  function setTheme(isLight) {
+    if(isLight) {
+        document.body.classList.add('light');
+        themeToggle.classList.add('active');
+        themeLabel.innerText = "Dark Mode ⏾";
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.remove('light');
+        themeToggle.classList.remove('active');
+        themeLabel.innerText = "Light Mode ☀️";
+        localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // Init Theme
+  setTheme(localStorage.getItem('theme') === 'light');
+
+  themeToggle.onclick = () => {
+    const nextLight = !document.body.classList.contains('light');
+    
+    // Haptic Feedback
+    if (window.navigator.vibrate) window.navigator.vibrate(12);
+    
+    setTheme(nextLight);
   };
 
   // --- IMAGE LOGIC ---
@@ -251,7 +281,7 @@
     setTimeout(() => m.style.display = "none", 400);
   }
 
-  // --- PROFILE LOGIC (FIXED) ---
+  // --- PROFILE LOGIC ---
   async function toggleProfile(show) {
     const ov = document.getElementById("profileOverlay");
     if (show) {
@@ -314,7 +344,6 @@
 
     fetch("/api/foods").then(r => r.json()).then(d => {
         allFoods = d.foods || [];
-        // Dynamic Location Filters
         const locRow = document.getElementById('location-row');
         [...new Set(allFoods.map(f => f.restaurant_address))].filter(Boolean).forEach(addr => {
             const chip = document.createElement('div');
