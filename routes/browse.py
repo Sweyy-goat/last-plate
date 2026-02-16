@@ -23,16 +23,16 @@ def browse_page():
 
 @browse_bp.route("/api/foods")
 def food_list():
-
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     # Convert UTC → IST
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     current_time_ist = ist_now.strftime('%H:%M:%S')
 
+    # UPDATED QUERY: Added f.original_price to the SELECT list
     query = """
     SELECT 
-        f.id, f.name, f.price, f.mrp, f.available_quantity,
+        f.id, f.name, f.original_price, f.price, f.available_quantity,
         f.pickup_start, f.pickup_end,
         r.name AS restaurant_name,
         r.address AS restaurant_address,
@@ -69,18 +69,25 @@ def food_list():
 
     foods = []
     for f in rows:
-        raw_mrp = float(f["mrp"])
-        restaurant_discount = float(f["price"])
-        valid_mrp = raw_mrp if raw_mrp > 0 else restaurant_discount
+        # The price set by the restaurant in the dashboard
+        restaurant_discounted_price = float(f["price"])
+        
+        # Original price from DB (e.g., 200)
+        # Fallback to restaurant_price if original_price is missing or 0
+        raw_original = float(f["original_price"]) if f.get("original_price") and f["original_price"] > 0 else restaurant_discounted_price
 
-        platform_price = math.ceil(restaurant_discount * 1.15)
-        display_mrp = valid_mrp if valid_mrp > platform_price else math.ceil(platform_price * 1.2)
+        # Your Platform Selling Price (The price user sees and pays: 180 * 1.15 = 207)
+        platform_selling_price = math.ceil(restaurant_discounted_price * 1.15)
+
+        # Final Display MRP (The strike-through: 200 * 1.15 = 230)
+        # We apply the same 15% to the original price so the discount ratio stays consistent
+        display_mrp = math.ceil(raw_original * 1.15)
 
         foods.append({
             "id": f["id"],
             "name": f["name"],
-            "price": platform_price,
-            "mrp": display_mrp,
+            "price": platform_selling_price, # Actual Price
+            "mrp": display_mrp,              # Strike-through Price
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
             "restaurant_address": f["restaurant_address"],
@@ -88,4 +95,3 @@ def food_list():
         })
 
     return jsonify({"foods": foods})
-
