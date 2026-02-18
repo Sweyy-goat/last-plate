@@ -13,6 +13,55 @@
       --timer-urgent: #ff4757; --spring: cubic-bezier(0.2, 1, 0.3, 1);
       --toggle-bg: #1e252e;
     }
+        .btn-clean-tech {
+      --border-width: 2px;
+      background: transparent;
+      position: relative;
+      display: inline-flex;
+      padding: 0; /* Handled by span */
+      color: var(--text);
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .btn-clean-tech:active { transform: scale(0.95); }
+
+    .btn-clean-tech::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(transparent, var(--accent), transparent 30%);
+      transform: translate(-50%, -50%) rotate(0deg);
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+
+    .btn-clean-tech span {
+      position: relative;
+      z-index: 1;
+      background: var(--btn-inner);
+      margin: var(--border-width);
+      padding: 14px 32px;
+      border-radius: 10px;
+      display: block;
+      transition: background 0.5s;
+    }
+
+    .btn-clean-tech:hover::before { opacity: 1; animation: rotate 2s linear infinite; }
+
+    @keyframes rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
     body.light { --bg: #f8fafc; --card: rgba(255, 255, 255, 0.85); --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.06); --toggle-bg: #e2e8f0; }
     
     * { box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
@@ -134,8 +183,11 @@
             </a>
         </div>
     </section>
-    <footer style="padding: 80px; text-align: center; color: var(--muted); font-size: 12px; letter-spacing: 4px; opacity: 0.5;">
-        EST. 2024 — REDEFINING THE SURPLUS
+<footer style="padding: 100px 20px; text-align: center; border-top: 1px solid var(--border);">
+        <p style="color: var(--muted); font-size: 12px; letter-spacing: 4px; margin-bottom: 30px;">EST. 2024 — REDEFINING THE SURPLUS</p>
+        <button class="btn-clean-tech" onclick="goToSite()">
+          <span>Know More</span>
+        </button>
     </footer>
 </div>
 
@@ -361,6 +413,9 @@
         applyAllFilters();
     });
   });
+  function goToSite(){
+    window.location.href = "https://last-plate-knowmore.vercel.app/";
+  }
 </script>
 </body>
 </html>
