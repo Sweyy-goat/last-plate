@@ -140,7 +140,7 @@ def verify_payment():
     )
 
     send_email(
-        "terminalplate@gmail.com",
+        "sidharthsunil1305@gmail.com",
         "New Order Received",
         f"<p>Food ID: {order['food_id']}<br>OTP: {otp}</p>"
     )
