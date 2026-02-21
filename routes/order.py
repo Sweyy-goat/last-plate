@@ -57,8 +57,7 @@ def create_order():
         return jsonify({"error": "Insufficient stock"}), 400
 
     # In create_order route
-    platform_price = math.ceil(food["price"] * 1.15)
-    amount = platform_price * quantity * 100
+    amount = food["price"] * quantity * 100
 
     razorpay_order = razorpay_client.order.create({
         "amount": amount,
