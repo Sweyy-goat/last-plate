@@ -37,28 +37,37 @@ def checkout(food_id):
 # ================= CREATE ORDER =================
 @order_bp.route("/api/create-order", methods=["POST"])
 def create_order():
-    # ... (existing session/data checks) ...
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # 1. EXTRACT DATA FROM REQUEST (The fix for the NameError)
+    data = request.json
+    food_id = int(data["food_id"])
+    quantity = int(data["quantity"])
+    email = data["email"]
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    # Check stock and get price
     cur.execute("SELECT price, restaurant_id, available_quantity FROM foods WHERE id=%s FOR UPDATE", (food_id,))
     food = cur.fetchone()
 
-    # --- THE MARKUP CALCULATION ---
+    if not food or food["available_quantity"] < quantity:
+        return jsonify({"error": "Insufficient stock"}), 400
+
+    # 2. MARKUP CALCULATION (Price + 15%)
     base_price = float(food["price"])
-    # Add 15% platform fee and round up to the nearest Rupee
     platform_unit_price = math.ceil(base_price * 1.15) 
-    
-    # Razorpay expects amount in PAISE (₹58 = 5800 paise)
     total_amount_paise = platform_unit_price * quantity * 100
 
-    # Create the Razorpay Order with the NEW marked-up amount
+    # Create Razorpay Order
     razorpay_order = razorpay_client.order.create({
         "amount": total_amount_paise,
         "currency": "INR",
         "payment_capture": 1
     })
 
-    # Save the ACTUAL amount (₹58) to the 'total_amount' column
+    # Save PENDING order to DB
     cur.execute("""
         INSERT INTO orders
         (user_id, food_id, quantity, restaurant_id,
@@ -69,7 +78,7 @@ def create_order():
         food_id,
         quantity,
         food["restaurant_id"],
-        platform_unit_price * quantity, # Save as 58.00
+        platform_unit_price * quantity, 
         email,
         razorpay_order["id"]
     ))
@@ -92,7 +101,7 @@ def verify_payment():
     except:
         return jsonify({"success": False}), 400
 
-    # Fetch order and restaurant details
+    # Fetch order and restaurant details using 'mobile' column
     cur.execute("""
         SELECT o.*, f.name AS food_name, f.price AS res_unit_price, 
                r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile
@@ -118,7 +127,7 @@ def verify_payment():
         mysql.connection.rollback()
         return jsonify({"success": False, "error": "Out of stock"}), 409
 
-    # 2. GENERATE OTP (This was missing!)
+    # 2. GENERATE OTP
     otp = str(random.randint(100000, 999999))
 
     # 3. Update Order Table
@@ -133,45 +142,35 @@ def verify_payment():
 
     mysql.connection.commit()
 
-    # --- MATH FOR ADMIN EMAIL ---
+    # --- FINANCIAL REPORTING ---
     qty = order["quantity"]
+    total_paid_by_user = float(order["total_amount"]) 
     res_unit_price = float(order["res_unit_price"])
     res_total_payout = res_unit_price * qty
     
-    # Calculate displayed platform prices for the report
-    platform_unit_price = math.ceil(res_unit_price * 1.15)
-    platform_total_collected = platform_unit_price * qty
-
-    # 📧 4. Send Email to User
+    # 📧 Send OTP to User
     send_email(
         order["user_email"],
         "Your Last Plate Pickup OTP",
         f"<h2>Order Confirmed!</h2><p>Your OTP for <b>{order['food_name']}</b> is:</p><h1>{otp}</h1>"
     )
 
-    # 📧 5. Send Detailed Email to Admin
-    admin_email_body = f"""
-    <h3>🚀 New Order: {order['food_name']}</h3>
+    # 📧 Send Detailed Info to Admin
+    admin_body = f"""
+    <h3>🚀 New Order Alert: {order['food_name']}</h3>
     <hr>
-    <p><b>Order Details:</b><br>
-    Quantity: {qty}<br>
-    OTP: <b>{otp}</b></p>
+    <p><b>Revenue:</b><br>
+    Collected from User: ₹{total_paid_by_user}<br>
+    Pay to Restaurant: ₹{res_total_payout}<br>
+    <b>Profit: ₹{total_paid_by_user - res_total_payout}</b></p>
 
-    <p><b>Money Collected (User Paid):</b><br>
-    Unit Price: ₹{platform_unit_price}<br>
-    <b>Total: ₹{platform_total_collected}</b></p>
-
-    <p><b>Payout Info (To Restaurant):</b><br>
-    Restaurant: {order['restaurant_name']}<br>
+    <p><b>Restaurant Details:</b><br>
+    Name: {order['restaurant_name']}<br>
     GPay UPI: <code>{order['gpay_upi']}</code><br>
     Mobile: {order['res_mobile']}<br>
-    <b>Total to Pay: ₹{res_total_payout}</b></p>
+    OTP: <b>{otp}</b></p>
     """
 
-    send_email(
-        "sidharthsunil1305@gmail.com",
-        f"Order Alert: {order['food_name']} ({order['restaurant_name']})",
-        admin_email_body
-    )
+    send_email("sidharthsunil1305@gmail.com", f"New Order: {order['food_name']}", admin_body)
 
     return jsonify({"success": True, "pickup_otp": otp})
