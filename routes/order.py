@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, session, redirect
 from utils.db import mysql
 import MySQLdb.cursors
+import math
 import razorpay, os, random
 from utils.emailer import send_email
 
