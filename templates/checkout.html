@@ -1,275 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Secure Checkout | Last Plate</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <meta charset="UTF-8" />
+    <title>Secure Checkout | Last Plate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<style>
-:root {
-  --bg: #020408;
-  --panel: #0a0c12;
-  --accent: #2ecc71;
-  --accent-glow: rgba(46, 204, 113, 0.4);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #ffffff;
-  --muted: #64748b;
-}
+    <style>
+        :root {
+            --bg: #020408;
+            --panel: #0a0c12;
+            --accent: #2ecc71;
+            --accent-glow: rgba(46, 204, 113, 0.4);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --muted: #64748b;
+        }
 
-* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--bg);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(46, 204, 113, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.5) 0px, transparent 50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text);
-}
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(46, 204, 113, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.5) 0px, transparent 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
 
-/* ===== THE MAIN SLAB ===== */
-.checkout-slab {
-  width: 460px;
-  max-width: 92%;
-  background: var(--panel);
-  border-radius: 40px;
-  border: 1px solid var(--border);
-  padding: 40px;
-  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
-  position: relative;
-  animation: entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
+        .checkout-slab {
+            width: 460px;
+            max-width: 92%;
+            background: var(--panel);
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
+            position: relative;
+            animation: entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-@keyframes entrance {
-  from { opacity: 0; transform: scale(0.95) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
+        @keyframes entrance {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
-.header-group { text-align: center; margin-bottom: 32px; }
-.header-group h1 { font-size: 14px; font-weight: 800; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin: 0; }
-.header-group p { font-size: 22px; font-weight: 700; margin: 8px 0 0; color: #fff; letter-spacing: -0.5px; }
+        .header-group { text-align: center; margin-bottom: 32px; }
+        .header-group h1 { font-size: 14px; font-weight: 800; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin: 0; }
+        .header-group p { font-size: 22px; font-weight: 700; margin: 8px 0 0; color: #fff; letter-spacing: -0.5px; }
 
-/* ===== ORDER SUMMARY TILE ===== */
-.order-tile {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 32px;
-}
+        .order-tile {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
 
-.food-icon {
-  width: 64px; height: 64px;
-  background: url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=200&q=80") center/cover;
-  border-radius: 16px;
-  flex-shrink: 0;
-}
+        .food-icon {
+            width: 64px; height: 64px;
+            background: #1e293b url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=200&q=80") center/cover;
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
 
-.food-details b { display: block; font-size: 17px; margin-bottom: 2px; }
-.food-details span { font-size: 13px; color: var(--muted); }
+        .food-details b { display: block; font-size: 17px; margin-bottom: 2px; }
+        .food-details span { font-size: 13px; color: var(--muted); }
 
-/* ===== INPUTS ===== */
-.input-label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; margin-left: 4px; }
+        .input-label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; margin-left: 4px; }
 
-.modern-input {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  color: #fff;
-  font-size: 16px;
-  margin-bottom: 24px;
-  transition: 0.3s;
-}
+        .modern-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 24px;
+            transition: 0.3s;
+        }
 
-.modern-input:focus {
-  border-color: var(--accent);
-  background: rgba(46, 204, 113, 0.05);
-  box-shadow: 0 0 20px var(--accent-glow);
-  outline: none;
-}
+        .modern-input:focus {
+            border-color: var(--accent);
+            background: rgba(46, 204, 113, 0.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+            outline: none;
+        }
 
-/* ===== THE INVOICE BLOCK ===== */
-.invoice-block {
-  margin-top: 10px;
-  padding: 20px;
-  background: rgba(255,255,255,0.02);
-  border-radius: 20px;
-  border: 1px dashed var(--border);
-}
+        .invoice-block {
+            margin-top: 10px;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px dashed var(--border);
+        }
 
-.invoice-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
-.invoice-row.total { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); color: #fff; font-weight: 800; font-size: 20px; }
+        .invoice-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
+        .invoice-row.total { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); color: #fff; font-weight: 800; font-size: 20px; }
 
-/* ===== ACTION BUTTON ===== */
-#payBtn {
-  width: 100%;
-  padding: 22px;
-  margin-top: 32px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        #payBtn {
+            width: 100%;
+            padding: 22px;
+            margin-top: 32px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-#payBtn:hover:not(:disabled) {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px var(--accent-glow);
-  filter: brightness(1.1);
-}
+        #payBtn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px var(--accent-glow);
+            filter: brightness(1.1);
+        }
 
-#payBtn:disabled { opacity: 0.5; filter: grayscale(1); }
+        #payBtn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
-.secure-footer {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-</style>
+        .secure-footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="checkout-slab">
-  <div class="header-group">
-    <h1>Secure Checkout</h1>
-    <p>Complete Reservation</p>
-  </div>
-
-  <div class="order-tile">
-    <div class="food-icon"></div>
-    <div class="food-details">
-      <b>{{ food.name }}</b>
-      <span>{{ food.restaurant_name }}</span>
+    <div class="header-group">
+        <h1>Secure Checkout</h1>
+        <p>Complete Reservation</p>
     </div>
-  </div>
 
-  <label class="input-label">Receipt Email</label>
-  <input id="email" type="email" class="modern-input" placeholder="Enter your email" required>
-
-  <label class="input-label">Quantity</label>
-  <input id="qty" type="number" class="modern-input" min="1" max="{{ food.available_quantity }}" value="1" oninput="calculate()">
-
-  <div class="invoice-block">
-    <div class="invoice-row">
-      <span>Unit Price</span>
-      <span>₹{{ food.price }}</span>
+    <div class="order-tile">
+        <div class="food-icon"></div>
+        <div class="food-details">
+            <b>{{ food.name }}</b>
+            <span>{{ food.restaurant_name }}</span>
+        </div>
     </div>
-    <div class="invoice-row">
-      <span>Subtotal</span>
-      <span id="subtotal">₹{{ food.price }}</span>
-    </div>
-    <div class="invoice-row total">
-      <span>Total</span>
-      <span id="grandtotal">₹{{ food.price }}</span>
-    </div>
-  </div>
 
-  <button id="payBtn">Proceed to Payment</button>
+    <label class="input-label">Receipt Email</label>
+    <input id="email" type="email" class="modern-input" placeholder="Enter your email" required>
 
-  <div class="secure-footer">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    Encrypted by Razorpay SSL
-  </div>
+    <label class="input-label">Quantity</label>
+    <input id="qty" type="number" class="modern-input" min="1" max="{{ food.available_quantity }}" value="1" oninput="calculate()">
+
+    <div class="invoice-block">
+        <div class="invoice-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₹0</span>
+        </div>
+        <div class="invoice-row">
+            <span>Service Fee (15%)</span>
+            <span id="service-fee">₹0</span>
+        </div>
+        <div class="invoice-row total">
+            <span>Total Payable</span>
+            <span id="grandtotal">₹0</span>
+        </div>
+    </div>
+
+    <button id="payBtn">Proceed to Payment</button>
+
+    <div class="secure-footer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Secure Payment via Razorpay
+    </div>
 </div>
 
 <script>
-const price = {{ food.price }};
+    const baseUnitPrice = {{ food.price }};
 
-function calculate() {
-  const q = document.getElementById("qty").value || 0;
-  const total = q * price;
-  document.getElementById("subtotal").innerText = `₹${total}`;
-  document.getElementById("grandtotal").innerText = `₹${total}`;
-}
+    /**
+     * Matches the Python math.ceil(price * 1.15) logic
+     */
+    function calculate() {
+        const qty = parseInt(document.getElementById("qty").value) || 0;
+        const subtotal = qty * baseUnitPrice;
+        
+        // Calculate the platform price (matches math.ceil logic in Python)
+        const platformTotal = Math.ceil(subtotal * 1.15);
+        const serviceFee = platformTotal - subtotal;
 
-document.getElementById("payBtn").onclick = function() {
-  const email = document.getElementById("email").value.trim();
-  const qty = parseInt(document.getElementById("qty").value);
-  const btn = this;
+        document.getElementById("subtotal").innerText = `₹${subtotal}`;
+        document.getElementById("service-fee").innerText = `₹${serviceFee}`;
+        document.getElementById("grandtotal").innerText = `₹${platformTotal}`;
+    }
 
-  if(!email) return showToast("Email is required for OTP");
-  if(!qty || qty <= 0) return showToast("Please select quantity");
+    // Run once on load to populate the ₹0 values
+    window.onload = calculate;
 
-  btn.disabled = true;
-  btn.innerText = "Connecting to Gateway...";
+    document.getElementById("payBtn").onclick = function() {
+        const email = document.getElementById("email").value.trim();
+        const qty = parseInt(document.getElementById("qty").value);
+        const btn = this;
 
-  fetch("/api/create-order", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      food_id: {{ food.id | tojson }},
-      quantity: qty,
-      email: email
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    const options = {
-      key: d.key,
-      amount: d.amount,
-      currency: "INR",
-      order_id: d.razorpay_order_id,
-      name: "Last Plate",
-      description: "Secure Food Reservation",
-      handler: function(res) {
-        btn.innerText = "Verifying...";
-        fetch("/api/verify-payment", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(res)
+        if(!email) {
+            alert("Email is required for receiving the pickup OTP.");
+            return;
+        }
+        if(!qty || qty <= 0) {
+            alert("Please select a valid quantity.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Connecting to Gateway...";
+
+        // Create order on backend
+        fetch("/api/create-order", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                food_id: {{ food.id | tojson }},
+                quantity: qty,
+                email: email
+            })
         })
         .then(r => r.json())
-        .then(out => {
-          if(out.success) {
-            btn.style.background = "#fff";
-            btn.innerText = "Order Confirmed!";
-            setTimeout(() => location.href = "/browse", 1500);
-          } else {
-            showToast("Payment verification failed");
+        .then(data => {
+            if(data.error) {
+                alert(data.error);
+                resetBtn(btn);
+                return;
+            }
+
+            const options = {
+                "key": data.key, 
+                "amount": data.amount, // 5800 paise for ₹58
+                "currency": "INR",
+                "name": "Last Plate",
+                "description": "Food Reservation Fee",
+                "order_id": data.razorpay_order_id,
+                "handler": function(response) {
+                    btn.innerText = "Verifying Payment...";
+                    
+                    fetch("/api/verify-payment", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(response)
+                    })
+                    .then(r => r.json())
+                    .then(out => {
+                        if(out.success) {
+                            btn.style.background = "#fff";
+                            btn.innerText = "Order Confirmed!";
+                            // Redirect to home/browse after success
+                            setTimeout(() => { location.href = "/browse"; }, 2000);
+                        } else {
+                            alert("Verification failed. Please contact support.");
+                            resetBtn(btn);
+                        }
+                    });
+                },
+                "modal": {
+                    "ondismiss": function() {
+                        resetBtn(btn);
+                    }
+                },
+                "theme": { "color": "#2ecc71" }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Server connection failed.");
             resetBtn(btn);
-          }
         });
-      },
-      modal: { ondismiss: () => resetBtn(btn) },
-      theme: { color: "#2ecc71" }
     };
-    new Razorpay(options).open();
-  })
-  .catch(() => {
-    showToast("Server error, try again");
-    resetBtn(btn);
-  });
-};
 
-function resetBtn(btn) {
-  btn.disabled = false;
-  btn.innerText = "Proceed to Payment";
-}
-
-function showToast(m) {
-  alert(m); // In a world-class UI, replace this with a custom snackbar
-}
+    function resetBtn(btn) {
+        btn.disabled = false;
+        btn.innerText = "Proceed to Payment";
+    }
 </script>
 
 </body>
