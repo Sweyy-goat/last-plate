@@ -2,364 +2,505 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Last Plate • The Midnight Rescue</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-pure: #030303;
-      --text-main: #ffffff;
-      --text-muted: #88888e;
+      --bg: #09090b;
+      --bg-2: #111113;
+      --text: #f5f0e8;
+      --text-muted: #6b6760;
+      --text-warm: #c9b99a;
       
-      /* Electric Lime / Acid Green - The current peak of high-end tech design */
-      --accent: #ccff00;
-      --accent-glow: rgba(204, 255, 0, 0.4);
-      --accent-dim: rgba(204, 255, 0, 0.1);
-      
-      --glass-line: rgba(255, 255, 255, 0.08);
+      /* Warm amber/gold - elevated restaurant feel */
+      --accent: #e8a245;
+      --accent-light: #f5c478;
+      --accent-glow: rgba(232, 162, 69, 0.25);
+      --accent-dim: rgba(232, 162, 69, 0.07);
+
+      --line: rgba(245, 240, 232, 0.07);
+      --line-warm: rgba(232, 162, 69, 0.15);
     }
 
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      /* Prevent mobile tap highlights */
-      -webkit-tap-highlight-color: transparent; 
+      -webkit-tap-highlight-color: transparent;
     }
 
+    /* Fixed Overflow for Landscape Mobile */
     body, html {
       width: 100%;
-      /* 100dvh fixes the mobile Safari address bar issue */
-      height: 100dvh; 
-      background-color: var(--bg-pure);
-      font-family: 'Manrope', sans-serif;
-      color: var(--text-main);
-      overflow: hidden;
+      min-height: 100dvh;
+      background: var(--bg);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto; /* Allows scrolling on tiny screens if needed */
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* === HIGH-END BACKGROUND ENVIRONMENT === */
-    .bg-grid {
+    /* ── BACKGROUND ── */
+    .bg-texture {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background-size: 50px 50px;
-      background-image: 
-        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-      mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-      -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+      background-image: radial-gradient(circle, rgba(245,240,232,0.035) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
-    .aurora-orb {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 50vw;
-      height: 50vw;
-      min-width: 300px;
-      min-height: 300px;
-      background: radial-gradient(circle, var(--accent-dim) 0%, transparent 60%);
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      filter: blur(60px);
-      z-index: 1;
-      animation: orbit 20s linear infinite;
-    }
-
-    .noise-overlay {
+    .bg-vignette {
       position: fixed;
       inset: 0;
-      z-index: 2;
-      opacity: 0.04;
+      z-index: 1;
+      background: radial-gradient(ellipse at 50% 50%, transparent 30%, var(--bg) 85%);
       pointer-events: none;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    /* === STRUCTURAL GRID (Guarantees perfect responsiveness) === */
+    .bg-glow-tl {
+      position: fixed;
+      top: -20vh;
+      left: -10vw;
+      width: 60vw;
+      height: 60vw;
+      z-index: 1;
+      background: radial-gradient(circle, rgba(232, 162, 69, 0.06) 0%, transparent 65%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .bg-glow-br {
+      position: fixed;
+      bottom: -20vh;
+      right: -10vw;
+      width: 50vw;
+      height: 50vw;
+      z-index: 1;
+      background: radial-gradient(circle, rgba(232, 162, 69, 0.04) 0%, transparent 65%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .grain {
+      position: fixed;
+      inset: -50%;
+      z-index: 2;
+      width: 200%;
+      height: 200%;
+      opacity: 0.025;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain-move 8s steps(2) infinite;
+    }
+
+    @keyframes grain-move {
+      0%   { transform: translate(0, 0); }
+      10%  { transform: translate(-2%, -3%); }
+      20%  { transform: translate(3%, 2%); }
+      30%  { transform: translate(-1%, 4%); }
+      40%  { transform: translate(4%, -1%); }
+      50%  { transform: translate(-3%, 1%); }
+      60%  { transform: translate(1%, -4%); }
+      70%  { transform: translate(-4%, 3%); }
+      80%  { transform: translate(2%, -2%); }
+      90%  { transform: translate(-2%, 4%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* ── LAYOUT ── */
     .layout {
       position: relative;
       z-index: 10;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      height: 100dvh;
-      width: 100vw;
-      padding: clamp(20px, 4vw, 40px); /* Fluid padding */
+      min-height: 100dvh;
+      width: 100%;
+      padding: clamp(20px, 5vw, 48px);
     }
 
-    /* === HEADER === */
+    /* ── HEADER ── */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      animation: fadeDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      animation: fade-in-down 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-line);
+      gap: 10px;
+      padding: 9px 18px;
+      background: rgba(232, 162, 69, 0.05);
+      border: 1px solid var(--line-warm);
       border-radius: 100px;
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(8px, 2vw, 9px);
+      font-weight: 400;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      color: var(--text-warm);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .status-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       background: var(--accent);
       border-radius: 50%;
-      box-shadow: 0 0 12px var(--accent-glow);
-      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
+      animation: beacon 2.5s ease-in-out infinite;
+    }
+
+    @keyframes beacon {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-glow), 0 0 16px var(--accent-glow); }
+      50%       { opacity: 0.35; box-shadow: 0 0 3px var(--accent-glow); }
     }
 
     .version-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(8px, 2vw, 9px);
+      font-weight: 300;
       color: var(--text-muted);
-      letter-spacing: 0.1em;
+      letter-spacing: 0.15em;
     }
 
-    /* === HERO === */
+    /* ── MAIN HERO ── */
     main {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 0;
+      padding: 40px 0; /* Breathing room on scrollable devices */
     }
 
-    .title-wrapper {
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: clamp(16px, 2.5vw, 28px);
+      opacity: 0;
+      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.25s;
+    }
+
+    .eyebrow-line {
+      flex: 0 0 clamp(20px, 5vw, 40px);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent));
+    }
+
+    .eyebrow-text {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(8px, 2.5vw, 10px);
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .title-block {
+      line-height: 0.88;
       overflow: hidden;
-      line-height: 0.85; /* Tight line height for architectural look */
+    }
+
+    .title-block + .title-block {
+      margin-top: 0.04em;
     }
 
     .huge-text {
-      font-family: 'Syne', sans-serif;
-      /* Bulletproof clamp: min 3.5rem, scales smoothly, max 14rem */
-      font-size: clamp(3.5rem, 15vw, 14rem); 
-      font-weight: 800;
-      letter-spacing: -0.03em;
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      /* Fixed font scaling: Prevents horizontal overflow on narrow phones */
+      font-size: clamp(4rem, 13.5vw, 16rem); 
+      font-weight: 400;
+      letter-spacing: 0.01em;
       text-transform: uppercase;
-      margin: 0;
-      transform: translateY(100%);
-      animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      color: var(--text);
+      transform: translateY(105%);
+      animation: reveal-up 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .text-outline {
+    .huge-text.delay-1 { animation-delay: 0.15s; }
+
+    .huge-text-outline {
       color: transparent;
-      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.25);
-      animation-delay: 0.1s;
-      transition: all 0.5s ease;
+      -webkit-text-stroke: 1.5px rgba(245, 240, 232, 0.25);
+      transition: -webkit-text-stroke 0.6s ease, color 0.6s ease, text-shadow 0.6s ease;
+      animation-delay: 0.28s;
     }
 
-    /* Modern Hover fill effect */
-    .text-outline:hover {
-      color: var(--text-main);
-      -webkit-text-stroke: 1.5px var(--text-main);
-      text-shadow: 0 0 30px rgba(255,255,255,0.2);
+    .huge-text-outline:hover {
+      color: var(--accent-light);
+      -webkit-text-stroke: 1.5px var(--accent-light);
+      text-shadow: 0 0 80px rgba(245, 196, 120, 0.15);
     }
 
     .sub-text {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      line-height: 1.6;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      line-height: 1.65;
       color: var(--text-muted);
-      max-width: 480px;
-      margin-top: clamp(20px, 4vw, 40px);
+      max-width: 440px;
+      margin-top: clamp(20px, 4vw, 44px);
       opacity: 0;
-      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s;
+      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.55s;
     }
 
-    .sub-text strong {
-      color: var(--text-main);
-      font-weight: 600;
+    .sub-text em {
+      font-style: normal;
+      color: var(--text-warm);
     }
 
-    /* === FOOTER & CTA === */
+    /* ── FOOTER ── */
     footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       opacity: 0;
-      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;
+      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.72s;
+    }
+
+    .footer-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer-city {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 1.5vw, 0.9rem);
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-hrs {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(8px, 1.5vw, 9px);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      opacity: 0.6;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
     }
 
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      gap: 20px;
-      padding: 16px 32px;
-      background: var(--text-main);
-      color: var(--bg-pure);
-      border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 700;
+      gap: 18px;
+      padding: 18px 38px;
+      background: var(--accent);
+      color: #0a0a0c;
+      border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       text-decoration: none;
       border: none;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
       overflow: hidden;
-      position: relative;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .btn-primary span, .btn-primary svg {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Sweep gradient hover */
-    .btn-primary::before {
+    .btn-primary::after {
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      width: 100%;
+      left: -80%;
+      width: 60%;
       height: 100%;
-      background: var(--accent);
-      transform: translateX(-100%);
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-15deg);
+      transition: left 0.6s ease;
     }
 
-    .btn-primary:hover::before {
-      transform: translateX(0);
+    .btn-primary:hover::after {
+      left: 130%;
     }
 
     .btn-primary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 35px var(--accent-dim);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(232, 162, 69, 0.35), 0 4px 12px rgba(232, 162, 69, 0.2);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
     }
 
     .btn-primary svg {
-      width: 20px;
-      height: 20px;
-      transition: transform 0.4s ease;
+      width: 14px;
+      height: 14px;
+      transition: transform 0.35s ease;
     }
 
     .btn-primary:hover svg {
-      transform: translateX(5px) rotate(-45deg); /* Slick arrow tilt */
+      transform: translateX(4px);
     }
 
     .merchant-link {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
       color: var(--text-muted);
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      transition: color 0.3s ease;
-      padding-bottom: 4px; /* Space for mobile tap target */
-    }
-
-    .merchant-link::before {
-      content: "SYS_ADMIN //";
-      opacity: 0.3;
-      font-size: 9px;
+      letter-spacing: 0.14em;
+      opacity: 0.45;
+      transition: opacity 0.3s ease, color 0.3s ease;
+      padding: 4px 0;
     }
 
     .merchant-link:hover {
-      color: var(--accent);
+      opacity: 1;
+      color: var(--text-warm);
     }
 
-    /* === MOBILE SPECIFIC FIXES === */
+    .side-label {
+      position: fixed;
+      bottom: 50%;
+      right: clamp(22px, 4vw, 48px);
+      transform: translateY(50%) rotate(90deg);
+      transform-origin: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.3;
+      z-index: 20;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ── RESPONSIVE BREAKPOINTS ── */
     @media (max-width: 768px) {
+      .side-label { display: none; }
+
       footer {
         flex-direction: column;
-        align-items: stretch;
-        gap: 30px;
+        align-items: flex-start;
+        gap: 32px;
       }
-      
+
+      .cta-group {
+        width: 100%;
+        align-items: stretch;
+      }
+
       .btn-primary {
         justify-content: center;
-        padding: 20px;
+        padding: 22px;
+        font-size: 0.8rem;
       }
 
       .merchant-link {
-        align-items: center; /* Center stealth link on mobile */
-        text-align: center;
+        align-self: center;
+        padding: 10px;
       }
     }
 
-    /* === ANIMATIONS === */
-    @keyframes orbit {
-      0% { transform: translate(-50%, -50%) rotate(0deg) translateX(50px) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg) translateX(50px) rotate(-360deg); }
+    /* ── ANIMATIONS ── */
+    @keyframes reveal-up {
+      from { transform: translateY(105%); }
+      to   { transform: translateY(0); }
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
+    @keyframes fade-in-down {
+      from { opacity: 0; transform: translateY(-16px); filter: blur(4px); }
+      to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
     }
 
-    @keyframes revealUp {
-      to { transform: translateY(0); }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
     }
 
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); filter: blur(5px); }
-      to { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    .hero-rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, var(--line-warm) 0%, transparent 60%);
+      margin-top: clamp(22px, 3.5vw, 40px);
+      opacity: 0;
+      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.62s;
     }
   </style>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="aurora-orb"></div>
-  <div class="noise-overlay"></div>
+  <div class="bg-texture"></div>
+  <div class="bg-vignette"></div>
+  <div class="bg-glow-tl"></div>
+  <div class="bg-glow-br"></div>
+  <div class="grain"></div>
+
+  <div class="side-label">Zero Waste · Maximum Taste</div>
 
   <div class="layout">
-    
+
     <header>
       <div class="status-pill">
         <div class="status-dot"></div>
         Night Rescue Active
       </div>
-      <div class="version-tag">V 2.1.0</div>
+      <div class="version-tag">V&nbsp;2.1.0</div>
     </header>
 
     <main>
-      <div class="title-wrapper">
-        <h1 class="huge-text">LAST</h1>
+      <div class="eyebrow">
+        <span class="eyebrow-line"></span>
+        <span class="eyebrow-text">Premium Surplus Gastronomy</span>
       </div>
-      <div class="title-wrapper">
-        <h1 class="huge-text text-outline">PLATE.</h1> 
+
+      <div class="title-block">
+        <span class="huge-text delay-1">LAST</span>
       </div>
-      
+      <div class="title-block">
+        <span class="huge-text huge-text-outline">PLATE.</span>
+      </div>
+
       <p class="sub-text">
-        <strong>Premium surplus gastronomy.</strong> Rescued from top-tier restaurants exclusively after-hours. Zero waste. Maximum taste.
+        Rescued from top-tier restaurants exclusively after-hours —
+        <em>because extraordinary food deserves a second chance.</em>
       </p>
+      <div class="hero-rule"></div>
     </main>
 
     <footer>
-      <a href="/browse-entry" class="btn-primary">
-        <span>Unlock Near You</span>
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-        </svg>
-      </a>
+      <div class="footer-meta">
+        <span class="footer-city">Available in select cities</span>
+        <span class="footer-hrs">Active · 21:00 – 02:00 nightly</span>
+      </div>
 
-      <a href="/restaurant/login" class="merchant-link">
-        Partner Auth
-      </a>
+      <div class="cta-group">
+        <a href="/browse-entry" class="btn-primary">
+          <span>Unlock Near You</span>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </a>
+        <a href="/restaurant/login" class="merchant-link">Partner Auth →</a>
+      </div>
     </footer>
 
   </div>
