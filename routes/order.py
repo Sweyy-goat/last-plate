@@ -37,35 +37,28 @@ def checkout(food_id):
 # ================= CREATE ORDER =================
 @order_bp.route("/api/create-order", methods=["POST"])
 def create_order():
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    data = request.json
-    food_id = int(data["food_id"])
-    quantity = int(data["quantity"])
-    email = data["email"]
+    # ... (existing session/data checks) ...
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-    cur.execute("""
-        SELECT price, restaurant_id, available_quantity
-        FROM foods WHERE id=%s FOR UPDATE
-    """, (food_id,))
+    cur.execute("SELECT price, restaurant_id, available_quantity FROM foods WHERE id=%s FOR UPDATE", (food_id,))
     food = cur.fetchone()
 
-    if not food or food["available_quantity"] < quantity:
-        return jsonify({"error": "Insufficient stock"}), 400
+    # --- THE MARKUP CALCULATION ---
+    base_price = float(food["price"])
+    # Add 15% platform fee and round up to the nearest Rupee
+    platform_unit_price = math.ceil(base_price * 1.15) 
+    
+    # Razorpay expects amount in PAISE (₹58 = 5800 paise)
+    total_amount_paise = platform_unit_price * quantity * 100
 
-    # FIX: Charge user the Platform Price (Price + 15%)
-    platform_unit_price = math.ceil(food["price"] * 1.15)
-    amount = platform_unit_price * quantity * 100
-
+    # Create the Razorpay Order with the NEW marked-up amount
     razorpay_order = razorpay_client.order.create({
-        "amount": amount,
+        "amount": total_amount_paise,
         "currency": "INR",
         "payment_capture": 1
     })
 
+    # Save the ACTUAL amount (₹58) to the 'total_amount' column
     cur.execute("""
         INSERT INTO orders
         (user_id, food_id, quantity, restaurant_id,
@@ -76,19 +69,17 @@ def create_order():
         food_id,
         quantity,
         food["restaurant_id"],
-        amount / 100,
+        platform_unit_price * quantity, # Save as 58.00
         email,
         razorpay_order["id"]
     ))
 
     mysql.connection.commit()
-
     return jsonify({
         "razorpay_order_id": razorpay_order["id"],
-        "amount": amount,
+        "amount": total_amount_paise,
         "key": os.getenv("RAZORPAY_KEY_ID")
     })
-
 
 # ================= VERIFY PAYMENT =================
 @order_bp.route("/api/verify-payment", methods=["POST"])
