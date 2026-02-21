@@ -12,7 +12,6 @@ razorpay_client = razorpay.Client(auth=(
     os.getenv("RAZORPAY_KEY_SECRET")
 ))
 
-
 # ================= CHECKOUT =================
 @order_bp.route("/checkout/<int:food_id>")
 def checkout(food_id):
@@ -57,8 +56,9 @@ def create_order():
     if not food or food["available_quantity"] < quantity:
         return jsonify({"error": "Insufficient stock"}), 400
 
-    # In create_order route
-    amount = food["price"] * quantity * 100
+    # FIX: Charge user the Platform Price (Price + 15%)
+    platform_unit_price = math.ceil(food["price"] * 1.15)
+    amount = platform_unit_price * quantity * 100
 
     razorpay_order = razorpay_client.order.create({
         "amount": amount,
@@ -91,7 +91,6 @@ def create_order():
 
 
 # ================= VERIFY PAYMENT =================
-# ================= VERIFY PAYMENT =================
 @order_bp.route("/api/verify-payment", methods=["POST"])
 def verify_payment():
     data = request.json
@@ -102,7 +101,7 @@ def verify_payment():
     except:
         return jsonify({"success": False}), 400
 
-    # FIX: Changed r.phone to r.mobile to match your database schema
+    # Fetch order and restaurant details
     cur.execute("""
         SELECT o.*, f.name AS food_name, f.price AS res_unit_price, 
                r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile
@@ -117,42 +116,65 @@ def verify_payment():
     if not order:
         return jsonify({"success": False}), 400
 
-    # ... [Keep your existing stock update and order status update code here] ...
+    # 1. Stock Update
+    cur.execute("""
+        UPDATE foods 
+        SET available_quantity = available_quantity - %s 
+        WHERE id=%s AND available_quantity >= %s
+    """, (order["quantity"], order["food_id"], order["quantity"]))
+
+    if cur.rowcount == 0:
+        mysql.connection.rollback()
+        return jsonify({"success": False, "error": "Out of stock"}), 409
+
+    # 2. GENERATE OTP (This was missing!)
+    otp = str(random.randint(100000, 999999))
+
+    # 3. Update Order Table
+    cur.execute("""
+        UPDATE orders 
+        SET payment_status='PAID', 
+            status='CONFIRMED', 
+            razorpay_payment_id=%s, 
+            pickup_otp=%s 
+        WHERE id=%s
+    """, (data["razorpay_payment_id"], otp, order["id"]))
+
+    mysql.connection.commit()
 
     # --- MATH FOR ADMIN EMAIL ---
     qty = order["quantity"]
     res_unit_price = float(order["res_unit_price"])
     res_total_payout = res_unit_price * qty
     
+    # Calculate displayed platform prices for the report
     platform_unit_price = math.ceil(res_unit_price * 1.15)
     platform_total_collected = platform_unit_price * qty
 
-    # 📧 Send OTP to User
+    # 📧 4. Send Email to User
     send_email(
         order["user_email"],
         "Your Last Plate Pickup OTP",
         f"<h2>Order Confirmed!</h2><p>Your OTP for <b>{order['food_name']}</b> is:</p><h1>{otp}</h1>"
     )
 
-    # 📧 Send Detailed Info to Admin
+    # 📧 5. Send Detailed Email to Admin
     admin_email_body = f"""
-    <h3>🚀 New Order for {order['restaurant_name']}</h3>
+    <h3>🚀 New Order: {order['food_name']}</h3>
     <hr>
     <p><b>Order Details:</b><br>
-    Item: {order['food_name']} (ID: {order['food_id']})<br>
     Quantity: {qty}<br>
     OTP: <b>{otp}</b></p>
 
-    <p><b>Financial Breakdown:</b><br>
-    Restaurant Rate: ₹{res_unit_price}<br>
-    Platform Rate (User Paid): ₹{platform_unit_price}<br>
-    <b>Total Collected: ₹{platform_total_collected}</b></p>
+    <p><b>Money Collected (User Paid):</b><br>
+    Unit Price: ₹{platform_unit_price}<br>
+    <b>Total: ₹{platform_total_collected}</b></p>
 
-    <p><b>Payout Information:</b><br>
+    <p><b>Payout Info (To Restaurant):</b><br>
     Restaurant: {order['restaurant_name']}<br>
     GPay UPI: <code>{order['gpay_upi']}</code><br>
     Mobile: {order['res_mobile']}<br>
-    <b>Amount to Transfer: ₹{res_total_payout}</b></p>
+    <b>Total to Pay: ₹{res_total_payout}</b></p>
     """
 
     send_email(
