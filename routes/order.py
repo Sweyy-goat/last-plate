@@ -171,6 +171,6 @@ def verify_payment():
     OTP: <b>{otp}</b></p>
     """
 
-    send_email("sidharthsunil1305@gmail.com", f"New Order: {order['food_name']}", admin_body)
+    send_email("terminalplate@gmail.com", f"New Order: {order['food_name']}", admin_body)
 
     return jsonify({"success": True, "pickup_otp": otp})
