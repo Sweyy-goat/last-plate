@@ -104,7 +104,7 @@ def verify_payment():
     # Fetch order and restaurant details using 'mobile' column
     cur.execute("""
         SELECT o.*, f.name AS food_name, f.price AS res_unit_price, 
-               r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile
+               r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile, r.email AS res_email
         FROM orders o
         JOIN foods f ON o.food_id = f.id
         JOIN restaurants r ON f.restaurant_id = r.id
@@ -172,5 +172,29 @@ def verify_payment():
     """
 
     send_email("terminalplate@gmail.com", f"New Order: {order['food_name']}", admin_body)
+    # 📧 Send Email to Restaurant
+    restaurant_body = f"""
+    <h2>New Order from LastPlate</h2>
+
+    <p><b>Dish:</b> {order['food_name']}</p>
+    <p><b>Quantity:</b> {order['quantity']}</p>
+    <p><b>Pickup OTP:</b> {otp}</p>
+
+    <hr>
+    <h3>Start Preparing the Order</h3>
+    <p>Please begin cooking immediately. The customer will arrive soon for pickup.</p>
+
+    <hr>
+    <h3>Restaurant Earnings</h3>
+    <p>You will receive: <b>₹{res_total_payout}</b> for this order.</p>
+
+    <p style="opacity:0.7;">This order was placed via LastPlate.in</p>
+    """
+
+    send_email(
+        order["res_email"],
+        f"Prepare Order: {order['food_name']}",
+        restaurant_body
+    )
 
     return jsonify({"success": True, "pickup_otp": otp})
