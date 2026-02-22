@@ -4,6 +4,7 @@ import MySQLdb.cursors
 import math
 import razorpay, os, random
 from utils.emailer import send_email
+import time
 
 order_bp = Blueprint("order", __name__)
 
@@ -190,7 +191,7 @@ def verify_payment():
 
     <p style="opacity:0.7;">This order was placed via LastPlate.in</p>
     """
-
+    time.sleep(1)
     send_email(
         order["res_email"],
         f"Prepare Order: {order['food_name']}",
