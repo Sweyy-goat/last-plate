@@ -105,7 +105,7 @@ def verify_payment():
     # Fetch order and restaurant details using 'mobile' column
     cur.execute("""
         SELECT o.*, f.name AS food_name, f.price AS res_unit_price, 
-               r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile, r.email AS res_email
+               r.name AS restaurant_name, r.gpay_upi, r.mobile AS res_mobile, r.email AS res_email, r.location_link AS res_location
         FROM orders o
         JOIN foods f ON o.food_id = f.id
         JOIN restaurants r ON f.restaurant_id = r.id
@@ -150,11 +150,38 @@ def verify_payment():
     res_total_payout = res_unit_price * qty
     
     # 📧 Send OTP to User
+
     send_email(
         order["user_email"],
-        "Your Last Plate Pickup OTP",
-        f"<h2>Order Confirmed!</h2><p>Your OTP for <b>{order['food_name']}</b> is:</p><h1>{otp}</h1>"
-    )
+        "Your LastPlate Pickup OTP",
+        f"""
+        <h2>Order Confirmed!</h2>
+
+        <p>Your OTP for <b>{order['food_name']}</b> is:</p>
+        <h1>{otp}</h1>
+
+        <hr>
+
+        <h3>Pickup Location</h3>
+        <p><b>{order['restaurant_name']}</b></p>
+        <p>
+            <a href="{order['res_location']}" style="
+                display:inline-block;
+                background:#000;
+                color:white;
+                padding:10px 15px;
+                border-radius:6px;
+                text-decoration:none;
+            ">Open in Google Maps</a>
+        </p>
+
+        <p>If the button doesn’t work, here is the link:</p>
+        <p>{order['res_location']}</p>
+
+        <hr>
+        <p>Thank you for using LastPlate.in!</p>
+        """
+)
 
     # 📧 Send Detailed Info to Admin
     admin_body = f"""
