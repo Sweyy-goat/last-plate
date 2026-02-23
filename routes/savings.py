@@ -1,82 +1,79 @@
-from flask import Blueprint, jsonify, session
+from flask import Blueprint, jsonify, session, render_template
 from utils.db import mysql
+import MySQLdb.cursors
 
 savings_bp = Blueprint("savings", __name__)
 
-def get_db_connection():
-    return pymysql.connect(
-        host='localhost',
-        user='root',
-        password='your_password',
-        db='lastplate_db',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+# -------------------------------
+# PAGE ROUTE  ( /savings )
+# -------------------------------
+@savings_bp.route('/savings')
+def savings_page():
+    return render_template('user/savings.html')
 
 
+# -------------------------------
+# API ROUTE  ( /api/savings )
+# -------------------------------
 @savings_bp.route('/api/savings', methods=['GET'])
 def get_savings():
     user_id = session.get('user_id', 1)
 
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cur:
+    conn = mysql.connection
+    cur = conn.cursor(MySQLdb.cursors.DictCursor)
 
-            # ----------------------------------------------------
-            # 1. TOTAL MEALS RESCUED + TOTAL SAVINGS
-            # ----------------------------------------------------
-            query_total = """
-                SELECT 
-                    COUNT(o.id) AS meals_rescued,
-                    COALESCE(SUM((f.original_price - f.price) * o.quantity), 0) AS total_saved
-                FROM orders o
-                JOIN foods f ON o.food_id = f.id
-                WHERE o.user_id = %s
-                AND o.status = 'PICKED_UP'
-                AND o.payment_status = 'PAID'
-            """
-            cur.execute(query_total, (user_id,))
-            total_stats = cur.fetchone()
+    # -----------------------------------
+    # 1. TOTAL MEALS + TOTAL SAVINGS
+    # -----------------------------------
+    query_total = """
+        SELECT 
+            COUNT(o.id) AS meals_rescued,
+            COALESCE(SUM((f.original_price - f.price) * o.quantity), 0) AS total_saved
+        FROM orders o
+        JOIN foods f ON o.food_id = f.id
+        WHERE o.user_id = %s
+        AND o.status = 'PICKED_UP'
+        AND o.payment_status = 'PAID'
+    """
+    cur.execute(query_total, (user_id,))
+    total_stats = cur.fetchone()
 
-            # ----------------------------------------------------
-            # 2. TODAY SAVINGS
-            # ----------------------------------------------------
-            query_today = """
-                SELECT 
-                    COALESCE(SUM((f.original_price - f.price) * o.quantity), 0) AS saved_today
-                FROM orders o
-                JOIN foods f ON o.food_id = f.id
-                WHERE o.user_id = %s
-                AND o.status = 'PICKED_UP'
-                AND o.payment_status = 'PAID'
-                AND DATE(o.created_at) = CURDATE()
-            """
-            cur.execute(query_today, (user_id,))
-            today_stats = cur.fetchone()
+    # -----------------------------------
+    # 2. TODAY SAVINGS
+    # -----------------------------------
+    query_today = """
+        SELECT 
+            COALESCE(SUM((f.original_price - f.price) * o.quantity), 0) AS saved_today
+        FROM orders o
+        JOIN foods f ON o.food_id = f.id
+        WHERE o.user_id = %s
+        AND o.status = 'PICKED_UP'
+        AND o.payment_status = 'PAID'
+        AND DATE(o.created_at) = CURDATE()
+    """
+    cur.execute(query_today, (user_id,))
+    today_stats = cur.fetchone()
 
-            # ----------------------------------------------------
-            # 3. RECENT TRANSACTIONS
-            # ----------------------------------------------------
-            query_tx = """
-                SELECT 
-                    r.name AS restaurant_name,
-                    o.created_at,
-                    (f.original_price - f.price) * o.quantity AS amount_saved
-                FROM orders o
-                JOIN foods f ON o.food_id = f.id
-                JOIN restaurants r ON o.restaurant_id = r.id
-                WHERE o.user_id = %s
-                AND o.status = 'PICKED_UP'
-                ORDER BY o.created_at DESC
-                LIMIT 5
-            """
-            cur.execute(query_tx, (user_id,))
-            recent_orders = cur.fetchall()
+    # -----------------------------------
+    # 3. RECENT TRANSACTIONS
+    # -----------------------------------
+    query_tx = """
+        SELECT 
+            r.name AS restaurant_name,
+            o.created_at,
+            (f.original_price - f.price) * o.quantity AS amount_saved
+        FROM orders o
+        JOIN foods f ON o.food_id = f.id
+        JOIN restaurants r ON o.restaurant_id = r.id
+        WHERE o.user_id = %s
+        AND o.status = 'PICKED_UP'
+        ORDER BY o.created_at DESC
+        LIMIT 5
+    """
+    cur.execute(query_tx, (user_id,))
+    recent_orders = cur.fetchall()
 
-    finally:
-        conn.close()
-
-    # -------------- Format Output ------------------
-
+    # Format data
     total_saved = int(total_stats["total_saved"])
     saved_today = int(today_stats["saved_today"])
     meals = total_stats["meals_rescued"]
@@ -96,8 +93,8 @@ def get_savings():
         "total_saved": total_saved,
         "saved_today": saved_today,
         "meals_rescued": meals,
-        "food_kg": round(meals * 0.4, 1),  # 400g per meal
-        "co2_kg": round(meals * 1.2, 1),   # 1.2kg CO2 per meal
+        "food_kg": round(meals * 0.4, 1),
+        "co2_kg": round(meals * 1.2, 1),
         "streak": 3,
         "city_rank": 47,
         "referral_code": "RESCUE50",
