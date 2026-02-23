@@ -32,7 +32,7 @@ def get_savings():
         FROM orders o
         JOIN foods f ON o.food_id = f.id
         WHERE o.user_id = %s
-        AND o.status = 'PICKED_UP'
+        AND o.status IN ('CONFIRMED', 'PICKED_UP')
         AND o.payment_status = 'PAID'
     """
     cur.execute(query_total, (user_id,))
@@ -47,7 +47,7 @@ def get_savings():
         FROM orders o
         JOIN foods f ON o.food_id = f.id
         WHERE o.user_id = %s
-        AND o.status = 'PICKED_UP'
+        AND o.status IN ('CONFIRMED', 'PICKED_UP')
         AND o.payment_status = 'PAID'
         AND DATE(o.created_at) = CURDATE()
     """
