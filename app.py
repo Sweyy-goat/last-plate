@@ -24,6 +24,9 @@ app.register_blueprint(browse_bp)
 from routes.order import order_bp
 app.register_blueprint(order_bp)
 
+from routes.savings import savings_bp
+app.register_blueprint(savings_bp)
+
 @app.route("/")
 def home():
     return render_template("index.html")
