@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session
-import pymysql.cursors
+from utils.db import mysql
 
 savings_bp = Blueprint("savings", __name__)
 
