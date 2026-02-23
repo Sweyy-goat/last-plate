@@ -2075,7 +2075,12 @@ function closeSecretMenu() {
   setActiveNav('bnBrowse');
 }
 
-document.getElementById('secretScrim').onclick = closeSecretMenu;
+// Use event delegation — works regardless of when elements are parsed
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'secretScrim' || e.target.closest('#secretClose')) {
+    closeSecretMenu();
+  }
+});
 
 /* ========================
    SECRET MENU — SEARCH
@@ -2157,11 +2162,9 @@ function handleSecretSearch(q) {
 
 // Wire up search input (after DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('secretClose').onclick = closeSecretMenu;
-
   const input    = document.getElementById('secretSearch');
   const clearBtn = document.getElementById('secretSearchClear');
-
+  if (!input) return;
   input.addEventListener('input', () => handleSecretSearch(input.value));
   clearBtn.onclick = () => {
     input.value = '';
