@@ -967,6 +967,604 @@ footer {
   .support-decor { display: none; }
   footer { flex-direction: column; gap: 20px; text-align: center; align-items: center; }
 }
+
+/* =====================
+   BOTTOM NAV
+===================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 76px;
+  background: var(--white);
+  border-top: 1.5px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  z-index: 2000;
+  backdrop-filter: blur(20px);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -8px 32px rgba(26,25,22,0.08);
+}
+
+html.dark .bottom-nav {
+  background: rgba(20,22,18,0.97);
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.35);
+}
+
+/* Vertical divider between two items */
+.bottom-nav::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 16px; bottom: 16px;
+  width: 1.5px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.bn-item {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 5px;
+  flex: 1; height: 100%;
+  background: none; border: none;
+  cursor: pointer;
+  color: var(--ink-3);
+  transition: color 0.25s var(--spring), background 0.25s;
+  position: relative;
+  text-decoration: none;
+}
+
+.bn-item:hover { background: var(--bg-2); color: var(--ink-2); }
+.bn-item.active { color: var(--green); }
+
+/* Animated green pill under active tab */
+.bn-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 32px; height: 3px;
+  background: var(--green);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 8px rgba(61,122,46,0.3);
+  animation: slideDown 0.4s var(--bounce) forwards;
+}
+
+@keyframes slideDown {
+  from { transform: translateX(-50%) scaleX(0); }
+  to   { transform: translateX(-50%) scaleX(1); }
+}
+
+.bn-icon {
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.bn-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Secret menu red pulse badge */
+.bn-badge {
+  position: absolute;
+  top: -3px; right: -5px;
+  width: 9px; height: 9px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  animation: urgentPulse 2s ease infinite;
+}
+
+html.dark .bn-badge { border-color: var(--bg); }
+
+/* Extra body padding so content clears bottom nav */
+body { padding-bottom: 80px; }
+
+/* =====================
+   SECRET MENU SHEET
+===================== */
+.secret-sheet-overlay {
+  position: fixed; inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+}
+
+.secret-sheet-overlay.open { pointer-events: all; }
+
+.secret-scrim {
+  position: absolute; inset: 0;
+  background: rgba(26,25,22,0);
+  backdrop-filter: blur(0px);
+  transition: background 0.4s, backdrop-filter 0.4s;
+}
+
+.secret-sheet-overlay.open .secret-scrim {
+  background: rgba(26,25,22,0.5);
+  backdrop-filter: blur(16px);
+}
+
+.secret-sheet {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-top: 1.5px solid var(--border);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -16px 64px rgba(26,25,22,0.18);
+  transform: translateY(100%);
+  transition: transform 0.55s var(--spring);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.secret-sheet-overlay.open .secret-sheet {
+  transform: translateY(0);
+}
+
+/* Drag handle */
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border-2);
+  border-radius: 2px;
+  margin: 14px auto 0;
+  flex-shrink: 0;
+}
+
+/* Sheet header */
+.sheet-header {
+  padding: 18px 28px 0;
+  flex-shrink: 0;
+}
+
+.sheet-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sheet-title {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.sheet-title-icon {
+  width: 38px; height: 38px;
+  background: var(--ink);
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+
+html.dark .sheet-title-icon { background: var(--bg-2); border: 1px solid var(--border); }
+
+.sheet-title-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.5rem; font-weight: 400;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+
+.sheet-close {
+  width: 34px; height: 34px;
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--ink-2);
+  font-size: 0.85rem;
+  transition: all 0.25s var(--spring);
+  flex-shrink: 0;
+}
+
+.sheet-close:hover { background: var(--border); color: var(--ink); transform: rotate(90deg); }
+
+/* Tab switcher */
+.sheet-tabs {
+  display: flex;
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.sheet-tab {
+  flex: 1; padding: 10px 16px;
+  background: none; border: none;
+  border-radius: 11px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all 0.3s var(--spring);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+.sheet-tab.active {
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+html.dark .sheet-tab.active { background: var(--bg); }
+
+/* Sheet body */
+.sheet-body {
+  flex: 1; overflow-y: auto;
+  padding: 0 28px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Tab panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: riseIn 0.4s var(--spring) both; }
+
+/* Today's Specials */
+.specials-kicker {
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.specials-kicker span { width: 14px; height: 1px; background: var(--gold); display: inline-block; }
+
+.special-card {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s var(--spring);
+  display: flex;
+}
+
+.special-card:hover {
+  border-color: var(--border-2);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.special-img {
+  width: 100px; min-height: 100px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.special-body {
+  padding: 16px 18px;
+  flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+}
+
+.special-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px;
+  background: var(--gold-bg);
+  border: 1px solid rgba(168,113,40,0.2);
+  border-radius: 6px;
+  font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  width: fit-content;
+}
+
+.special-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.1rem; font-weight: 400;
+  letter-spacing: -0.01em; color: var(--ink);
+  line-height: 1.2; margin-bottom: 4px;
+}
+
+.special-kitchen {
+  font-size: 0.65rem; color: var(--ink-3);
+  font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.special-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.special-price {
+  font-size: 1.1rem; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+
+.special-price .mrp {
+  font-size: 0.65rem; font-weight: 400;
+  color: var(--ink-3); text-decoration: line-through;
+  margin-right: 4px;
+}
+
+.special-btn {
+  padding: 7px 14px;
+  background: var(--green); color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.25s var(--spring);
+}
+
+.special-btn:hover { background: var(--green-l); transform: translateY(-1px); }
+
+/* Restaurant filter chips inside secret sheet */
+.rest-chip-row {
+  display: flex; gap: 8px;
+  overflow-x: auto; scrollbar-width: none;
+  padding-bottom: 16px; margin-bottom: 4px;
+}
+.rest-chip-row::-webkit-scrollbar { display: none; }
+
+.rest-chip {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 10px 16px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s var(--spring);
+  font-family: 'Sora', sans-serif;
+  text-align: left;
+}
+
+.rest-chip:hover {
+  border-color: var(--border-2);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.rest-chip.active {
+  background: var(--green-bg);
+  border-color: var(--green-bd);
+  box-shadow: 0 4px 12px rgba(61,122,46,0.15);
+}
+
+.rest-chip-name {
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.01em;
+  display: block;
+}
+
+.rest-chip-count {
+  font-size: 0.6rem; color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.rest-chip.active .rest-chip-name { color: var(--green); }
+
+/* Dishes list container */
+.dishes-list { }
+
+/* Special dish card description */
+.special-desc {
+  font-size: 0.65rem; color: var(--ink-3);
+  line-height: 1.5; margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Discount tag inside price */
+.special-disc {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  background: var(--gold-bg);
+  border: 1px solid rgba(168,113,40,0.2);
+  border-radius: 6px;
+  font-size: 0.6rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* Secret skeleton card */
+.skel-secret-card {
+  display: flex;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.skel-secret-img {
+  width: 100px; min-height: 90px; flex-shrink: 0;
+  background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skel-secret-body {
+  flex: 1; padding: 16px 18px;
+}
+
+/* Secret empty / error state */
+.secret-empty {
+  padding: 48px 20px;
+  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+
+/* Tomorrow footer note */
+.tomorrow-footer {
+  margin-top: 20px;
+  font-size: 0.7rem; color: var(--ink-3);
+  line-height: 1.6; text-align: center;
+  padding: 16px;
+  background: var(--bg-2);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+.tomorrow-intro {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.tomorrow-intro-icon { font-size: 1.6rem; }
+
+.tomorrow-intro-title {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 3px;
+}
+
+.tomorrow-intro-sub { font-size: 0.68rem; color: var(--ink-3); }
+
+/* Tomorrow cards */
+.tomorrow-card {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 14px;
+  transition: border-color 0.2s, transform 0.25s var(--spring);
+}
+
+.tomorrow-card:hover {
+  border-color: var(--border-2);
+  transform: translateX(3px);
+}
+
+.tomorrow-emoji {
+  width: 46px; height: 46px;
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+
+.tomorrow-info { flex: 1; }
+
+.tomorrow-name {
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.tomorrow-kitchen {
+  font-size: 0.64rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 3px;
+}
+
+.tomorrow-hint {
+  font-size: 0.65rem; color: var(--ink-3);
+}
+
+.tomorrow-notify {
+  display: flex; align-items: center; gap: 5px;
+  padding: 8px 13px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-2); cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s var(--spring);
+  font-family: 'Sora', sans-serif;
+}
+
+.tomorrow-notify:hover {
+  border-color: var(--green-bd);
+  background: var(--green-bg);
+  color: var(--green);
+  transform: translateY(-1px);
+}
+
+.tomorrow-notify.notified {
+  background: var(--green-bg);
+  border-color: var(--green-bd);
+  color: var(--green);
+}
+
+.tomorrow-footer {
+  margin-top: 20px;
+  font-size: 0.7rem; color: var(--ink-3);
+  line-height: 1.6; text-align: center;
+  padding: 16px;
+  background: var(--bg-2);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+
+/* Exclusive notice banner */
+.exclusive-notice {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px;
+  background: var(--ink);
+  border-radius: 10px;
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 16px;
+}
+
+html.dark .exclusive-notice {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+}
+
+/* Sheet title sub */
+.sheet-title-sub {
+  font-size: 0.65rem; color: var(--ink-3);
+  margin-top: 2px;
+}
+
+/* By Cuisine tab */
+.cuisine-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cuisine-chip {
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  transition: all 0.25s var(--spring);
+}
+
+.cuisine-chip:hover, .cuisine-chip.active {
+  background: var(--green-bg);
+  border-color: var(--green-bd);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.cuisine-emoji { font-size: 1.4rem; }
+
+.cuisine-name {
+  font-size: 0.78rem; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.01em;
+  display: block; margin-bottom: 1px;
+}
+
+.cuisine-count { font-size: 0.62rem; color: var(--ink-3); }
+
 </style>
 </head>
 <body>
@@ -992,9 +1590,6 @@ footer {
       <button class="icon-btn" id="openProfile" aria-label="Profile">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
-      <a href="/savings" class="icon-btn" aria-label="Savings">
-  💰
-</a>
     </div>
   </nav>
 
@@ -1351,6 +1946,331 @@ fetch('/api/foods')
     applyFilters();
   })
   .catch(() => { allFoods = []; render([]); });
+
+/* ========================
+   BOTTOM NAV ACTIVE STATE
+======================== */
+function setActiveNav(id) {
+  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+setActiveNav('bnBrowse');
+
+/* ========================
+   SECRET MENU — STATE
+======================== */
+let secretRestaurants = [];    // [{restaurant_id, restaurant_name, dish_count, min_price, max_price}]
+let secretDishes = [];         // dishes for currently selected restaurant
+let secretLoaded = false;
+
+/* ========================
+   SECRET MENU — OPEN/CLOSE
+======================== */
+function openSecretMenu() {
+  document.getElementById('secretSheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setActiveNav('bnSecret');
+  if (window.navigator.vibrate) window.navigator.vibrate(12);
+  if (!secretLoaded) loadSecretRestaurants();
+}
+
+function closeSecretMenu() {
+  document.getElementById('secretSheet').classList.remove('open');
+  document.body.style.overflow = '';
+  setActiveNav('bnBrowse');
+}
+
+document.getElementById('secretScrim').onclick = closeSecretMenu;
+document.getElementById('secretClose').onclick = closeSecretMenu;
+
+/* ========================
+   SECRET MENU — TAB SWITCH
+======================== */
+document.querySelectorAll('.sheet-tab').forEach(tab => {
+  tab.onclick = function() {
+    const target = this.dataset.tab;
+    document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById(target).classList.add('active');
+  };
+});
+
+/* ========================
+   SECRET MENU — LOAD RESTAURANTS (Tab 1 sidebar)
+======================== */
+async function loadSecretRestaurants() {
+  secretLoaded = true;
+  const tabToday    = document.getElementById('tabToday');
+  const tabTomorrow = document.getElementById('tabTomorrow');
+
+  // Show skeletons in both tabs
+  tabToday.innerHTML    = secretSkelList(3);
+  tabTomorrow.innerHTML = secretSkelList(2);
+
+  try {
+    const res  = await fetch('/api/secret-menu/restaurants');
+    const data = await res.json();
+    secretRestaurants = data.restaurants || [];
+
+    if (!secretRestaurants.length) {
+      tabToday.innerHTML    = secretEmpty('No secret specials tonight.');
+      tabTomorrow.innerHTML = secretEmpty('Nothing coming up yet — check back later.');
+      return;
+    }
+
+    // Tab 1: today's specials — restaurants with is_today_special dishes
+    renderSecretRestaurants(tabToday, secretRestaurants, 'today');
+    // Tab 2: coming tomorrow — all others (or same restaurants, chef's choice framing)
+    renderSecretRestaurants(tabTomorrow, secretRestaurants, 'tomorrow');
+
+    // Auto-load dishes for first restaurant in tab 1
+    if (secretRestaurants[0]) {
+      loadDishesForRestaurant(secretRestaurants[0], tabToday, 'today');
+    }
+
+  } catch (e) {
+    tabToday.innerHTML    = secretError();
+    tabTomorrow.innerHTML = secretError();
+  }
+}
+
+/* ========================
+   SECRET MENU — RENDER RESTAURANT LIST
+======================== */
+function renderSecretRestaurants(container, restaurants, mode) {
+  const notice = mode === 'today'
+    ? `<div class="exclusive-notice"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Only available here — not on the main browse</div>`
+    : `<div class="tomorrow-intro"><div class="tomorrow-intro-icon">${mode === 'tomorrow' ? '🌙' : '🍽️'}</div><div><div class="tomorrow-intro-title">Tomorrow's drops are being prepped.</div><div class="tomorrow-intro-sub">Check back after 5 PM to see them unlock.</div></div></div>`;
+
+  const restaurantBtns = restaurants.map((r, i) => `
+    <button class="rest-chip ${i === 0 && mode === 'today' ? 'active' : ''}"
+            onclick="loadDishesForRestaurant(${JSON.stringify(r).replace(/"/g, '&quot;')}, document.getElementById('${mode === 'today' ? 'tabToday' : 'tabTomorrow'}'), '${mode}', this)"
+            data-rid="${r.restaurant_id}">
+      <span class="rest-chip-name">${r.restaurant_name}</span>
+      <span class="rest-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
+    </button>
+  `).join('');
+
+  container.innerHTML = `
+    ${notice}
+    <div class="rest-chip-row" id="restChips_${mode}">${restaurantBtns}</div>
+    <div class="dishes-list" id="dishesList_${mode}">
+      ${secretSkelList(2)}
+    </div>
+  `;
+}
+
+/* ========================
+   SECRET MENU — LOAD DISHES FOR A RESTAURANT
+======================== */
+async function loadDishesForRestaurant(restaurant, container, mode, chipEl) {
+  // Update active chip
+  const chipsContainer = document.getElementById(`restChips_${mode}`);
+  if (chipsContainer) {
+    chipsContainer.querySelectorAll('.rest-chip').forEach(c => c.classList.remove('active'));
+    if (chipEl) chipEl.classList.add('active');
+    else {
+      const firstChip = chipsContainer.querySelector(`[data-rid="${restaurant.restaurant_id}"]`);
+      if (firstChip) firstChip.classList.add('active');
+    }
+  }
+
+  const dishesEl = document.getElementById(`dishesList_${mode}`);
+  if (dishesEl) dishesEl.innerHTML = secretSkelList(2);
+
+  try {
+    const res  = await fetch(`/api/secret-menu/${restaurant.restaurant_id}`);
+    const data = await res.json();
+    const dishes = data.dishes || [];
+
+    if (!dishes.length) {
+      if (dishesEl) dishesEl.innerHTML = secretEmpty('No dishes available from this kitchen right now.');
+      return;
+    }
+
+    if (dishesEl) {
+      dishesEl.innerHTML = dishes.map(d => renderSecretDishCard(d, mode)).join('');
+    }
+
+  } catch (e) {
+    if (dishesEl) dishesEl.innerHTML = secretError();
+  }
+}
+
+/* ========================
+   SECRET MENU — DISH CARD TEMPLATE
+======================== */
+function renderSecretDishCard(d, mode) {
+  const img = d.img || getFoodImage(d.name);
+  const disc = d.mrp && d.mrp > d.price
+    ? Math.round(((d.mrp - d.price) / d.mrp) * 100)
+    : null;
+
+  const tag = d.cuisine
+    ? `<div class="special-tag">${cuisineEmoji(d.cuisine)} ${d.cuisine}</div>`
+    : '';
+
+  if (mode === 'tomorrow') {
+    // Blurred teaser for "coming tomorrow"
+    return `
+      <div class="tomorrow-card">
+        <div class="tomorrow-emoji">${cuisineEmoji(d.cuisine)}</div>
+        <div class="tomorrow-info">
+          <div class="tomorrow-name">${d.name}</div>
+          <div class="tomorrow-kitchen">${d.restaurant_name || ''}</div>
+          <div class="tomorrow-hint">🕕 Available from tomorrow evening</div>
+        </div>
+        <button class="tomorrow-notify" onclick="notifyMe(this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Notify
+        </button>
+      </div>`;
+  }
+
+  return `
+    <div class="special-card" onclick="location.href='/checkout/secret/${d.id}'">
+      <img class="special-img" src="${img}" alt="${d.name}" loading="lazy"
+           onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80'">
+      <div class="special-body">
+        <div>
+          ${tag}
+          <div class="special-name">${d.name}</div>
+          <div class="special-kitchen">${d.restaurant_name || ''} · ${d.stock} left</div>
+          ${d.description ? `<div class="special-desc">${d.description}</div>` : ''}
+        </div>
+        <div class="special-footer">
+          <div class="special-price">
+            ${d.mrp ? `<span class="mrp">₹${d.mrp}</span>` : ''}
+            ₹${Math.ceil(d.price)}
+            ${disc ? `<span class="special-disc">${disc}% off</span>` : ''}
+          </div>
+          <button class="special-btn" ${d.stock === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>
+            ${d.stock === 0 ? 'Sold Out' : 'Reserve ↗'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ========================
+   SECRET MENU — HELPERS
+======================== */
+function cuisineEmoji(c) {
+  if (!c) return '🍽️';
+  const map = { kerala:'🥥', arabic:'🫕', mughlai:'🍗', continental:'🥗',
+                dessert:'🍮', chinese:'🥢', italian:'🍝', seafood:'🐟', biryani:'🍛' };
+  return map[(c || '').toLowerCase()] || '🍽️';
+}
+
+function secretSkelList(n) {
+  return Array.from({length: n}, () => `
+    <div class="skel-secret-card">
+      <div class="skel-secret-img"></div>
+      <div class="skel-secret-body">
+        <div class="skel-line" style="width:35%;height:9px"></div>
+        <div class="skel-line" style="width:65%;height:16px"></div>
+        <div class="skel-line" style="width:45%;height:10px;margin-top:18px"></div>
+      </div>
+    </div>`).join('');
+}
+
+function secretEmpty(msg) {
+  return `<div class="secret-empty">
+    <div style="font-size:2rem;margin-bottom:10px">🍃</div>
+    <div style="font-size:0.78rem;color:var(--ink-3)">${msg}</div>
+  </div>`;
+}
+
+function secretError() {
+  return `<div class="secret-empty">
+    <div style="font-size:2rem;margin-bottom:10px">⚠️</div>
+    <div style="font-size:0.78rem;color:var(--ink-3)">Couldn't load — check your connection.</div>
+  </div>`;
+}
+
+function notifyMe(btn) {
+  btn.innerHTML = '✓ Set!';
+  btn.classList.add('notified');
+  if (window.navigator.vibrate) window.navigator.vibrate(6);
+}
+
+// Drag to close sheet
+let startY = 0;
+const sheet = document.querySelector('.secret-sheet');
+sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+sheet.addEventListener('touchend', e => {
+  if (e.changedTouches[0].clientY - startY > 80) closeSecretMenu();
+}, { passive: true });
 </script>
+
+<!-- ===================== BOTTOM NAV ===================== -->
+<nav class="bottom-nav">
+  <button class="bn-item active" id="bnBrowse" onclick="setActiveNav('bnBrowse'); window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="bn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="bn-label">Browse</span>
+  </button>
+
+  <button class="bn-item" id="bnSecret" onclick="openSecretMenu()">
+    <div class="bn-icon">
+      <!-- Fingerprint-style icon for "secret" -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 10a2 2 0 0 0-2 2v4"/><path d="M10 10a4 4 0 0 1 7.97.93"/><path d="M7.63 7.63A6 6 0 0 0 6 12c0 1.65.5 3.18 1.36 4.44"/><path d="M16 17a6 6 0 0 0 1.64-4"/><path d="M4.6 4.6A9 9 0 0 0 3 12c0 2.43.96 4.63 2.52 6.24"/><path d="M19.4 4.6A9 9 0 0 1 21 12c0 1.45-.34 2.82-.95 4.04"/></svg>
+      <div class="bn-badge"></div>
+    </div>
+    <span class="bn-label">Chef's Secret</span>
+  </button>
+</nav>
+
+<!-- ===================== CHEF'S SECRET MENU SHEET ===================== -->
+<div class="secret-sheet-overlay" id="secretSheet">
+  <div class="secret-scrim" id="secretScrim"></div>
+  <div class="secret-sheet">
+    <div class="sheet-handle"></div>
+
+    <div class="sheet-header">
+      <div class="sheet-title-row">
+        <div class="sheet-title">
+          <div class="sheet-title-icon">🤫</div>
+          <div>
+            <div class="sheet-title-text">Chef's Secret Menu</div>
+            <div class="sheet-title-sub">Exclusive dishes, not on the main feed</div>
+          </div>
+        </div>
+        <button class="sheet-close" id="secretClose">✕</button>
+      </div>
+
+      <div class="sheet-tabs">
+        <button class="sheet-tab active" data-tab="tabToday">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Tonight's Exclusives
+        </button>
+        <button class="sheet-tab" data-tab="tabTomorrow">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Coming Tomorrow
+        </button>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <!-- TAB 1: TONIGHT'S EXCLUSIVES — populated by JS -->
+      <div class="tab-panel active" id="tabToday"></div>
+
+      <!-- TAB 2: COMING TOMORROW — populated by JS -->
+      <div class="tab-panel" id="tabTomorrow"></div>
+    </div><!-- /sheet-body -->
+  </div><!-- /secret-sheet -->
+</div><!-- /secret-sheet-overlay -->
+
+<script>
+function notifyMe(btn) {
+  btn.innerHTML = '✓ Set!';
+  btn.classList.add('notified');
+  if (window.navigator.vibrate) window.navigator.vibrate(6);
+}
+</script>
+
 </body>
 </html>
