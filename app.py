@@ -27,6 +27,9 @@ app.register_blueprint(order_bp)
 from routes.savings import savings_bp
 app.register_blueprint(savings_bp)
 
+from routes.secret import secret_bp
+app.register_blueprint(secret_bp)
+
 @app.route("/")
 def home():
     return render_template("index.html")
