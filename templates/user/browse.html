@@ -991,10 +991,14 @@ html.dark .bottom-nav {
 }
 
 /* Vertical divider between two items */
-.bottom-nav::after {
+
+/* Vertical divider between items */
+.bn-item + .bn-item::before {
   content: '';
   position: absolute;
-  left: 50%; top: 16px; bottom: 16px;
+  left: 0; 
+  top: 16px; 
+  bottom: 16px;
   width: 1.5px;
   background: var(--border);
   border-radius: 2px;
@@ -2399,21 +2403,27 @@ sheet.addEventListener('touchend', e => {
 
 <!-- ===================== BOTTOM NAV ===================== -->
 <nav class="bottom-nav">
-  <button class="bn-item active" id="bnBrowse" onclick="setActiveNav('bnBrowse'); window.scrollTo({top:0,behavior:'smooth'})">
-    <div class="bn-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    </div>
-    <span class="bn-label">Browse</span>
-  </button>
+  <button class="bn-item active" id="bnBrowse" onclick="setActiveNav('bnBrowse'); window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="bn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="bn-label">Browse</span>
+  </button>
 
-  <button class="bn-item" id="bnSecret" onclick="openSecretMenu()">
-    <div class="bn-icon">
-      <!-- Fingerprint-style icon for "secret" -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 10a2 2 0 0 0-2 2v4"/><path d="M10 10a4 4 0 0 1 7.97.93"/><path d="M7.63 7.63A6 6 0 0 0 6 12c0 1.65.5 3.18 1.36 4.44"/><path d="M16 17a6 6 0 0 0 1.64-4"/><path d="M4.6 4.6A9 9 0 0 0 3 12c0 2.43.96 4.63 2.52 6.24"/><path d="M19.4 4.6A9 9 0 0 1 21 12c0 1.45-.34 2.82-.95 4.04"/></svg>
-      <div class="bn-badge"></div>
-    </div>
-    <span class="bn-label">Chef's Secret</span>
-  </button>
+  <button class="bn-item" id="bnSecret" onclick="openSecretMenu()">
+    <div class="bn-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 10a2 2 0 0 0-2 2v4"/><path d="M10 10a4 4 0 0 1 7.97.93"/><path d="M7.63 7.63A6 6 0 0 0 6 12c0 1.65.5 3.18 1.36 4.44"/><path d="M16 17a6 6 0 0 0 1.64-4"/><path d="M4.6 4.6A9 9 0 0 0 3 12c0 2.43.96 4.63 2.52 6.24"/><path d="M19.4 4.6A9 9 0 0 1 21 12c0 1.45-.34 2.82-.95 4.04"/></svg>
+      <div class="bn-badge"></div>
+    </div>
+    <span class="bn-label">Chef's Secret</span>
+  </button>
+
+    <button class="bn-item" id="bnWallet" onclick="location.href='/savings'">
+    <div class="bn-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+    </div>
+    <span class="bn-label">Impact</span>
+  </button>
 </nav>
 
 <!-- ===================== CHEF'S SECRET MENU SHEET ===================== -->
