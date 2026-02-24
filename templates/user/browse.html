@@ -1255,6 +1255,7 @@ footer {
   backdrop-filter: blur(28px) saturate(1.5);
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 -8px 40px rgba(26,25,22,0.09), 0 -1px 0 var(--border);
+  transition: transform 0.4s var(--spring);
 }
 
 html.dark .bottom-nav {
@@ -1367,10 +1368,12 @@ html.dark .bn-badge { border-color: var(--bg); }
   box-shadow: 0 -20px 80px rgba(26,25,22,0.2);
   transform: translateY(100%);
   transition: transform 0.6s var(--spring);
+  height: 92vh;
   max-height: 92vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
 }
 
 .secret-sheet-overlay.open .secret-sheet {
@@ -2256,6 +2259,7 @@ let secretLoaded = false;
 
 function openSecretMenu() {
   document.getElementById('secretSheet').classList.add('open');
+  document.querySelector('.bottom-nav').style.transform = 'translateY(100%)';
   document.body.style.overflow = 'hidden';
   setActiveNav('bnSecret');
   if (window.navigator.vibrate) window.navigator.vibrate(12);
@@ -2264,6 +2268,7 @@ function openSecretMenu() {
 
 function closeSecretMenu() {
   document.getElementById('secretSheet').classList.remove('open');
+  document.querySelector('.bottom-nav').style.transform = '';
   document.body.style.overflow = '';
   setActiveNav('bnBrowse');
 }
