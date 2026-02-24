@@ -2386,8 +2386,16 @@ async function loadSecretRestaurants() {
     prefetchAllDishes(secretRestaurants);
     renderSecretRestaurants(tabToday, secretRestaurants, 'today');
     renderSecretRestaurants(tabTomorrow, secretRestaurants, 'tomorrow');
-    if (secretRestaurants[0]) loadDishesForRestaurant(secretRestaurants[0], tabToday, 'today');
-  } catch {
+
+    // ✅ Wait one tick for DOM to paint before loading dishes
+    setTimeout(() => {
+      if (secretRestaurants[0]) {
+        loadDishesForRestaurant(secretRestaurants[0], tabToday, 'today');
+      }
+    }, 0);
+
+  } catch(e) {
+    console.error('Secret menu load error:', e);
     tabToday.innerHTML    = secretError();
     tabTomorrow.innerHTML = secretError();
   }
