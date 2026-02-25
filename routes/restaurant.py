@@ -283,3 +283,30 @@ def secret_menu_add_page():
     if not restaurant_required():
         return redirect("/restaurant/login")
     return render_template("restaurant/secret_add.html")
+@restaurant_bp.route("/api/secret-menu/add", methods=["POST"])
+def api_secret_add():
+    if not restaurant_required():
+        return jsonify({"success": False}), 401
+
+    data = request.json
+    rid = session["restaurant_id"]
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        INSERT INTO secret_menu
+        (restaurant_id, name, description, cuisine, mrp, price, stock, img, is_today_special)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,0)
+    """, (
+        rid,
+        data["name"],
+        data["description"],
+        data["cuisine"],
+        data["mrp"],
+        data["price"],
+        data["stock"],
+        data["img"]
+    ))
+
+    mysql.connection.commit()
+    return jsonify({"success": True})
