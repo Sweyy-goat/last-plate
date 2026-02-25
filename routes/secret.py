@@ -4,9 +4,10 @@ from MySQLdb.cursors import DictCursor
 
 secret_bp = Blueprint("secret", __name__)
 
-# ====================================================================================
-# 1️⃣ GET RESTAURANTS THAT HAVE ACTIVE SECRET MENU TODAY
-# ====================================================================================
+
+# =========================================
+# RESTAURANTS WITH ACTIVE SECRET MENU
+# =========================================
 @secret_bp.route("/api/secret-menu/restaurants", methods=["GET"])
 def secret_restaurants():
     cur = mysql.connection.cursor(DictCursor)
@@ -33,15 +34,12 @@ def secret_restaurants():
 
     items = cur.fetchall()
 
-    return jsonify({
-        "success": True,
-        "restaurants": items
-    })
+    return jsonify({"success": True, "restaurants": items})
 
 
-# ====================================================================================
-# 2️⃣ GET ALL SECRET MENU DISHES OF ONE RESTAURANT (Only today's active)
-# ====================================================================================
+# =========================================
+# DISHES OF A RESTAURANT
+# =========================================
 @secret_bp.route("/api/secret-menu/<int:rid>", methods=["GET"])
 def secret_menu_by_restaurant(rid):
     cur = mysql.connection.cursor(DictCursor)
@@ -71,7 +69,4 @@ def secret_menu_by_restaurant(rid):
 
     dishes = cur.fetchall()
 
-    return jsonify({
-        "success": True,
-        "dishes": dishes
-    })
+    return jsonify({"success": True, "dishes": dishes})
