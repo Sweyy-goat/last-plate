@@ -257,3 +257,24 @@ def my_secret_menu():
 
     items = cur.fetchall()
     return jsonify(items)
+@restaurant_bp.route("/api/toggle-secret/<int:item_id>", methods=["POST"])
+def toggle_secret(item_id):
+    if not restaurant_required():
+        return jsonify({"success": False}), 401
+
+    rid = session["restaurant_id"]
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        UPDATE secret_menu
+        SET is_today_special = NOT is_today_special
+        WHERE id = %s AND restaurant_id = %s
+    """, (item_id, rid))
+
+    mysql.connection.commit()
+    return jsonify({"success": True})
+@restaurant_bp.route("/secret-menu")
+def secret_menu_page():
+    if not restaurant_required():
+        return redirect("/restaurant/login")
+    return render_template("restaurant/secret_menu.html")
