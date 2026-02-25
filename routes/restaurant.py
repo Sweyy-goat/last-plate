@@ -231,3 +231,29 @@ def update_food_quantity(food_id):
 
     mysql.connection.commit()
     return jsonify({"success": True})
+    
+@restaurant_bp.route("/api/my-secret-menu")
+def my_secret_menu():
+    if not restaurant_required():
+        return jsonify([]), 401
+
+    rid = session["restaurant_id"]
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cur.execute("""
+        SELECT 
+            id,
+            name,
+            price,
+            mrp,
+            stock,
+            img,
+            is_today_special,
+            created_at
+        FROM secret_menu
+        WHERE restaurant_id = %s
+        ORDER BY created_at DESC
+    """, (rid,))
+
+    items = cur.fetchall()
+    return jsonify(items)
