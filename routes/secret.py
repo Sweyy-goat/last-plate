@@ -24,11 +24,7 @@ def secret_restaurants():
         JOIN restaurants r ON r.id = sm.restaurant_id
         WHERE 
             sm.stock > 0
-            AND (
-                sm.is_today_special = 1
-                OR DATE(CONVERT_TZ(sm.created_at, '+00:00', '+05:30')) = 
-                   DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
-            )
+            AND sm.is_today_special = 1
         GROUP BY r.id
         ORDER BY r.name ASC
     """)
@@ -42,7 +38,7 @@ def secret_restaurants():
 
 
 # ============================================================
-# 2️⃣ GET ALL SECRET DISHES OF ONE RESTAURANT (active today only)
+# 2️⃣ GET ALL SECRET DISHES OF ONE RESTAURANT (only today's active)
 # ============================================================
 @secret_bp.route("/api/secret-menu/<int:rid>", methods=["GET"])
 def secret_menu_by_restaurant(rid):
@@ -64,11 +60,7 @@ def secret_menu_by_restaurant(rid):
         WHERE 
             sm.restaurant_id = %s
             AND sm.stock > 0
-            AND (
-                sm.is_today_special = 1
-                OR DATE(CONVERT_TZ(sm.created_at, '+00:00', '+05:30')) =
-                   DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
-            )
+            AND sm.is_today_special = 1
         ORDER BY sm.id DESC
     """, (rid,))
 
