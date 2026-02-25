@@ -4,10 +4,9 @@ from MySQLdb.cursors import DictCursor
 
 secret_bp = Blueprint("secret", __name__)
 
-
-# ----------------------------------------------
-# GET RESTAURANTS THAT HAVE SECRET MENU DISHES
-# ----------------------------------------------
+# ====================================================================================
+# 1️⃣ GET RESTAURANTS THAT HAVE ACTIVE SECRET MENU TODAY
+# ====================================================================================
 @secret_bp.route("/api/secret-menu/restaurants", methods=["GET"])
 def secret_restaurants():
     cur = mysql.connection.cursor(DictCursor)
@@ -22,20 +21,27 @@ def secret_restaurants():
             MAX(sm.price) AS max_price
         FROM secret_menu sm
         JOIN restaurants r ON r.id = sm.restaurant_id
+        WHERE 
+            sm.stock > 0 AND
+            (
+                sm.is_today_special = 1
+                OR DATE(sm.created_at) = CURDATE()
+            )
         GROUP BY r.id
         ORDER BY r.name ASC
     """)
 
     items = cur.fetchall()
+
     return jsonify({
         "success": True,
         "restaurants": items
     })
 
 
-# --------------------------------------------------------
-# GET ALL SECRET MENU DISHES OF ONE RESTAURANT
-# --------------------------------------------------------
+# ====================================================================================
+# 2️⃣ GET ALL SECRET MENU DISHES OF ONE RESTAURANT (Only today's active)
+# ====================================================================================
 @secret_bp.route("/api/secret-menu/<int:rid>", methods=["GET"])
 def secret_menu_by_restaurant(rid):
     cur = mysql.connection.cursor(DictCursor)
@@ -53,11 +59,18 @@ def secret_menu_by_restaurant(rid):
             r.name AS restaurant_name
         FROM secret_menu sm
         JOIN restaurants r ON r.id = sm.restaurant_id
-        WHERE sm.restaurant_id = %s
+        WHERE 
+            sm.restaurant_id = %s AND
+            sm.stock > 0 AND
+            (
+                sm.is_today_special = 1
+                OR DATE(sm.created_at) = CURDATE()
+            )
         ORDER BY sm.id DESC
     """, (rid,))
 
     dishes = cur.fetchall()
+
     return jsonify({
         "success": True,
         "dishes": dishes
