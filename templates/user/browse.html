@@ -1522,23 +1522,32 @@ function getAllCachedDishes() {
 
 function handleSecretSearch(q) {
   const clearBtn = document.getElementById('secretSearchClear');
-  const tabBody  = document.querySelector('.sheet-body');
+  const tabToday = document.getElementById('tabToday');
+  const tabTomorrow = document.getElementById('tabTomorrow');
+  const existing = document.getElementById('searchResultsPanel');
+
   q = q.trim().toLowerCase();
   clearBtn.style.display = q ? 'block' : 'none';
 
+  // CLEAR STATE
   if (!q) {
-    document.getElementById('searchResultsPanel')?.remove();
-    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
+    if (existing) existing.remove();
+    tabToday.style.display = '';
+    tabTomorrow.style.display = '';
     return;
   }
 
-  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
-  let panel = document.getElementById('searchResultsPanel');
+  // HIDE TAB PANELS
+  tabToday.style.display = 'none';
+  tabTomorrow.style.display = 'none';
+
+  // CREATE RESULT PANEL IF MISSING
+  let panel = existing;
   if (!panel) {
     panel = document.createElement('div');
     panel.id = 'searchResultsPanel';
-    panel.className = 'search-results-panel tab-panel active';
-    tabBody.appendChild(panel);
+    panel.className = 'search-results-panel';
+    tabToday.parentNode.appendChild(panel);
   }
 
   const results = getAllCachedDishes().filter(d =>
@@ -1554,8 +1563,7 @@ function handleSecretSearch(q) {
 
   panel.innerHTML = results.map(d => `
     <a class="search-result-card" href="/checkout/secret/${d.id}">
-      <img class="search-result-img" src="${d.img || getFoodImage(d.name)}" alt="${d.name}"
-           onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=80'">
+      <img class="search-result-img" src="${d.img || getFoodImage(d.name)}">
       <div class="search-result-info">
         <div class="search-result-name">${d.name}</div>
         <div class="search-result-kitchen">${d.restaurant_name}${d.cuisine ? ' · ' + d.cuisine : ''}</div>
