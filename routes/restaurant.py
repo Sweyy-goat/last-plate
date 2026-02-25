@@ -278,3 +278,8 @@ def secret_menu_page():
     if not restaurant_required():
         return redirect("/restaurant/login")
     return render_template("restaurant/secret_menu.html")
+@restaurant_bp.route("/secret-menu/add")
+def secret_menu_add_page():
+    if not restaurant_required():
+        return redirect("/restaurant/login")
+    return render_template("restaurant/secret_add.html")
