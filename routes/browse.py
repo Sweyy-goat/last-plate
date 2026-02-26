@@ -113,3 +113,36 @@ def walkin_list():
     cur.close()
 
     return render_template("user/walkin_list.html", restaurants=restaurants)
+
+@browse_bp.route("/restaurant/<int:rid>/walkin")
+def walkin_view(rid):
+    if "user_id" not in session or session.get("role") != "user":
+        return redirect("/login")
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # Get scene
+    cur.execute("""
+        SELECT id, image_url 
+        FROM restaurant_scenes 
+        WHERE restaurant_id = %s
+        LIMIT 1
+    """, (rid,))
+    scene = cur.fetchone()
+
+    if not scene:
+        cur.close()
+        return "No Walk-In scene found for this restaurant."
+
+    # Get hotspots
+    cur.execute("""
+        SELECT pitch, yaw, seat_number
+        FROM restaurant_hotspots
+        WHERE scene_id = %s
+    """, (scene["id"],))
+    hotspots = cur.fetchall()
+    cur.close()
+
+    return render_template("user/walkin_view.html",
+                           scene=scene,
+                           hotspots=hotspots)
