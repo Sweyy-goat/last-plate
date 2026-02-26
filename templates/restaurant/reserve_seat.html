@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reserve Seat</title>
+
+    <style>
+        body { font-family: Arial; background:#fafafa; }
+        .box {
+            width: 300px;
+            padding: 20px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ddd;
+        }
+        input, select {
+            width: 100%; padding: 10px; margin: 10px 0;
+        }
+        button {
+            width:100%; padding: 12px;
+            background:black; color:white;
+            border:none; border-radius:8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Reserve Seat {{ seat }}</h2>
+
+    <form action="/api/reserve-seat" method="POST">
+        <input type="hidden" name="restaurant_id" value="{{ restaurant_id }}">
+        <input type="hidden" name="seat" value="{{ seat }}">
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+        <label>Time</label>
+        <select name="time" required>
+            <option>7:00 PM</option>
+            <option>7:30 PM</option>
+            <option>8:00 PM</option>
+        </select>
+
+        <button type="submit">Confirm Reservation</button>
+    </form>
+</div>
+
+</body>
+</html>
