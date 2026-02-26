@@ -1,4 +1,4 @@
-# browse.py
+# browse.p
 from flask import Blueprint, render_template, session, redirect, jsonify
 from utils.db import mysql
 import MySQLdb.cursors
