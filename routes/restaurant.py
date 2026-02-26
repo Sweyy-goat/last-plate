@@ -357,3 +357,12 @@ def walkin(id):
         restaurant=restaurant,
         scenes=scenes
     )
+@restaurant_bp.route("/reserve-seat")
+def reserve_seat():
+    restaurant_id = request.args.get("restaurant")
+    seat = request.args.get("seat")
+    return render_template(
+        "restaurant/reserve_seat.html",
+        restaurant_id=restaurant_id,
+        seat=seat
+    )
