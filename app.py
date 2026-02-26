@@ -30,8 +30,6 @@ app.register_blueprint(savings_bp)
 from routes.secret import secret_bp
 app.register_blueprint(secret_bp)
 
-from routes.user import user_bp
-app.register_blueprint(user_bp)
 
 @app.route("/")
 def home():
