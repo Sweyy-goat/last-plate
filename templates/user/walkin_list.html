@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Virtual Walk-In</title>
+
+    <style>
+        body { font-family: Arial; margin:0; background:#fafafa; }
+        .header {
+            padding:15px; background:black; color:white;
+            font-size:20px; text-align:center;
+        }
+        .list-item {
+            background:white; padding:15px; margin:10px;
+            border-radius:10px; box-shadow:0 0 8px #ddd;
+        }
+        .list-item h3 { margin:0; font-size:18px; }
+        .list-item p { margin:5px 0; color:#555; }
+        .btn {
+            display:inline-block; margin-top:8px; background:black;
+            color:white; padding:8px 12px; border-radius:6px;
+            text-decoration:none; font-size:14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">Select a Restaurant</div>
+
+{% if restaurants|length == 0 %}
+    <p style="text-align:center; padding:20px;">No Virtual Walk-In Available Yet</p>
+{% endif %}
+
+{% for r in restaurants %}
+<div class="list-item">
+    <h3>{{ r.name }}</h3>
+    <p>{{ r.address }}</p>
+    <a href="/restaurant/{{ r.id }}/walkin" class="btn">Enter Walk-In</a>
+</div>
+{% endfor %}
+
+</body>
+</html>
