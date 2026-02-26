@@ -96,7 +96,20 @@ def food_list():
 
     return jsonify({"foods": foods})
 @browse_bp.route("/walkin")
+@browse_bp.route("/walkin")
 def walkin_list():
     if "user_id" not in session or session.get("role") != "user":
         return redirect("/login")
-    return render_template("user/walkin_list.html")
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cur.execute("""
+        SELECT r.id, r.name, r.address
+        FROM restaurants r
+        JOIN restaurant_scenes s ON s.restaurant_id = r.id
+        GROUP BY r.id
+    """)
+    restaurants = cur.fetchall()
+    cur.close()
+
+    return render_template("user/walkin_list.html", restaurants=restaurants)
