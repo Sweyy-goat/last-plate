@@ -366,3 +366,20 @@ def reserve_seat():
         restaurant_id=restaurant_id,
         seat=seat
     )
+@restaurant_bp.route("/walkin")
+def walkin_list():
+    cur = mysql.connection.cursor(DictCursor)
+
+    # get only restaurants that have 360 scenes
+    cur.execute("""
+        SELECT DISTINCT r.id, r.name, r.address
+        FROM restaurants r
+        JOIN restaurant_scenes s ON r.id = s.restaurant_id
+        WHERE r.is_active = 1
+    """)
+    restaurants = cur.fetchall()
+
+    return render_template(
+        "restaurant/walkin_list.html",
+        restaurants=restaurants
+    )
