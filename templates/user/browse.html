@@ -1182,6 +1182,16 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
     </div>
     <span class="bn-label">Impact</span>
   </button>
+   <button class="bn-item" onclick="openWalkinList()">
+  <div class="bn-icon">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 6v6l4 2"/>
+    </svg>
+  </div>
+  <span class="bn-label">Walk-In</span>
+</button>
 </nav>
 
 <!-- =============================================
@@ -1235,6 +1245,9 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
 </div><!-- end secret-sheet-overlay -->
 
 <script>
+function openWalkinList() {
+    window.location.href = "/walkin";
+}
 /* ========================
    DARK MODE
 ======================== */
