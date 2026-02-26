@@ -310,3 +310,50 @@ def api_secret_add():
 
     mysql.connection.commit()
     return jsonify({"success": True})
+from flask import render_template, request
+from utils.db import mysql
+from MySQLdb.cursors import DictCursor
+
+@restaurant_bp.route("/restaurant/<int:id>/walkin")
+def walkin(id):
+    cur = mysql.connection.cursor(DictCursor)
+
+    # get restaurant info
+    cur.execute("SELECT * FROM restaurants WHERE id=%s", (id,))
+    restaurant = cur.fetchone()
+
+    # load scenes
+    cur.execute("SELECT * FROM restaurant_scenes WHERE restaurant_id=%s", (id,))
+    scenes_rows = cur.fetchall()
+
+    scenes = {}
+
+    for row in scenes_rows:
+        scene_name = f"scene{row['id']}"
+
+        # load hotspots for this scene
+        cur.execute("SELECT * FROM restaurant_hotspots WHERE scene_id=%s", (row["id"],))
+        hotspots_rows = cur.fetchall()
+
+        hotspots = []
+        for h in hotspots_rows:
+            hotspots.append({
+                "pitch": h["pitch"],
+                "yaw": h["yaw"],
+                "text": f"Seat {h['seat_number']}",
+                "type": "info",
+                "clickHandlerFunc": "selectSeat",
+                "clickHandlerArgs": [h["seat_number"]]
+            })
+
+        scenes[scene_name] = {
+            "type": "equirectangular",
+            "panorama": row["image_url"],
+            "hotSpots": hotspots
+        }
+
+    return render_template(
+        "restaurant/walkin.html",
+        restaurant=restaurant,
+        scenes=scenes
+    )
