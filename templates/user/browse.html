@@ -1373,7 +1373,7 @@ function render(foods) {
 function applyFilters() {
   const q = document.getElementById('foodSearch').value.toLowerCase();
   const filtered = allFoods.filter(f => {
-    const key = f.restaurant_name || f.restaurant_address || '';
+    const key = f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
     const locOk = currentLoc === 'all' || key === currentLoc;
     const qOk = (f.name||'').toLowerCase().includes(q) || (f.restaurant_name||'').toLowerCase().includes(q);
     return locOk && qOk;
@@ -1465,15 +1465,26 @@ fetch('/api/foods')
   .then(r => { if (!r.ok) throw new Error(); return r.json(); })
   .then(data => {
     allFoods = data.foods || [];
-    const locKey = f => f.restaurant_name || f.restaurant_address || '';
+
+    // Group chips by location area, not restaurant name
+    const locKey = f =>
+      f.location ||
+      f.area ||
+      f.locality ||
+      f.restaurant_address ||
+      f.restaurant_name || '';
+
     const locs = [...new Set(allFoods.map(locKey).filter(Boolean))];
+
     locs.forEach(loc => {
+      const count = allFoods.filter(f => locKey(f) === loc).length;
       const c = document.createElement('div');
       c.className = 'chip';
-      c.textContent = loc;
+      c.innerHTML = `${loc} <span style="opacity:0.55;font-weight:500;margin-left:3px">${count}</span>`;
       c.onclick = () => { currentLoc = loc; setActiveChip(c); applyFilters(); };
       locationRow.appendChild(c);
     });
+
     applyFilters();
   })
   .catch(() => { allFoods = []; render([]); });
