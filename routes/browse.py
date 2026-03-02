@@ -36,6 +36,7 @@ def food_list():
         f.pickup_start, f.pickup_end,
         r.name AS restaurant_name,
         r.address AS restaurant_address,
+        r.short_address AS restaurant_short_address,
         CASE
             WHEN f.pickup_end >= f.pickup_start THEN 
                 TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
@@ -91,6 +92,7 @@ def food_list():
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
             "restaurant_address": f["restaurant_address"],
+            "restaurant_short_address": f.get("restaurant_short_address") or "",
             "minutes_left": max(0, int(f["minutes_left"]))
         })
 
