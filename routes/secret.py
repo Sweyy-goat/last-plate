@@ -70,3 +70,57 @@ def secret_menu_by_restaurant(rid):
         "success": True,
         "dishes": dishes
     })
+# ================= CREATE SECRET ORDER =================
+@secret_bp.route("/api/secret/create-order", methods=["POST"])
+def create_secret_order():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.json
+    dish_id = int(data["dish_id"])
+    qty = int(data["quantity"])
+    user_phone = data["phone"]
+    user_email = data["email"]
+
+    cur = mysql.connection.cursor(DictCursor)
+
+    cur.execute("""
+        SELECT price, restaurant_id, stock
+        FROM secret_menu
+        WHERE id=%s
+        FOR UPDATE
+    """, (dish_id,))
+    dish = cur.fetchone()
+
+    if not dish or dish["stock"] < qty:
+        return jsonify({"error": "Insufficient stock"}), 400
+
+    base_price = float(dish["price"])
+    final_unit_price = math.ceil(base_price * 1.18)
+    amount_paise = final_unit_price * qty * 100
+
+    rp_order = razorpay_client.order.create({
+        "amount": amount_paise,
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    cur.execute("""
+        INSERT INTO secret_orders
+        (user_id, dish_id, restaurant_id, quantity,
+         user_phone, user_email, total_amount,
+         status, payment_status, razorpay_order_id)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
+    """, (
+        session["user_id"], dish_id, dish["restaurant_id"], qty,
+        user_phone, user_email, final_unit_price * qty,
+        rp_order["id"]
+    ))
+
+    mysql.connection.commit()
+
+    return jsonify({
+        "razorpay_order_id": rp_order["id"],
+        "amount": amount_paise,
+        "key": os.getenv("RAZORPAY_KEY_ID")
+    })
