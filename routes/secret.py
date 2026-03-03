@@ -83,10 +83,15 @@ def create_secret_order():
     dish_id = int(data["dish_id"])
     qty = int(data["quantity"])
     user_phone = data["phone"]
-    user_email = data["email"]
 
     cur = mysql.connection.cursor(DictCursor)
 
+    # 🔹 Fetch USER EMAIL directly from DB
+    cur.execute("SELECT email FROM users WHERE id=%s", (session["user_id"],))
+    u = cur.fetchone()
+    user_email = u["email"]
+
+    # Get dish
     cur.execute("""
         SELECT price, restaurant_id, stock
         FROM secret_menu
@@ -99,7 +104,7 @@ def create_secret_order():
         return jsonify({"error": "Insufficient stock"}), 400
 
     base_price = float(dish["price"])
-    final_unit_price = math.ceil(base_price * 1.18)
+    final_unit_price = math.ceil(base_price * 1.18)   # 18% fee
     amount_paise = final_unit_price * qty * 100
 
     rp_order = razorpay_client.order.create({
@@ -116,7 +121,8 @@ def create_secret_order():
         VALUES (%s,%s,%s,%s,%s,%s,%s,'PENDING','PENDING',%s)
     """, (
         session["user_id"], dish_id, dish["restaurant_id"], qty,
-        user_phone, user_email, final_unit_price * qty,
+        user_phone, user_email,
+        final_unit_price * qty,
         rp_order["id"]
     ))
 
