@@ -7,6 +7,13 @@ from utils.emailer import send_email
 
 secret_bp = Blueprint("secret", __name__)
 
+razorpay_client = razorpay.Client(auth=(
+    os.getenv("RAZORPAY_KEY_ID"),
+    os.getenv("RAZORPAY_KEY_SECRET")
+))
+
+
+
 
 # ============================================================
 # 1️⃣ GET RESTAURANTS THAT HAVE ACTIVE SECRET MENU TODAY
