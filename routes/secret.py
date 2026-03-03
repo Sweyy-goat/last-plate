@@ -222,7 +222,7 @@ def secret_verify_payment():
     )
 
     return jsonify({"success": True})
-@secret_bp.route("/secret-checkout/<int:dish_id>")
+@secret_bp.route("/checkout/secret/<int:dish_id>")
 def secret_checkout(dish_id):
     if "user_id" not in session:
         return redirect("/login")
