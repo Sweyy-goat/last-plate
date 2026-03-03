@@ -222,3 +222,21 @@ def secret_verify_payment():
     )
 
     return jsonify({"success": True})
+@secret_bp.route("/secret-checkout/<int:dish_id>")
+def secret_checkout(dish_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        SELECT sm.id, sm.name, sm.price, sm.stock, r.name AS restaurant_name
+        FROM secret_menu sm
+        JOIN restaurants r ON r.id = sm.restaurant_id
+        WHERE sm.id=%s AND sm.stock > 0
+    """, (dish_id,))
+    
+    dish = cur.fetchone()
+    if not dish:
+        return "Not available", 404
+
+    return render_template("user/secret_checkout.html", dish=dish)
