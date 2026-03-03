@@ -93,7 +93,7 @@ def create_secret_order():
 
     cur = mysql.connection.cursor(DictCursor)
 
-    # 🔹 Fetch USER EMAIL directly from DB
+    # Fetch user's email from DB (correct location)
     cur.execute("SELECT email FROM users WHERE id=%s", (session["user_id"],))
     u = cur.fetchone()
     user_email = u["email"]
