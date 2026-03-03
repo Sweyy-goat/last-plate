@@ -4,212 +4,662 @@
     <meta charset="UTF-8" />
     <title>Secure Checkout | Last Plate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg: #020408;
-            --panel: #0a0c12;
-            --accent: #2ecc71;
-            --accent-glow: rgba(46, 204, 113, 0.4);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #ffffff;
-            --muted: #64748b;
+            --earth: #1a1208;
+            --soil: #251b0d;
+            --bark: #2e2010;
+            --moss: #2d4a1e;
+            --leaf: #4a7c35;
+            --sage: #7aad5e;
+            --dew: #b8d89e;
+            --cream: #f5edda;
+            --parchment: #ede0c8;
+            --amber: #c8963e;
+            --rust: #a85b2a;
+            --muted: #8c7a5e;
+            --border: rgba(184, 216, 158, 0.12);
+            --glow: rgba(122, 173, 94, 0.15);
         }
 
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            margin: 0;
+        html, body {
             min-height: 100vh;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(46, 204, 113, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.5) 0px, transparent 50%);
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--earth);
+            color: var(--cream);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(45,74,30,0.35) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 85% 80%, rgba(200,150,62,0.1) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 40% at 50% 50%, rgba(46,32,16,0.8) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .story-panel {
+            padding: 60px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            border-right: 1px solid var(--border);
+        }
+
+        .brand-mark {
             display: flex;
             align-items: center;
+            gap: 10px;
+            margin-bottom: 56px;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .brand-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--leaf), var(--sage));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--cream);
+        }
+
+        .savings-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45,74,30,0.35);
+            border: 1px solid rgba(122,173,94,0.25);
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 12px;
+            color: var(--sage);
+            margin-bottom: 24px;
+            animation: fadeUp 0.85s 0.05s ease both;
+            width: fit-content;
+        }
+
+        .savings-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--sage);
+            animation: pulse 2s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero-quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(36px, 4vw, 52px);
+            font-weight: 400;
+            line-height: 1.15;
+            color: var(--cream);
+            margin-bottom: 24px;
+            animation: fadeUp 0.9s 0.1s ease both;
+        }
+
+        .hero-quote em {
+            font-style: italic;
+            color: var(--sage);
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 340px;
+            margin-bottom: 48px;
+            animation: fadeUp 1s 0.2s ease both;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            animation: fadeUp 1.1s 0.3s ease both;
+        }
+
+        .impact-card {
+            background: rgba(45,74,30,0.15);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            background: rgba(45,74,30,0.28);
+            border-color: rgba(122,173,94,0.3);
+            transform: translateY(-2px);
+        }
+
+        .impact-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--sage);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .impact-label {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .bottom-quote {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 17px;
+            color: var(--muted);
+            line-height: 1.6;
+            animation: fadeUp 1.2s 0.4s ease both;
+        }
+
+        .bottom-quote span {
+            display: block;
+            font-size: 12px;
+            font-style: normal;
+            font-family: 'DM Sans', sans-serif;
+            margin-top: 8px;
+            color: rgba(140,122,94,0.6);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .checkout-panel {
+            padding: 60px 48px;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            color: var(--text);
+            animation: fadeIn 1s 0.2s ease both;
         }
 
-        .checkout-slab {
-            width: 460px;
-            max-width: 92%;
-            background: var(--panel);
-            border-radius: 40px;
+        .checkout-header { margin-bottom: 36px; }
+
+        .checkout-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: 8px;
+        }
+
+        .checkout-header p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--cream);
+        }
+
+        .meal-card {
+            background: linear-gradient(135deg, rgba(45,74,30,0.2), rgba(26,18,8,0.5));
             border: 1px solid var(--border);
-            padding: 40px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
-            position: relative;
-            animation: entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes entrance {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .header-group { text-align: center; margin-bottom: 32px; }
-        .header-group h1 { font-size: 14px; font-weight: 800; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin: 0; }
-        .header-group p { font-size: 22px; font-weight: 700; margin: 8px 0 0; color: #fff; letter-spacing: -0.5px; }
-
-        .order-tile {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 20px;
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .food-icon {
-            width: 64px; height: 64px;
-            background: #1e293b url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=200&q=80") center/cover;
-            border-radius: 16px;
+        .meal-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(122,173,94,0.4), transparent);
+        }
+
+        .rescued-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: rgba(45,74,30,0.6);
+            border: 1px solid rgba(122,173,94,0.3);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--sage);
+            letter-spacing: 0.5px;
+        }
+
+        .meal-img {
+            width: 68px; height: 68px;
+            border-radius: 14px;
             flex-shrink: 0;
+            background: #2e2010 url("https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=200&q=80") center/cover;
         }
 
-        .food-details b { display: block; font-size: 17px; margin-bottom: 2px; }
-        .food-details span { font-size: 13px; color: var(--muted); }
+        .meal-info b {
+            display: block;
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--cream);
+            margin-bottom: 4px;
+        }
 
-        .input-label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; margin-left: 4px; }
+        .meal-info span { font-size: 13px; color: var(--muted); }
 
-        .modern-input {
+        .meal-price { margin-left: auto; text-align: right; flex-shrink: 0; }
+
+        .meal-price .original {
+            font-size: 11px;
+            color: var(--rust);
+            text-decoration: line-through;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .meal-price .current {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--sage);
+        }
+
+        .field-group { margin-bottom: 20px; }
+
+        .field-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .field-input {
             width: 100%;
-            background: transparent;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px 18px;
+            color: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .field-input::placeholder { color: rgba(140,122,94,0.5); }
+
+        .field-input:focus {
+            outline: none;
+            border-color: rgba(122,173,94,0.5);
+            background: rgba(45,74,30,0.12);
+            box-shadow: 0 0 0 3px rgba(122,173,94,0.08), 0 0 24px rgba(122,173,94,0.1);
+        }
+
+        .invoice {
+            background: rgba(255,255,255,0.02);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 16px;
-            color: #fff;
-            font-size: 16px;
-            margin-bottom: 24px;
-            transition: 0.3s;
-        }
-
-        .modern-input:focus {
-            border-color: var(--accent);
-            background: rgba(46, 204, 113, 0.05);
-            box-shadow: 0 0 20px var(--accent-glow);
-            outline: none;
-        }
-
-        .invoice-block {
-            margin-top: 10px;
             padding: 20px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            border: 1px dashed var(--border);
+            margin-top: 8px;
         }
 
-        .invoice-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
-        .invoice-row.total { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); color: #fff; font-weight: 800; font-size: 20px; }
+        .invoice-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .invoice-line:last-child { margin-bottom: 0; }
+
+        .invoice-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 14px 0;
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .invoice-total .label {
+            font-size: 14px;
+            color: var(--cream);
+            font-weight: 500;
+        }
+
+        .invoice-total .amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--sage);
+        }
 
         #payBtn {
             width: 100%;
-            padding: 22px;
-            margin-top: 32px;
-            background: var(--accent);
-            color: #000;
+            padding: 20px 24px;
+            margin-top: 24px;
+            background: linear-gradient(135deg, var(--leaf) 0%, var(--sage) 100%);
+            color: var(--earth);
             border: none;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 800;
+            border-radius: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
             cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
+        #payBtn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        #payBtn:hover:not(:disabled)::before { left: 100%; }
 
         #payBtn:hover:not(:disabled) {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px var(--accent-glow);
-            filter: brightness(1.1);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(74,124,53,0.35), 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        #payBtn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+        #payBtn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
 
-        .secure-footer {
-            margin-top: 24px;
-            text-align: center;
-            font-size: 11px;
-            color: var(--muted);
+        .btn-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .secure-note {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 11px;
+            color: rgba(140,122,94,0.6);
+            letter-spacing: 0.3px;
+        }
+
+        .eco-note {
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 14px;
+            color: rgba(122,173,94,0.5);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .deco-leaf {
+            position: fixed;
+            width: 600px; height: 600px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            background: radial-gradient(circle at 40% 40%, rgba(45,74,30,0.08), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .deco-leaf.one { top: -200px; right: -100px; }
+        .deco-leaf.two { bottom: -200px; left: -100px; transform: rotate(45deg); }
+
+        .success-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            z-index: 100;
+            background: var(--earth);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .success-overlay.show { display: flex; animation: fadeIn 0.5s ease; }
+
+        .success-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--moss), var(--leaf));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 40px;
+            font-weight: 400;
+            color: var(--cream);
+            margin-bottom: 12px;
+        }
+
+        .success-sub {
+            font-size: 15px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrap { grid-template-columns: 1fr; }
+            .story-panel { padding: 48px 28px 32px; border-right: none; border-bottom: 1px solid var(--border); }
+            .impact-grid { grid-template-columns: repeat(4, 1fr); }
+            .checkout-panel { padding: 32px 28px 48px; }
+        }
+
+        @media (max-width: 540px) {
+            .impact-grid { grid-template-columns: 1fr 1fr; }
+            .hero-quote { font-size: 34px; }
         }
     </style>
 </head>
 
 <body>
 
-<div class="checkout-slab">
-    <div class="header-group">
-        <h1>Secure Checkout</h1>
-        <p>Complete Reservation</p>
-    </div>
+<div class="deco-leaf one"></div>
+<div class="deco-leaf two"></div>
 
-    <div class="order-tile">
-        <div class="food-icon"></div>
-        <div class="food-details">
-            <b>{{ food.name }}</b>
-            <span>{{ food.restaurant_name }}</span>
+<div class="success-overlay" id="successOverlay">
+    <div class="success-icon">🌿</div>
+    <div class="success-title">Meal Rescued.</div>
+    <p class="success-sub">You've done something real today. The earth quietly thanks you.<br><br>Check your email for pickup details.</p>
+</div>
+
+<div class="page-wrap">
+
+    <div class="story-panel">
+        <div class="brand-mark">
+            <div class="brand-icon">🍃</div>
+            <span class="brand-name">Last Plate</span>
+        </div>
+
+        <div class="savings-pill">
+            <div class="savings-dot"></div>
+            Live rescues happening near you
+        </div>
+
+        <h1 class="hero-quote">
+            Every meal saved<br>is a small act of<br><em>rebellion against waste.</em>
+        </h1>
+
+        <p class="hero-sub">
+            One third of all food produced on Earth is lost or wasted. 
+            You're about to change that — one plate at a time.
+        </p>
+
+        <div class="impact-grid">
+            <div class="impact-card">
+                <div class="impact-num">1.3B</div>
+                <div class="impact-label">Tonnes wasted each year</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-num">8%</div>
+                <div class="impact-label">Of global emissions from food waste</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-num">70%</div>
+                <div class="impact-label">Less CO₂ per rescued meal</div>
+            </div>
+            <div class="impact-card">
+                <div class="impact-num">₹0</div>
+                <div class="impact-label">Cost to the planet when you act</div>
+            </div>
+        </div>
+
+        <div class="bottom-quote">
+            "The most sustainable meal is the one that was already made."
+            <span>— The Last Plate Manifesto</span>
         </div>
     </div>
 
-    <label class="input-label">Receipt Email</label>
-    <input id="email" type="email" class="modern-input" placeholder="Enter your email" required>
+    <div class="checkout-panel">
+        <div class="checkout-header">
+            <h2>Secure Checkout</h2>
+            <p>Complete your reservation</p>
+        </div>
 
-    <label class="input-label">Quantity</label>
-    <input id="qty" type="number" class="modern-input" min="1" max="{{ food.available_quantity }}" value="1" oninput="calculate()">
+        <div class="meal-card">
+            <div class="meal-img"></div>
+            <div class="meal-info">
+                <b>{{ food.name }}</b>
+                <span>{{ food.restaurant_name }}</span>
+            </div>
+            <div class="meal-price">
+                <span class="original">₹{{ food.original_price }}</span>
+                <span class="current">₹{{ food.price }}</span>
+            </div>
+            <div class="rescued-badge">✦ Rescuable</div>
+        </div>
 
-    <div class="invoice-block">
-        <div class="invoice-row">
-            <span>Subtotal</span>
-            <span id="subtotal">₹0</span>
+        <div class="field-group">
+            <label class="field-label">Receipt &amp; OTP Email</label>
+            <input id="email" type="email" class="field-input" placeholder="your@email.com" required>
         </div>
-        <div class="invoice-row">
-            <span>Service Fee (15%)</span>
-            <span id="service-fee">₹0</span>
+
+        <div class="field-group">
+            <label class="field-label">Quantity</label>
+            <input id="qty" type="number" class="field-input" min="1" max="{{ food.available_quantity }}" value="1" oninput="calculate()">
         </div>
-        <div class="invoice-row total">
-            <span>Total Payable</span>
-            <span id="grandtotal">₹0</span>
+
+        <div class="invoice">
+            <div class="invoice-line">
+                <span>Meal subtotal</span>
+                <span id="subtotal">&#8377;0</span>
+            </div>
+            <div class="invoice-line">
+                <span>Platform fee (15%)</span>
+                <span id="service-fee">&#8377;0</span>
+            </div>
+            <div class="invoice-divider"></div>
+            <div class="invoice-total">
+                <span class="label">Total payable</span>
+                <span class="amount" id="grandtotal">&#8377;0</span>
+            </div>
         </div>
+
+        <button id="payBtn">
+            <div class="btn-content">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Rescue This Meal
+            </div>
+        </button>
+
+        <div class="secure-note">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            256-bit encrypted &middot; Powered by Razorpay
+        </div>
+        <div class="eco-note">Your action matters more than you know.</div>
     </div>
 
-    <button id="payBtn">Proceed to Payment</button>
-
-    <div class="secure-footer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-        Secure Payment via Razorpay
-    </div>
 </div>
 
 <script>
     const baseUnitPrice = {{ food.price }};
 
-    /**
-     * Matches the Python math.ceil(price * 1.15) logic
-     */
     function calculate() {
         const qty = parseInt(document.getElementById("qty").value) || 0;
         const subtotal = qty * baseUnitPrice;
-        
-        // Calculate the platform price (matches math.ceil logic in Python)
         const platformTotal = Math.ceil(subtotal * 1.15);
         const serviceFee = platformTotal - subtotal;
-
-        document.getElementById("subtotal").innerText = `₹${subtotal}`;
-        document.getElementById("service-fee").innerText = `₹${serviceFee}`;
-        document.getElementById("grandtotal").innerText = `₹${platformTotal}`;
+        document.getElementById("subtotal").innerText = '\u20B9' + subtotal;
+        document.getElementById("service-fee").innerText = '\u20B9' + serviceFee;
+        document.getElementById("grandtotal").innerText = '\u20B9' + platformTotal;
     }
 
-    // Run once on load to populate the ₹0 values
     window.onload = calculate;
 
     document.getElementById("payBtn").onclick = function() {
@@ -217,46 +667,29 @@
         const qty = parseInt(document.getElementById("qty").value);
         const btn = this;
 
-        if(!email) {
-            alert("Email is required for receiving the pickup OTP.");
-            return;
-        }
-        if(!qty || qty <= 0) {
-            alert("Please select a valid quantity.");
-            return;
-        }
+        if (!email) { alert("We need your email to send the pickup OTP."); return; }
+        if (!qty || qty <= 0) { alert("Please select a valid quantity."); return; }
 
         btn.disabled = true;
-        btn.innerText = "Connecting to Gateway...";
+        btn.querySelector('.btn-content').textContent = "Connecting to Gateway...";
 
-        // Create order on backend
         fetch("/api/create-order", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                food_id: {{ food.id | tojson }},
-                quantity: qty,
-                email: email
-            })
+            body: JSON.stringify({ food_id: {{ food.id | tojson }}, quantity: qty, email: email })
         })
         .then(r => r.json())
         .then(data => {
-            if(data.error) {
-                alert(data.error);
-                resetBtn(btn);
-                return;
-            }
-
+            if (data.error) { alert(data.error); resetBtn(btn); return; }
             const options = {
-                "key": data.key, 
-                "amount": data.amount, // 5800 paise for ₹58
-                "currency": "INR",
-                "name": "Last Plate",
-                "description": "Food Reservation Fee",
-                "order_id": data.razorpay_order_id,
-                "handler": function(response) {
-                    btn.innerText = "Verifying Payment...";
-                    
+                key: data.key,
+                amount: data.amount,
+                currency: "INR",
+                name: "Last Plate",
+                description: "Meal Rescue Fee",
+                order_id: data.razorpay_order_id,
+                handler: function(response) {
+                    btn.querySelector('.btn-content').textContent = "Verifying...";
                     fetch("/api/verify-payment", {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
@@ -264,39 +697,27 @@
                     })
                     .then(r => r.json())
                     .then(out => {
-                        if(out.success) {
-                            btn.style.background = "#fff";
-                            btn.innerText = "Order Confirmed!";
-                            // Redirect to home/browse after success
-                            setTimeout(() => { location.href = "/browse"; }, 2000);
+                        if (out.success) {
+                            document.getElementById("successOverlay").classList.add("show");
+                            setTimeout(() => { location.href = "/browse"; }, 3500);
                         } else {
                             alert("Verification failed. Please contact support.");
                             resetBtn(btn);
                         }
                     });
                 },
-                "modal": {
-                    "ondismiss": function() {
-                        resetBtn(btn);
-                    }
-                },
-                "theme": { "color": "#2ecc71" }
+                modal: { ondismiss: function() { resetBtn(btn); } },
+                theme: { color: "#4a7c35" }
             };
-            const rzp = new Razorpay(options);
-            rzp.open();
+            new Razorpay(options).open();
         })
-        .catch(err => {
-            console.error(err);
-            alert("Server connection failed.");
-            resetBtn(btn);
-        });
+        .catch(function() { alert("Server connection failed. Please try again."); resetBtn(btn); });
     };
 
     function resetBtn(btn) {
         btn.disabled = false;
-        btn.innerText = "Proceed to Payment";
+        btn.innerHTML = '<div class="btn-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Rescue This Meal</div>';
     }
 </script>
-
 </body>
 </html>
