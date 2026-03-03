@@ -124,3 +124,101 @@ def create_secret_order():
         "amount": amount_paise,
         "key": os.getenv("RAZORPAY_KEY_ID")
     })
+# ================= VERIFY SECRET PAYMENT =================
+@secret_bp.route("/api/secret/verify-payment", methods=["POST"])
+def secret_verify_payment():
+    data = request.json
+    cur = mysql.connection.cursor(DictCursor)
+
+    try:
+        razorpay_client.utility.verify_payment_signature(data)
+    except:
+        return jsonify({"success": False}), 400
+
+    cur.execute("""
+        SELECT so.*, sm.name AS dish_name, sm.price AS base_price,
+               r.name AS restaurant_name, r.email AS res_email,
+               r.location_link AS res_location
+        FROM secret_orders so
+        JOIN secret_menu sm ON so.dish_id = sm.id
+        JOIN restaurants r ON sm.restaurant_id = r.id
+        WHERE so.razorpay_order_id=%s
+          AND so.payment_status='PENDING'
+        FOR UPDATE
+    """, (data["razorpay_order_id"],))
+    order = cur.fetchone()
+
+    if not order:
+        return jsonify({"success": False}), 400
+
+    qty = order["quantity"]
+
+    cur.execute("""
+        UPDATE secret_menu
+        SET stock = stock - %s
+        WHERE id=%s AND stock >= %s
+    """, (qty, order["dish_id"], qty))
+
+    if cur.rowcount == 0:
+        mysql.connection.rollback()
+        return jsonify({"success": False, "error": "Out of stock"}), 409
+
+    cur.execute("""
+        UPDATE secret_orders
+        SET payment_status='PAID',
+            status='CONFIRMED',
+            razorpay_payment_id=%s
+        WHERE id=%s
+    """, (data["razorpay_payment_id"], order["id"]))
+
+    mysql.connection.commit()
+
+    collected = float(order["total_amount"])
+    restaurant_payout = float(order["base_price"]) * qty
+
+    # ---- Email restaurant ----
+    send_email(
+        order["res_email"],
+        f"Secret Menu Order: {order['dish_name']}",
+        f"""
+        <h2>New Secret Order</h2>
+        <p><b>Dish:</b> {order['dish_name']}</p>
+        <p><b>Quantity:</b> {qty}</p>
+
+        <h3>Customer Phone Number</h3>
+        <h1>{order['user_phone']}</h1>
+
+        <p>Restaurant Payout: ₹{restaurant_payout}</p>
+
+        <a href="{order['res_location']}">Open in Maps</a>
+        """
+    )
+
+    # ---- Email user ----
+    send_email(
+        order["user_email"],
+        "Your Secret Menu Order is Confirmed",
+        f"""
+        <h2>Order Confirmed!</h2>
+        <p>You ordered: <b>{order['dish_name']}</b> × {qty}<br>
+        Show your phone number (<b>{order['user_phone']}</b>) at pickup.</p>
+
+        <a href="{order['res_location']}">Open in Google Maps</a>
+        """
+    )
+
+    # ---- Email admin ----
+    send_email(
+        "terminalplate@gmail.com",
+        f"Secret Order Report: {order['dish_name']}",
+        f"""
+        Dish: {order['dish_name']}<br>
+        Qty: {qty}<br>
+        Phone: {order['user_phone']}<br>
+        Charged: ₹{collected}<br>
+        Payout: ₹{restaurant_payout}<br>
+        Profit: ₹{collected - restaurant_payout}
+        """
+    )
+
+    return jsonify({"success": True})
