@@ -194,7 +194,9 @@ def secret_verify_payment():
 
     # ---- Email restaurant ----
     send_email(
-        order["res_email"],
+        cur.execute("SELECT email FROM users WHERE id=%s", (session["user_id"],))
+        user = cur.fetchone()
+        user_email = user["email"],
         f"Secret Menu Order: {order['dish_name']}",
         f"""
         <h2>New Secret Order</h2>
