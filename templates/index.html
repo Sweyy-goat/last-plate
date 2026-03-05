@@ -526,48 +526,37 @@
 
 <script>
 /* ════════════════════════════════════════════════════════════════
-   CURSOR GLOW — silky lerp-tracked mouse halo
+   CURSOR GLOW — lerp-tracked, CSS transform only (compositor thread)
    ════════════════════════════════════════════════════════════════ */
 const cursorGlow = document.getElementById('cursorGlow');
-const bgGlowTl   = document.getElementById('bgGlowTl');
 
 let cX = window.innerWidth / 2, cY = window.innerHeight / 2;
 let lX = cX, lY = cY;
-
-window.addEventListener('mousemove', e => { cX = e.clientX; cY = e.clientY; });
-
-function lerpCursor() {
-  lX += (cX - lX) * 0.072;
-  lY += (cY - lY) * 0.072;
-  cursorGlow.style.transform = `translate(${lX - 140}px, ${lY - 140}px)`;
-  requestAnimationFrame(lerpCursor);
-}
-lerpCursor();
+window.addEventListener('mousemove', e => { cX = e.clientX; cY = e.clientY; }, { passive: true });
 
 /* ════════════════════════════════════════════════════════════════
-   PREMIUM LEAF PHYSICS ENGINE — Canvas 2D
+   LEAF ENGINE — GPU-friendly, pre-baked sprites
 
-   · 3 organic leaf silhouettes (teardrop, maple-hint, oval)
-   · 3 depth layers: far (blurred/dim) · mid · near (sharp/bright)
-   · Smooth wind turbulence via summed sine fields
-   · Per-leaf: gravity, drag, lateral sway, angular momentum
-   · Perspective 3D tumble: scaleY oscillation reveals front/back face
-   · Front face: 4-stop gradient + specular sheen sweep
-   · Back face: darker underside tones
-   · Organic vein lines (midrib + lateral veins)
-   · Ambient glow halo under each leaf
-   · Smooth opacity arc (fade in → hold → fade out)
-   · Mouse-reactive wind: cursor nudges nearby leaves
-   · Continuous respawn — always ~32 leaves in flight
+   WHY IT'S FAST:
+   · Each leaf is pre-rendered to an OffscreenCanvas ONCE at init.
+     Per-frame cost = drawImage only (single GPU texture blit).
+   · Zero per-frame gradient/Path2D/filter allocation.
+   · ctx.filter removed entirely — depth is implied by size+alpha.
+   · save/restore: exactly ONE pair per leaf per frame.
+   · globalAlpha set once; no nested multiply chains.
+   · Mouse repulsion uses squared-distance (sqrt only on hit).
+   · DPR capped at 1.5 on mobile to halve fill-rate.
+   · Leaf count: 8 far + 9 mid + 10 near = 27 total.
    ════════════════════════════════════════════════════════════════ */
 
 const canvas = document.getElementById('leaf-canvas');
-const ctx    = canvas.getContext('2d', { alpha: true });
+const ctx    = canvas.getContext('2d', { alpha: true, desynchronized: true });
 
 let W, H, dpr;
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
   W   = window.innerWidth;
   H   = window.innerHeight;
   canvas.width  = Math.round(W * dpr);
@@ -577,47 +566,101 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
-window.addEventListener('resize', () => { ctx.setTransform(1,0,0,1,0,0); resize(); });
+window.addEventListener('resize', () => { ctx.setTransform(1,0,0,1,0,0); resize(); }, { passive: true });
 
-/* mouse (shared with cursor glow above) */
 let mX = W / 2, mY = -400;
-window.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+window.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; }, { passive: true });
 
-/* ── colour palettes ── */
+/* ── palettes ── */
 const PALETTES = [
-  { c0:'#223d0a', c1:'#4a7e18', c2:'#6fa82a', c3:'#9fd44e', gR:111, gG:168, gB:42  },
-  { c0:'#1a3208', c1:'#3e6014', c2:'#5a8c22', c3:'#82b840', gR:90,  gG:140, gB:34  },
-  { c0:'#3d1f04', c1:'#7a4008', c2:'#b87d20', c3:'#d9a84c', gR:184, gG:125, gB:32  },
-  { c0:'#3a1008', c1:'#7e2810', c2:'#c04522', c3:'#d97040', gR:180, gG:70,  gB:32  },
-  { c0:'#2a4a0a', c1:'#5e8e20', c2:'#88bc38', c3:'#b4d860', gR:136, gG:188, gB:56  },
+  { c0:'#223d0a', c1:'#4a7e18', c2:'#6fa82a', c3:'#9fd44e', gR:111, gG:168, gB:42 },
+  { c0:'#1a3208', c1:'#3e6014', c2:'#5a8c22', c3:'#82b840', gR:90,  gG:140, gB:34 },
+  { c0:'#3d1f04', c1:'#7a4008', c2:'#b87d20', c3:'#d9a84c', gR:184, gG:125, gB:32 },
+  { c0:'#3a1008', c1:'#7e2810', c2:'#c04522', c3:'#d97040', gR:180, gG:70,  gB:32 },
+  { c0:'#2a4a0a', c1:'#5e8e20', c2:'#88bc38', c3:'#b4d860', gR:136, gG:188, gB:56 },
 ];
 
-/* ── shape builders ── */
-function shapeTear(s) {
-  const p = new Path2D();
-  p.moveTo(0, -s * 0.52);
-  p.bezierCurveTo( s*0.52,-s*0.52,  s*0.52, s*0.44,  0,  s*0.52);
-  p.bezierCurveTo(-s*0.52, s*0.44, -s*0.52,-s*0.52,  0, -s*0.52);
-  return p;
-}
-function shapeMaple(s) {
-  const p = new Path2D(), r = s * 0.46;
-  p.moveTo(0, -r);
-  p.bezierCurveTo( r*0.5,-r,      r*1.1,-r*0.28,  r*0.72, r*0.12);
-  p.bezierCurveTo( r*1.0, r*0.52, r*0.5, r*0.92,  0,      r);
-  p.bezierCurveTo(-r*0.5, r*0.92,-r*1.0, r*0.52, -r*0.72, r*0.12);
-  p.bezierCurveTo(-r*1.1,-r*0.28,-r*0.5,-r,       0,     -r);
-  return p;
-}
-function shapeOval(s) {
-  const p = new Path2D();
-  p.ellipse(0, 0, s * 0.36, s * 0.54, 0, 0, Math.PI * 2);
-  return p;
-}
-const SHAPES = [shapeTear, shapeMaple, shapeOval];
+/* ── bake one face to an OffscreenCanvas, hand back an ImageBitmap ── */
+function bakeLeaf(size, pal, isFront) {
+  const dim = Math.ceil(size * 1.25); // includes padding
+  const oc  = new OffscreenCanvas(dim, dim);
+  const c   = oc.getContext('2d');
+  const h   = dim / 2;
 
-/* ── smooth wind field ── */
-function windNoise(x, y, t) {
+  c.translate(h, h);
+
+  /* body gradient */
+  const g = c.createLinearGradient(-size*0.38, -size*0.48, size*0.38, size*0.48);
+  if (isFront) {
+    g.addColorStop(0,    pal.c1);
+    g.addColorStop(0.35, pal.c2);
+    g.addColorStop(0.78, pal.c3);
+    g.addColorStop(1,    pal.c2);
+  } else {
+    g.addColorStop(0,   pal.c0);
+    g.addColorStop(0.6, pal.c1);
+    g.addColorStop(1,   pal.c0);
+  }
+
+  /* teardrop silhouette */
+  c.beginPath();
+  c.moveTo(0, -size * 0.52);
+  c.bezierCurveTo( size*0.52, -size*0.52,  size*0.52, size*0.44,  0,  size*0.52);
+  c.bezierCurveTo(-size*0.52,  size*0.44, -size*0.52,-size*0.52,  0, -size*0.52);
+  c.fillStyle = g;
+  c.fill();
+
+  /* midrib */
+  c.strokeStyle = isFront ? 'rgba(240,230,190,0.52)' : 'rgba(0,0,0,0.25)';
+  c.lineWidth   = Math.max(0.5, size * 0.021);
+  c.lineCap     = 'round';
+  c.beginPath(); c.moveTo(0, -size*0.44); c.lineTo(0, size*0.44); c.stroke();
+
+  /* lateral veins */
+  c.lineWidth   = Math.max(0.28, size * 0.011);
+  c.globalAlpha = 0.45;
+  for (const [x0,y0,x1,y1] of [
+    [ 0,-size*.17,  size*.27,-size*.04],
+    [ 0,-size*.17, -size*.27,-size*.04],
+    [ 0, size*.07,  size*.23, size*.19],
+    [ 0, size*.07, -size*.23, size*.19],
+    [ 0, size*.27,  size*.15, size*.37],
+    [ 0, size*.27, -size*.15, size*.37],
+  ]) { c.beginPath(); c.moveTo(x0,y0); c.lineTo(x1,y1); c.stroke(); }
+  c.globalAlpha = 1;
+
+  /* rim */
+  c.strokeStyle = isFront
+    ? `rgba(${pal.gR+50},${pal.gG+35},${pal.gB},0.55)`
+    : 'rgba(0,0,0,0.30)';
+  c.lineWidth = Math.max(0.3, size * 0.015);
+  c.beginPath();
+  c.moveTo(0, -size * 0.52);
+  c.bezierCurveTo( size*0.52,-size*0.52,  size*0.52, size*0.44,  0,  size*0.52);
+  c.bezierCurveTo(-size*0.52, size*0.44, -size*0.52,-size*0.52,  0, -size*0.52);
+  c.stroke();
+
+  return oc.transferToImageBitmap();
+}
+
+/* ── sprite cache keyed by size-bucket × palette ── */
+const SPRITES = new Map();
+function getSprites(size, palIdx) {
+  const bucket = Math.round(size / 7) * 7; // ~6 size bands
+  const key    = bucket * 10 + palIdx;
+  if (!SPRITES.has(key)) {
+    const pal = PALETTES[palIdx];
+    SPRITES.set(key, {
+      f: bakeLeaf(bucket, pal, true),
+      b: bakeLeaf(bucket, pal, false),
+      d: Math.ceil(bucket * 1.25), // baked canvas dimension
+    });
+  }
+  return SPRITES.get(key);
+}
+
+/* ── wind (pure math, no allocations) ── */
+function wind(x, y, t) {
   return (
     Math.sin(x * 0.007 + t * 0.38) * 0.38 +
     Math.sin(y * 0.005 + t * 0.25) * 0.28 +
@@ -626,202 +669,118 @@ function windNoise(x, y, t) {
   );
 }
 
-/* ── layer configs ── */
+/* ── layers ── */
 const LAYERS = [
-  { n:9,  sMin:7,  sMax:13, spd:0.42, a:0.22, blur:2.6 },
-  { n:11, sMin:16, sMax:28, spd:0.70, a:0.50, blur:0.6 },
-  { n:12, sMin:32, sMax:58, spd:1.00, a:0.88, blur:0   },
+  { n: isMobile ? 5 : 8,  sMin: 8,  sMax: 14, spd: 0.42, a: 0.20 },
+  { n: isMobile ? 6 : 9,  sMin: 17, sMax: 29, spd: 0.70, a: 0.47 },
+  { n: isMobile ? 7 : 10, sMin: 33, sMax: 56, spd: 1.00, a: 0.85 },
 ];
 
-/* ── leaf particle ── */
 class Leaf {
   constructor(li, scatter) {
     this.li = li;
-    this.L  = LAYERS[li];
     this._init(scatter);
   }
   _init(scatter) {
-    const L = this.L;
-    this.x   = Math.random() * W;
-    this.y   = scatter ? (Math.random() * H * 1.3 - H * 0.15) : (-50 - Math.random() * 100);
-    this.s   = L.sMin + Math.random() * (L.sMax - L.sMin);
-    this.vx  = (Math.random() - 0.5) * 0.5;
-    this.vy  = 0.35 + Math.random() * 0.55;
-    this.ang = Math.random() * Math.PI * 2;
-    this.om  = (Math.random() - 0.5) * 0.036;
-    this.swF = Math.random() * Math.PI * 2;
-    this.swS = 0.011 + Math.random() * 0.014;
-    this.swA = 0.5   + Math.random() * 1.0;
-    this.flF = Math.random() * Math.PI * 2;
-    this.flS = 0.007 + Math.random() * 0.016;
-    this.shF = Math.random() * Math.PI * 2;
-    this.pal = PALETTES[Math.floor(Math.random() * PALETTES.length)];
-    this.shp = Math.floor(Math.random() * SHAPES.length);
-    this.op  = 0;
-    this.age = 0;
-    this.maxAge = 420 + Math.random() * 360;
-    this.drag = 0.994 + Math.random() * 0.004;
-    /* smooth opacity uses a sine curve */
+    const L = LAYERS[this.li];
+    this.x      = Math.random() * W;
+    this.y      = scatter ? Math.random() * H * 1.2 - H * 0.1 : -60 - Math.random() * 80;
+    this.s      = L.sMin + Math.random() * (L.sMax - L.sMin);
+    this.vx     = (Math.random() - 0.5) * 0.5;
+    this.vy     = 0.38 + Math.random() * 0.5;
+    this.ang    = Math.random() * Math.PI * 2;
+    this.om     = (Math.random() - 0.5) * 0.033;
+    this.swF    = Math.random() * Math.PI * 2;
+    this.swS    = 0.012 + Math.random() * 0.013;
+    this.swA    = 0.5   + Math.random() * 0.9;
+    this.flF    = Math.random() * Math.PI * 2;
+    this.flS    = 0.008 + Math.random() * 0.015;
+    this.palIdx = (Math.random() * PALETTES.length) | 0;
+    this.op     = 0;
+    this.age    = 0;
+    this.maxAge = 400 + Math.random() * 360;
+    this.drag   = 0.994 + Math.random() * 0.004;
+    this.sp     = getSprites(this.s, this.palIdx); // pre-baked bitmaps
   }
 
   update(t) {
     this.age++;
     const r = this.age / this.maxAge;
+    this.op = r < 0.08 ? Math.sin(r / 0.08 * 1.5708)
+            : r < 0.78 ? 1
+            : Math.sin((1 - r) / 0.22 * 1.5708);
 
-    /* smooth opacity with sine easing */
-    if (r < 0.08)      this.op = Math.sin((r / 0.08) * Math.PI * 0.5);
-    else if (r < 0.78) this.op = 1;
-    else               this.op = Math.sin(((1 - r) / 0.22) * Math.PI * 0.5);
-    this.op = Math.max(0, Math.min(1, this.op));
-
-    const wx = windNoise(this.x, this.y, t) * 1.6;
-    const wy = windNoise(this.x + 400, this.y + 300, t * 0.65) * 0.35;
+    const wx = wind(this.x, this.y, t) * 1.5;
     const sw = Math.sin(this.swF + t * this.swS * 60) * this.swA;
 
-    /* smooth mouse repulsion with soft falloff */
     const dx = this.x - mX, dy = this.y - mY;
-    const dd2 = dx*dx + dy*dy;
+    const d2 = dx*dx + dy*dy;
     let rx = 0, ry = 0;
-    if (dd2 < 160*160 && dd2 > 1) {
-      const dd = Math.sqrt(dd2);
-      const f = Math.pow((160 - dd) / 160, 1.5) * 1.5;
-      rx = (dx / dd) * f;
-      ry = (dy / dd) * f * 0.3;
+    if (d2 < 22500) {
+      const d = Math.sqrt(d2) + 0.001;
+      const f = (150 - d) / 150 * 1.4;
+      rx = dx / d * f; ry = dy / d * f * 0.28;
     }
 
-    this.vx = (this.vx + wx*0.016 + sw*0.020 + rx*0.055) * this.drag;
-    this.vy = (this.vy + 0.011    + wy*0.011 + ry*0.040) * this.drag;
-    this.vx = Math.max(-2.4, Math.min(2.4, this.vx));
-    this.vy = Math.max(0.12, Math.min(3.8, this.vy));
+    this.vx = (this.vx + wx*0.015 + sw*0.018 + rx*0.05) * this.drag;
+    this.vy = (this.vy + 0.010 + ry*0.038) * this.drag;
+    this.vx = this.vx < -2.2 ? -2.2 : this.vx > 2.2 ? 2.2 : this.vx;
+    this.vy = this.vy <  0.1 ?  0.1 : this.vy > 3.5  ? 3.5 : this.vy;
 
-    this.x  += this.vx * this.L.spd;
-    this.y  += this.vy * this.L.spd;
+    const spd = LAYERS[this.li].spd;
+    this.x  += this.vx * spd;
+    this.y  += this.vy * spd;
     this.ang += this.om;
-    this.om  += (Math.random() - 0.5) * 0.0006;
-    this.om  *= 0.995;
+    this.om  = this.om * 0.995 + (Math.random() - 0.5) * 0.0005;
 
-    if (this.age >= this.maxAge || this.y > H + 110 || this.x < -130 || this.x > W + 130) {
+    if (this.age >= this.maxAge || this.y > H + 100 || this.x < -120 || this.x > W + 120) {
       this._init(false);
     }
   }
 
   draw(t) {
     if (this.op < 0.005) return;
-    const { s, ang, pal, shp } = this;
-
     const flipY  = Math.cos(this.flF + t * this.flS * 60);
-    const scY    = 0.12 + Math.abs(flipY) * 0.88;
-    const isBack = flipY < 0;
+    const scY    = 0.14 + Math.abs(flipY) * 0.86;
+    const bmp    = flipY >= 0 ? this.sp.f : this.sp.b;
+    const dim    = this.sp.d;
+    const half   = dim * 0.5;
 
     ctx.save();
-    ctx.globalAlpha = this.op * this.L.a;
+    ctx.globalAlpha = this.op * LAYERS[this.li].a;
     ctx.translate(this.x, this.y);
-    ctx.rotate(ang);
+    ctx.rotate(this.ang);
     ctx.scale(1, scY);
-
-    if (this.L.blur > 0) ctx.filter = `blur(${this.L.blur}px)`;
-
-    /* glow halo */
-    if (this.li >= 1) {
-      ctx.save();
-      const ga = ctx.globalAlpha;
-      ctx.globalAlpha = ga * 0.26;
-      const hR = s * 1.55;
-      const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, hR);
-      rg.addColorStop(0,   `rgba(${pal.gR},${pal.gG},${pal.gB},0.5)`);
-      rg.addColorStop(0.5, `rgba(${pal.gR},${pal.gG},${pal.gB},0.14)`);
-      rg.addColorStop(1,   `rgba(${pal.gR},${pal.gG},${pal.gB},0)`);
-      ctx.filter = `blur(${s * 0.52}px)`;
-      ctx.fillStyle = rg;
-      ctx.beginPath(); ctx.arc(0, 0, hR, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-    }
-
-    /* leaf body */
-    const bg = ctx.createLinearGradient(-s*0.38, -s*0.48, s*0.38, s*0.48);
-    if (isBack) {
-      bg.addColorStop(0,   pal.c0);
-      bg.addColorStop(0.6, pal.c1);
-      bg.addColorStop(1,   pal.c0);
-    } else {
-      bg.addColorStop(0,    pal.c1);
-      bg.addColorStop(0.35, pal.c2);
-      bg.addColorStop(0.78, pal.c3);
-      bg.addColorStop(1,    pal.c2);
-    }
-    const path = SHAPES[shp](s);
-    ctx.fillStyle = bg;
-    ctx.fill(path);
-
-    /* veins */
-    ctx.save();
-    ctx.globalAlpha *= isBack ? 0.28 : 0.44;
-    ctx.strokeStyle  = isBack ? 'rgba(0,0,0,0.38)' : 'rgba(240,230,190,0.72)';
-    ctx.lineWidth    = Math.max(0.4, s * 0.023);
-    ctx.lineCap      = 'round';
-    ctx.beginPath(); ctx.moveTo(0, -s*0.45); ctx.lineTo(0, s*0.45); ctx.stroke();
-    ctx.lineWidth = Math.max(0.28, s * 0.013);
-    ctx.globalAlpha *= 0.68;
-    [
-      [0,-s*0.18, s*0.30,-s*0.04], [0,-s*0.18,-s*0.30,-s*0.04],
-      [0, s*0.06, s*0.26, s*0.20], [0, s*0.06,-s*0.26, s*0.20],
-      [0, s*0.28, s*0.18, s*0.38], [0, s*0.28,-s*0.18, s*0.38],
-    ].forEach(([x0,y0,x1,y1]) => {
-      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
-    });
-    ctx.restore();
-
-    /* specular sheen */
-    if (!isBack && this.li >= 1) {
-      const sA = this.shF + t * 0.35;
-      const sx = Math.cos(sA) * s * 0.5;
-      const sy = Math.sin(sA) * s * 0.2;
-      const sg = ctx.createLinearGradient(sx-s*0.35, sy-s*0.35, sx+s*0.35, sy+s*0.35);
-      sg.addColorStop(0,    'rgba(255,255,255,0)');
-      sg.addColorStop(0.42, 'rgba(255,255,255,0.20)');
-      sg.addColorStop(0.58, 'rgba(255,255,255,0.10)');
-      sg.addColorStop(1,    'rgba(255,255,255,0)');
-      ctx.save();
-      ctx.globalAlpha *= 0.60;
-      ctx.fillStyle = sg; ctx.fill(path);
-      ctx.restore();
-    }
-
-    /* rim light */
-    ctx.save();
-    ctx.globalAlpha *= isBack ? 0.20 : 0.38;
-    ctx.strokeStyle  = isBack
-      ? 'rgba(0,0,0,0.45)'
-      : `rgba(${pal.gR + 60},${pal.gG + 40},${pal.gB},0.75)`;
-    ctx.lineWidth = Math.max(0.3, s * 0.018);
-    ctx.stroke(path);
-    ctx.restore();
-
+    ctx.drawImage(bmp, -half, -half, dim, dim);
     ctx.restore();
   }
 }
 
-/* ── init pool ── */
+/* ── init ── */
 const leaves = [];
 LAYERS.forEach((_, li) => {
   for (let i = 0; i < LAYERS[li].n; i++) leaves.push(new Leaf(li, true));
 });
 leaves.sort((a, b) => a.li - b.li);
 
-/* ── RAF loop with delta-time for consistent speed ── */
-let t = 0;
-let last = performance.now();
+/* ── loop ── */
+let t = 0, last = performance.now();
+function loop(now) {
+  const dt = Math.min((now - last) / 16.667, 2);
+  last = now; t += dt / 60;
 
-(function loop(now) {
-  const dt = Math.min((now - last) / 16.667, 2.5); // cap at 2.5× frame
-  last = now;
-  t += dt / 60;
+  lX += (cX - lX) * 0.072;
+  lY += (cY - lY) * 0.072;
+  cursorGlow.style.transform = `translate(${(lX - 140)|0}px,${(lY - 140)|0}px)`;
 
   ctx.clearRect(0, 0, W, H);
-  for (const lf of leaves) { lf.update(t); lf.draw(t); }
-
+  for (let i = 0; i < leaves.length; i++) {
+    leaves[i].update(t);
+    leaves[i].draw(t);
+  }
   requestAnimationFrame(loop);
-})(performance.now());
+}
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
