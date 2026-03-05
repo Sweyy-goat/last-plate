@@ -4,446 +4,415 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Last Plate • The Midnight Rescue</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #09090b;
-      --bg-2: #111113;
-      --text: #f5f0e8;
-      --text-muted: #6b6760;
-      --text-warm: #c9b99a;
-      
-      /* Warm amber/gold - elevated restaurant feel */
-      --accent: #e8a245;
-      --accent-light: #f5c478;
-      --accent-glow: rgba(232, 162, 69, 0.25);
-      --accent-dim: rgba(232, 162, 69, 0.07);
-
-      --line: rgba(245, 240, 232, 0.07);
-      --line-warm: rgba(232, 162, 69, 0.15);
+      --bg:          #080c07;
+      --bg-2:        #0d1109;
+      --text:        #f0ece2;
+      --text-muted:  #5c6652;
+      --text-warm:   #c9d4a8;
+      --accent:       #6fa82a;
+      --accent-light: #9fd44e;
+      --accent-deep:  #3e5c18;
+      --accent-glow:  rgba(111,168,42,0.28);
+      --accent-dim:   rgba(111,168,42,0.07);
+      --amber:        #b87d20;
+      --amber-light:  #d9a84c;
+      --line:         rgba(240,236,226,0.07);
+      --line-warm:    rgba(111,168,42,0.18);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
     }
 
     *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      box-sizing: border-box; margin: 0; padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Fixed Overflow for Landscape Mobile */
     body, html {
-      width: 100%;
-      min-height: 100dvh;
+      width: 100%; min-height: 100dvh;
       background: var(--bg);
       font-family: 'Cormorant Garamond', Georgia, serif;
       color: var(--text);
-      overflow-x: hidden;
-      overflow-y: auto; /* Allows scrolling on tiny screens if needed */
+      overflow-x: hidden; overflow-y: auto;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
     }
 
-    /* ── BACKGROUND ── */
+    /* ── background layers ── */
     .bg-texture {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background-image: radial-gradient(circle, rgba(245,240,232,0.035) 1px, transparent 1px);
+      position: fixed; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, rgba(240,236,226,0.025) 1px, transparent 1px);
       background-size: 28px 28px;
     }
-
     .bg-vignette {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      background: radial-gradient(ellipse at 50% 50%, transparent 30%, var(--bg) 85%);
+      position: fixed; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse at 50% 50%, transparent 25%, var(--bg) 82%);
       pointer-events: none;
     }
-
     .bg-glow-tl {
-      position: fixed;
-      top: -20vh;
-      left: -10vw;
-      width: 60vw;
-      height: 60vw;
-      z-index: 1;
-      background: radial-gradient(circle, rgba(232, 162, 69, 0.06) 0%, transparent 65%);
-      filter: blur(40px);
-      pointer-events: none;
+      position: fixed; top: -20vh; left: -10vw; width: 65vw; height: 65vw; z-index: 1;
+      background: radial-gradient(circle, rgba(62,92,24,0.32) 0%, transparent 65%);
+      filter: blur(60px); pointer-events: none;
+      will-change: transform;
+      transition: transform 1.2s var(--ease-out-expo);
     }
-
     .bg-glow-br {
-      position: fixed;
-      bottom: -20vh;
-      right: -10vw;
-      width: 50vw;
-      height: 50vw;
-      z-index: 1;
-      background: radial-gradient(circle, rgba(232, 162, 69, 0.04) 0%, transparent 65%);
-      filter: blur(40px);
-      pointer-events: none;
+      position: fixed; bottom: -20vh; right: -10vw; width: 50vw; height: 50vw; z-index: 1;
+      background: radial-gradient(circle, rgba(184,125,32,0.09) 0%, transparent 65%);
+      filter: blur(60px); pointer-events: none;
     }
-
     .grain {
-      position: fixed;
-      inset: -50%;
-      z-index: 2;
-      width: 200%;
-      height: 200%;
-      opacity: 0.025;
-      pointer-events: none;
+      position: fixed; inset: -50%; z-index: 2; width: 200%; height: 200%;
+      opacity: 0.022; pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      animation: grain-move 8s steps(2) infinite;
+      animation: grain-move 10s steps(2) infinite;
     }
-
     @keyframes grain-move {
-      0%   { transform: translate(0, 0); }
-      10%  { transform: translate(-2%, -3%); }
-      20%  { transform: translate(3%, 2%); }
-      30%  { transform: translate(-1%, 4%); }
-      40%  { transform: translate(4%, -1%); }
-      50%  { transform: translate(-3%, 1%); }
-      60%  { transform: translate(1%, -4%); }
-      70%  { transform: translate(-4%, 3%); }
-      80%  { transform: translate(2%, -2%); }
-      90%  { transform: translate(-2%, 4%); }
-      100% { transform: translate(0, 0); }
+      0%  { transform: translate(0, 0) }
+      10% { transform: translate(-2%, -3%) }
+      20% { transform: translate(3%, 2%) }
+      30% { transform: translate(-1%, 4%) }
+      40% { transform: translate(4%, -1%) }
+      50% { transform: translate(-3%, 1%) }
+      60% { transform: translate(1%, -4%) }
+      70% { transform: translate(-4%, 3%) }
+      80% { transform: translate(2%, -2%) }
+      90% { transform: translate(-2%, 4%) }
+      100%{ transform: translate(0, 0) }
     }
 
-    /* ── LAYOUT ── */
+    /* ── canvas ── */
+    #leaf-canvas {
+      position: fixed; inset: 0; z-index: 3;
+      pointer-events: none; width: 100%; height: 100%;
+    }
+
+    /* ── layout ── */
     .layout {
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      min-height: 100dvh;
-      width: 100%;
-      padding: clamp(20px, 5vw, 48px);
+      position: relative; z-index: 10;
+      display: grid; grid-template-rows: auto 1fr auto auto;
+      min-height: 100dvh; width: 100%;
+      padding: clamp(20px, 5vw, 52px);
+      will-change: contents;
     }
 
-    /* ── HEADER ── */
+    /* ── header ── */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       opacity: 0;
-      animation: fade-in-down 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
+      animation: fade-in-down 1.6s var(--ease-out-expo) forwards 0.05s;
     }
+    .logo-mark {
+      display: flex; align-items: center; gap: 13px;
+      cursor: pointer;
+    }
+    .logo-leaf {
+      width: 30px; height: 30px; border-radius: 50% 50% 50% 0;
+      background: linear-gradient(135deg, var(--accent-deep), var(--accent), var(--accent-light));
+      box-shadow: 0 0 18px var(--accent-glow);
+      transform: rotate(-45deg); flex-shrink: 0;
+      transition: box-shadow 0.5s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+      will-change: transform;
+    }
+    .logo-mark:hover .logo-leaf {
+      box-shadow: 0 0 32px var(--accent-glow), 0 0 64px var(--accent-glow);
+      transform: rotate(-45deg) scale(1.12);
+    }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-weight: 300; font-size: 1.15rem; color: var(--text); letter-spacing: 0.04em;
+      transition: color 0.3s;
+    }
+    .logo-name em { font-style: normal; color: var(--accent); }
 
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 18px;
-      background: rgba(232, 162, 69, 0.05);
-      border: 1px solid var(--line-warm);
+      display: inline-flex; align-items: center; gap: 10px; padding: 9px 18px;
+      background: rgba(111,168,42,0.055); border: 1px solid var(--line-warm);
       border-radius: 100px;
-      font-family: 'DM Mono', monospace;
-      font-size: clamp(8px, 2vw, 9px);
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-warm);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      font-family: 'DM Mono', monospace; font-size: clamp(8px, 2vw, 9px);
+      font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-warm); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: background 0.4s, border-color 0.4s, transform 0.4s var(--ease-out-expo);
+      will-change: transform;
     }
-
+    .status-pill:hover {
+      background: rgba(111,168,42,0.10);
+      border-color: rgba(111,168,42,0.32);
+      transform: translateY(-1px);
+    }
     .status-dot {
-      width: 5px;
-      height: 5px;
-      background: var(--accent);
-      border-radius: 50%;
+      width: 5px; height: 5px; background: var(--accent); border-radius: 50%;
       box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
-      animation: beacon 2.5s ease-in-out infinite;
+      animation: beacon 2.8s ease-in-out infinite;
     }
-
     @keyframes beacon {
-      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-glow), 0 0 16px var(--accent-glow); }
-      50%       { opacity: 0.35; box-shadow: 0 0 3px var(--accent-glow); }
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-glow), 0 0 18px var(--accent-glow) }
+      50%       { opacity: 0.3; box-shadow: 0 0 3px var(--accent-glow) }
     }
 
-    .version-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: clamp(8px, 2vw, 9px);
-      font-weight: 300;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
-    }
-
-    /* ── MAIN HERO ── */
-    main {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 0;
-      padding: 40px 0; /* Breathing room on scrollable devices */
-    }
+    /* ── main ── */
+    main { display: flex; flex-direction: column; justify-content: center; padding: 48px 0 24px; }
 
     .eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      display: flex; align-items: center; gap: 16px;
       margin-bottom: clamp(16px, 2.5vw, 28px);
       opacity: 0;
-      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.25s;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.2s;
     }
-
     .eyebrow-line {
-      flex: 0 0 clamp(20px, 5vw, 40px);
-      height: 1px;
+      flex: 0 0 clamp(20px, 5vw, 40px); height: 1px;
       background: linear-gradient(to right, transparent, var(--accent));
     }
-
     .eyebrow-text {
-      font-family: 'DM Mono', monospace;
-      font-size: clamp(8px, 2.5vw, 10px);
-      font-weight: 300;
-      color: var(--accent);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      font-family: 'DM Mono', monospace; font-size: clamp(8px, 2.5vw, 10px);
+      font-weight: 300; color: var(--accent); letter-spacing: 0.22em; text-transform: uppercase;
     }
 
-    .title-block {
-      line-height: 0.88;
-      overflow: hidden;
-    }
-
-    .title-block + .title-block {
-      margin-top: 0.04em;
-    }
+    /* ── hero type ── */
+    .title-block { line-height: 0.88; overflow: hidden; }
+    .title-block + .title-block { margin-top: 0.04em; }
 
     .huge-text {
       display: block;
       font-family: 'Bebas Neue', sans-serif;
-      /* Fixed font scaling: Prevents horizontal overflow on narrow phones */
-      font-size: clamp(4rem, 13.5vw, 16rem); 
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
-      color: var(--text);
-      transform: translateY(105%);
-      animation: reveal-up 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      font-size: clamp(4rem, 13.5vw, 16rem);
+      font-weight: 400; letter-spacing: 0.01em;
+      text-transform: uppercase; color: var(--text);
+      transform: translateY(108%);
+      animation: reveal-up 1.4s var(--ease-out-expo) forwards;
+      will-change: transform;
+    }
+    .huge-text.delay-1 { animation-delay: 0.12s; }
+    .huge-text-green {
+      color: var(--accent);
+      text-shadow: 0 0 80px rgba(111,168,42,0.18);
+      animation-delay: 0.24s;
     }
 
-    .huge-text.delay-1 { animation-delay: 0.15s; }
-
-    .huge-text-outline {
-      color: transparent;
-      -webkit-text-stroke: 1.5px rgba(245, 240, 232, 0.25);
-      transition: -webkit-text-stroke 0.6s ease, color 0.6s ease, text-shadow 0.6s ease;
-      animation-delay: 0.28s;
-    }
-
-    .huge-text-outline:hover {
-      color: var(--accent-light);
-      -webkit-text-stroke: 1.5px var(--accent-light);
-      text-shadow: 0 0 80px rgba(245, 196, 120, 0.15);
-    }
-
+    /* ── subtitle ── */
     .sub-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-      line-height: 1.65;
-      color: var(--text-muted);
-      max-width: 440px;
+      font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+      font-size: clamp(1.1rem, 2.5vw, 1.45rem); line-height: 1.68;
+      color: var(--text-muted); max-width: 460px;
       margin-top: clamp(20px, 4vw, 44px);
       opacity: 0;
-      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.55s;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.50s;
     }
-
-    .sub-text em {
-      font-style: normal;
-      color: var(--text-warm);
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      opacity: 0;
-      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.72s;
-    }
-
-    .footer-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .footer-city {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(0.85rem, 1.5vw, 0.9rem);
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    .footer-hrs {
-      font-family: 'DM Mono', monospace;
-      font-size: clamp(8px, 1.5vw, 9px);
-      font-weight: 300;
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
-      opacity: 0.6;
-    }
-
-    .cta-group {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 14px;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 18px;
-      padding: 18px 38px;
-      background: var(--accent);
-      color: #0a0a0c;
-      border-radius: 4px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 400;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -80%;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-      transform: skewX(-15deg);
-      transition: left 0.6s ease;
-    }
-
-    .btn-primary:hover::after {
-      left: 130%;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(232, 162, 69, 0.35), 0 4px 12px rgba(232, 162, 69, 0.2);
-    }
-
-    .btn-primary:active {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary svg {
-      width: 14px;
-      height: 14px;
-      transition: transform 0.35s ease;
-    }
-
-    .btn-primary:hover svg {
-      transform: translateX(4px);
-    }
-
-    .merchant-link {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      font-weight: 300;
-      color: var(--text-muted);
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      opacity: 0.45;
-      transition: opacity 0.3s ease, color 0.3s ease;
-      padding: 4px 0;
-    }
-
-    .merchant-link:hover {
-      opacity: 1;
-      color: var(--text-warm);
-    }
-
-    .side-label {
-      position: fixed;
-      bottom: 50%;
-      right: clamp(22px, 4vw, 48px);
-      transform: translateY(50%) rotate(90deg);
-      transform-origin: center;
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      font-weight: 300;
-      color: var(--text-muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      opacity: 0.3;
-      z-index: 20;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    /* ── RESPONSIVE BREAKPOINTS ── */
-    @media (max-width: 768px) {
-      .side-label { display: none; }
-
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 32px;
-      }
-
-      .cta-group {
-        width: 100%;
-        align-items: stretch;
-      }
-
-      .btn-primary {
-        justify-content: center;
-        padding: 22px;
-        font-size: 0.8rem;
-      }
-
-      .merchant-link {
-        align-self: center;
-        padding: 10px;
-        font-weight:bolder;
-      }
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes reveal-up {
-      from { transform: translateY(105%); }
-      to   { transform: translateY(0); }
-    }
-
-    @keyframes fade-in-down {
-      from { opacity: 0; transform: translateY(-16px); filter: blur(4px); }
-      to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
-    }
-
-    @keyframes fade-in-up {
-      from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
-      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
-    }
+    .sub-text em { font-style: normal; color: var(--text-warm); }
 
     .hero-rule {
-      width: 100%;
-      height: 1px;
+      width: 100%; height: 1px;
       background: linear-gradient(to right, var(--line-warm) 0%, transparent 60%);
       margin-top: clamp(22px, 3.5vw, 40px);
       opacity: 0;
-      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.62s;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.58s;
+    }
+
+    /* ── CTA ── */
+    .cta-strip {
+      display: flex; align-items: center; gap: 28px;
+      margin-top: clamp(24px, 4vw, 48px);
+      opacity: 0;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.68s;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 18px;
+      padding: 18px 38px;
+      background: var(--accent); color: #06100a; border-radius: 4px;
+      font-family: 'DM Mono', monospace; font-size: 0.75rem;
+      font-weight: 400; letter-spacing: 0.10em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: transform 0.5s var(--ease-out-expo),
+                  box-shadow 0.5s var(--ease-out-expo),
+                  background 0.3s;
+      will-change: transform;
+    }
+    /* sheen sweep */
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.28) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.7s var(--ease-in-out-quart);
+    }
+    .btn-primary:hover::before { transform: translateX(200%); }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 48px rgba(111,168,42,0.40), 0 4px 16px rgba(111,168,42,0.22);
+    }
+    .btn-primary:active { transform: translateY(-1px); transition-duration: 0.15s; }
+    .btn-arrow {
+      width: 14px; height: 14px; flex-shrink: 0;
+      transition: transform 0.45s var(--ease-out-expo);
+    }
+    .btn-primary:hover .btn-arrow { transform: translateX(5px); }
+
+    .btn-secondary {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 300;
+      color: var(--text-muted); text-decoration: none; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(111,168,42,0.22);
+      padding-bottom: 2px;
+      transition: color 0.35s, border-color 0.35s, transform 0.35s var(--ease-out-expo);
+      will-change: transform;
+    }
+    .btn-secondary:hover {
+      color: var(--accent-light);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* ── stats ── */
+    .stats-row {
+      display: flex; gap: clamp(28px, 5vw, 56px);
+      margin-top: clamp(36px, 5vw, 60px);
+      padding-top: clamp(24px, 3vw, 36px);
+      border-top: 1px solid var(--line);
+      opacity: 0;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.82s;
+    }
+    .stat { display: flex; flex-direction: column; gap: 5px; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      color: var(--accent); letter-spacing: 0.04em; line-height: 1;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .stat:hover .stat-num {
+      color: var(--accent-light);
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 300;
+      color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .stat:hover .stat-label { color: var(--text-warm); }
+
+    /* ── footer ── */
+    footer {
+      margin-top: clamp(48px, 7vw, 80px);
+      border-top: 1px solid var(--line);
+      padding-top: clamp(28px, 4vw, 44px);
+      opacity: 0;
+      animation: fade-in-up 1.4s var(--ease-out-expo) forwards 0.92s;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: clamp(24px, 4vw, 48px);
+      margin-bottom: clamp(28px, 4vw, 44px);
+    }
+    .footer-brand .fb-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .fb-leaf {
+      width: 22px; height: 22px; border-radius: 50% 50% 50% 0;
+      background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+      transform: rotate(-45deg); box-shadow: 0 0 10px var(--accent-glow); flex-shrink: 0;
+    }
+    .fb-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: var(--text); }
+    .fb-name em { font-style: normal; color: var(--accent); }
+    .fb-desc {
+      font-size: 0.88rem; line-height: 1.72; color: var(--text-muted);
+      max-width: 240px; margin-bottom: 18px;
+    }
+    .footer-social { display: flex; gap: 12px; }
+    .social-btn {
+      width: 34px; height: 34px; border: 1px solid var(--line-warm); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.7rem; font-family: 'DM Mono', monospace;
+      transition: border-color 0.35s, color 0.35s, background 0.35s, transform 0.4s var(--ease-out-expo);
+      will-change: transform;
+    }
+    .social-btn:hover {
+      border-color: var(--accent); color: var(--accent);
+      background: var(--accent-dim);
+      transform: translateY(-2px);
+    }
+    .footer-col h4 {
+      font-family: 'DM Mono', monospace; font-size: 8.5px; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: 0.88rem; color: var(--text-muted); text-decoration: none;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      transition: color 0.3s, transform 0.35s var(--ease-out-expo);
+      display: inline-block; will-change: transform;
+    }
+    .footer-col ul li a:hover { color: var(--text-warm); transform: translateX(3px); }
+
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: clamp(18px, 3vw, 28px); border-top: 1px solid var(--line);
+      gap: 16px; flex-wrap: wrap;
+    }
+    .footer-legal {
+      font-size: 0.75rem; color: var(--text-muted);
+      font-family: 'DM Mono', monospace; font-weight: 300;
+      letter-spacing: 0.04em; opacity: 0.5; line-height: 1.6; max-width: 520px;
+    }
+    .footer-links-bottom { display: flex; gap: 20px; flex-shrink: 0; }
+    .footer-links-bottom a {
+      font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 300;
+      color: var(--text-muted); text-decoration: none; letter-spacing: 0.14em;
+      text-transform: uppercase; opacity: 0.45;
+      transition: opacity 0.3s, color 0.3s;
+    }
+    .footer-links-bottom a:hover { opacity: 1; color: var(--accent-light); }
+
+    /* ── side label ── */
+    .side-label {
+      position: fixed; bottom: 50%; right: clamp(22px, 4vw, 48px);
+      transform: translateY(50%) rotate(90deg); transform-origin: center;
+      font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 300;
+      color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase;
+      opacity: 0.22; z-index: 20; pointer-events: none; white-space: nowrap;
+    }
+
+    /* ── cursor glow ── */
+    .cursor-glow {
+      position: fixed; width: 280px; height: 280px;
+      border-radius: 50%; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle, rgba(111,168,42,0.06) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.4s;
+      will-change: transform;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+    @media (max-width: 600px) {
+      .side-label { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .cta-strip { flex-direction: column; align-items: flex-start; }
+      .btn-primary { align-self: stretch; justify-content: center; }
+      .stats-row { flex-wrap: wrap; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .cursor-glow { display: none; }
+    }
+
+    /* ── keyframes ── */
+    @keyframes reveal-up {
+      from { transform: translateY(108%) }
+      to   { transform: translateY(0) }
+    }
+    @keyframes fade-in-down {
+      from { opacity: 0; transform: translateY(-14px); filter: blur(6px) }
+      to   { opacity: 1; transform: translateY(0);     filter: blur(0) }
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(18px); filter: blur(5px) }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0) }
     }
   </style>
 </head>
@@ -451,20 +420,25 @@
 
   <div class="bg-texture"></div>
   <div class="bg-vignette"></div>
-  <div class="bg-glow-tl"></div>
+  <div class="bg-glow-tl" id="bgGlowTl"></div>
   <div class="bg-glow-br"></div>
   <div class="grain"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <canvas id="leaf-canvas"></canvas>
 
   <div class="side-label">Zero Waste · Maximum Taste</div>
 
   <div class="layout">
-
     <header>
+      <div class="logo-mark">
+        <div class="logo-leaf"></div>
+        <span class="logo-name">Last<em>Plate</em></span>
+      </div>
       <div class="status-pill">
         <div class="status-dot"></div>
         Night Rescue Active
       </div>
-      <div class="version-tag">V&nbsp;2.6.1</div>
     </header>
 
     <main>
@@ -472,39 +446,382 @@
         <span class="eyebrow-line"></span>
         <span class="eyebrow-text">Premium Surplus Gastronomy</span>
       </div>
-
-      <div class="title-block">
-        <span class="huge-text delay-1">LAST</span>
-      </div>
-      <div class="title-block">
-        <span class="huge-text huge-text-outline">PLATE.</span>
-      </div>
-
+      <div class="title-block"><span class="huge-text delay-1">LAST</span></div>
+      <div class="title-block"><span class="huge-text huge-text-green">PLATE.</span></div>
       <p class="sub-text">
         Rescued from top-tier restaurants exclusively after-hours —
         <em>because extraordinary food deserves a second chance.</em>
       </p>
       <div class="hero-rule"></div>
-    </main>
-
-    <footer>
-      <div class="footer-meta">
-        <span class="footer-city">LastPlate acts solely as an online marketplace and mediator between the customer and the restaurant, and does not take responsibility for food preparation, quality, safety, or delivery delays caused by the restaurant.</span>
-        <span class="footer-hrs"></span>
-      </div>
-
-      <div class="cta-group">
+      <div class="cta-strip">
         <a href="/browse-entry" class="btn-primary">
           <span>Unlock Near You</span>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="btn-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
           </svg>
         </a>
-        <a href="/restaurant/login" class="merchant-link" style="font-weight: bolder;color: rgb(255, 255, 255);">Partner Auth →</a>
+        <a href="/restaurant/login" class="btn-secondary">Partner Auth →</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><span class="stat-num">840+</span><span class="stat-label">Partner Restaurants</span></div>
+        <div class="stat"><span class="stat-num">12K</span><span class="stat-label">Meals Rescued</span></div>
+        <div class="stat"><span class="stat-num">98%</span><span class="stat-label">Guest Satisfaction</span></div>
+        <div class="stat"><span class="stat-num">—60%</span><span class="stat-label">Avg. Discount</span></div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="fb-logo">
+            <div class="fb-leaf"></div>
+            <span class="fb-name">Last<em>Plate</em></span>
+          </div>
+          <p class="fb-desc">We partner with the city's finest kitchens to rescue surplus meals after service — giving guests extraordinary food at honest prices, and giving chefs the audience they deserve.</p>
+          <div class="footer-social">
+            <a href="#" class="social-btn">Ig</a>
+            <a href="#" class="social-btn">Tw</a>
+            <a href="#" class="social-btn">Li</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Discover</h4>
+          <ul>
+            <li><a href="#">Browse Tonight's Menu</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Cities We Serve</a></li>
+            <li><a href="#">The Midnight Box</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Partners</h4>
+          <ul>
+            <li><a href="#">Restaurant Login</a></li>
+            <li><a href="#">Join as Partner</a></li>
+            <li><a href="#">Partner Resources</a></li>
+            <li><a href="#">Impact Report</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">Our Mission</a></li>
+            <li><a href="#">Press & Media</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-legal">LastPlate acts solely as an online marketplace and mediator between the customer and the restaurant, and does not take responsibility for food preparation, quality, safety, or delivery delays caused by the restaurant. © 2025 LastPlate Inc. All rights reserved.</p>
+        <div class="footer-links-bottom">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Cookies</a>
+          <a href="#">Accessibility</a>
+        </div>
       </div>
     </footer>
-
   </div>
 
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CURSOR GLOW — silky lerp-tracked mouse halo
+   ════════════════════════════════════════════════════════════════ */
+const cursorGlow = document.getElementById('cursorGlow');
+const bgGlowTl   = document.getElementById('bgGlowTl');
+
+let cX = window.innerWidth / 2, cY = window.innerHeight / 2;
+let lX = cX, lY = cY;
+
+window.addEventListener('mousemove', e => { cX = e.clientX; cY = e.clientY; });
+
+function lerpCursor() {
+  lX += (cX - lX) * 0.072;
+  lY += (cY - lY) * 0.072;
+  cursorGlow.style.transform = `translate(${lX - 140}px, ${lY - 140}px)`;
+  requestAnimationFrame(lerpCursor);
+}
+lerpCursor();
+
+/* ════════════════════════════════════════════════════════════════
+   PREMIUM LEAF PHYSICS ENGINE — Canvas 2D
+
+   · 3 organic leaf silhouettes (teardrop, maple-hint, oval)
+   · 3 depth layers: far (blurred/dim) · mid · near (sharp/bright)
+   · Smooth wind turbulence via summed sine fields
+   · Per-leaf: gravity, drag, lateral sway, angular momentum
+   · Perspective 3D tumble: scaleY oscillation reveals front/back face
+   · Front face: 4-stop gradient + specular sheen sweep
+   · Back face: darker underside tones
+   · Organic vein lines (midrib + lateral veins)
+   · Ambient glow halo under each leaf
+   · Smooth opacity arc (fade in → hold → fade out)
+   · Mouse-reactive wind: cursor nudges nearby leaves
+   · Continuous respawn — always ~32 leaves in flight
+   ════════════════════════════════════════════════════════════════ */
+
+const canvas = document.getElementById('leaf-canvas');
+const ctx    = canvas.getContext('2d', { alpha: true });
+
+let W, H, dpr;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W   = window.innerWidth;
+  H   = window.innerHeight;
+  canvas.width  = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+window.addEventListener('resize', () => { ctx.setTransform(1,0,0,1,0,0); resize(); });
+
+/* mouse (shared with cursor glow above) */
+let mX = W / 2, mY = -400;
+window.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+
+/* ── colour palettes ── */
+const PALETTES = [
+  { c0:'#223d0a', c1:'#4a7e18', c2:'#6fa82a', c3:'#9fd44e', gR:111, gG:168, gB:42  },
+  { c0:'#1a3208', c1:'#3e6014', c2:'#5a8c22', c3:'#82b840', gR:90,  gG:140, gB:34  },
+  { c0:'#3d1f04', c1:'#7a4008', c2:'#b87d20', c3:'#d9a84c', gR:184, gG:125, gB:32  },
+  { c0:'#3a1008', c1:'#7e2810', c2:'#c04522', c3:'#d97040', gR:180, gG:70,  gB:32  },
+  { c0:'#2a4a0a', c1:'#5e8e20', c2:'#88bc38', c3:'#b4d860', gR:136, gG:188, gB:56  },
+];
+
+/* ── shape builders ── */
+function shapeTear(s) {
+  const p = new Path2D();
+  p.moveTo(0, -s * 0.52);
+  p.bezierCurveTo( s*0.52,-s*0.52,  s*0.52, s*0.44,  0,  s*0.52);
+  p.bezierCurveTo(-s*0.52, s*0.44, -s*0.52,-s*0.52,  0, -s*0.52);
+  return p;
+}
+function shapeMaple(s) {
+  const p = new Path2D(), r = s * 0.46;
+  p.moveTo(0, -r);
+  p.bezierCurveTo( r*0.5,-r,      r*1.1,-r*0.28,  r*0.72, r*0.12);
+  p.bezierCurveTo( r*1.0, r*0.52, r*0.5, r*0.92,  0,      r);
+  p.bezierCurveTo(-r*0.5, r*0.92,-r*1.0, r*0.52, -r*0.72, r*0.12);
+  p.bezierCurveTo(-r*1.1,-r*0.28,-r*0.5,-r,       0,     -r);
+  return p;
+}
+function shapeOval(s) {
+  const p = new Path2D();
+  p.ellipse(0, 0, s * 0.36, s * 0.54, 0, 0, Math.PI * 2);
+  return p;
+}
+const SHAPES = [shapeTear, shapeMaple, shapeOval];
+
+/* ── smooth wind field ── */
+function windNoise(x, y, t) {
+  return (
+    Math.sin(x * 0.007 + t * 0.38) * 0.38 +
+    Math.sin(y * 0.005 + t * 0.25) * 0.28 +
+    Math.sin((x + y) * 0.004 + t * 0.52) * 0.22 +
+    Math.sin(x * 0.018 - t * 0.17) * 0.12
+  );
+}
+
+/* ── layer configs ── */
+const LAYERS = [
+  { n:9,  sMin:7,  sMax:13, spd:0.42, a:0.22, blur:2.6 },
+  { n:11, sMin:16, sMax:28, spd:0.70, a:0.50, blur:0.6 },
+  { n:12, sMin:32, sMax:58, spd:1.00, a:0.88, blur:0   },
+];
+
+/* ── leaf particle ── */
+class Leaf {
+  constructor(li, scatter) {
+    this.li = li;
+    this.L  = LAYERS[li];
+    this._init(scatter);
+  }
+  _init(scatter) {
+    const L = this.L;
+    this.x   = Math.random() * W;
+    this.y   = scatter ? (Math.random() * H * 1.3 - H * 0.15) : (-50 - Math.random() * 100);
+    this.s   = L.sMin + Math.random() * (L.sMax - L.sMin);
+    this.vx  = (Math.random() - 0.5) * 0.5;
+    this.vy  = 0.35 + Math.random() * 0.55;
+    this.ang = Math.random() * Math.PI * 2;
+    this.om  = (Math.random() - 0.5) * 0.036;
+    this.swF = Math.random() * Math.PI * 2;
+    this.swS = 0.011 + Math.random() * 0.014;
+    this.swA = 0.5   + Math.random() * 1.0;
+    this.flF = Math.random() * Math.PI * 2;
+    this.flS = 0.007 + Math.random() * 0.016;
+    this.shF = Math.random() * Math.PI * 2;
+    this.pal = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+    this.shp = Math.floor(Math.random() * SHAPES.length);
+    this.op  = 0;
+    this.age = 0;
+    this.maxAge = 420 + Math.random() * 360;
+    this.drag = 0.994 + Math.random() * 0.004;
+    /* smooth opacity uses a sine curve */
+  }
+
+  update(t) {
+    this.age++;
+    const r = this.age / this.maxAge;
+
+    /* smooth opacity with sine easing */
+    if (r < 0.08)      this.op = Math.sin((r / 0.08) * Math.PI * 0.5);
+    else if (r < 0.78) this.op = 1;
+    else               this.op = Math.sin(((1 - r) / 0.22) * Math.PI * 0.5);
+    this.op = Math.max(0, Math.min(1, this.op));
+
+    const wx = windNoise(this.x, this.y, t) * 1.6;
+    const wy = windNoise(this.x + 400, this.y + 300, t * 0.65) * 0.35;
+    const sw = Math.sin(this.swF + t * this.swS * 60) * this.swA;
+
+    /* smooth mouse repulsion with soft falloff */
+    const dx = this.x - mX, dy = this.y - mY;
+    const dd2 = dx*dx + dy*dy;
+    let rx = 0, ry = 0;
+    if (dd2 < 160*160 && dd2 > 1) {
+      const dd = Math.sqrt(dd2);
+      const f = Math.pow((160 - dd) / 160, 1.5) * 1.5;
+      rx = (dx / dd) * f;
+      ry = (dy / dd) * f * 0.3;
+    }
+
+    this.vx = (this.vx + wx*0.016 + sw*0.020 + rx*0.055) * this.drag;
+    this.vy = (this.vy + 0.011    + wy*0.011 + ry*0.040) * this.drag;
+    this.vx = Math.max(-2.4, Math.min(2.4, this.vx));
+    this.vy = Math.max(0.12, Math.min(3.8, this.vy));
+
+    this.x  += this.vx * this.L.spd;
+    this.y  += this.vy * this.L.spd;
+    this.ang += this.om;
+    this.om  += (Math.random() - 0.5) * 0.0006;
+    this.om  *= 0.995;
+
+    if (this.age >= this.maxAge || this.y > H + 110 || this.x < -130 || this.x > W + 130) {
+      this._init(false);
+    }
+  }
+
+  draw(t) {
+    if (this.op < 0.005) return;
+    const { s, ang, pal, shp } = this;
+
+    const flipY  = Math.cos(this.flF + t * this.flS * 60);
+    const scY    = 0.12 + Math.abs(flipY) * 0.88;
+    const isBack = flipY < 0;
+
+    ctx.save();
+    ctx.globalAlpha = this.op * this.L.a;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(ang);
+    ctx.scale(1, scY);
+
+    if (this.L.blur > 0) ctx.filter = `blur(${this.L.blur}px)`;
+
+    /* glow halo */
+    if (this.li >= 1) {
+      ctx.save();
+      const ga = ctx.globalAlpha;
+      ctx.globalAlpha = ga * 0.26;
+      const hR = s * 1.55;
+      const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, hR);
+      rg.addColorStop(0,   `rgba(${pal.gR},${pal.gG},${pal.gB},0.5)`);
+      rg.addColorStop(0.5, `rgba(${pal.gR},${pal.gG},${pal.gB},0.14)`);
+      rg.addColorStop(1,   `rgba(${pal.gR},${pal.gG},${pal.gB},0)`);
+      ctx.filter = `blur(${s * 0.52}px)`;
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(0, 0, hR, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    /* leaf body */
+    const bg = ctx.createLinearGradient(-s*0.38, -s*0.48, s*0.38, s*0.48);
+    if (isBack) {
+      bg.addColorStop(0,   pal.c0);
+      bg.addColorStop(0.6, pal.c1);
+      bg.addColorStop(1,   pal.c0);
+    } else {
+      bg.addColorStop(0,    pal.c1);
+      bg.addColorStop(0.35, pal.c2);
+      bg.addColorStop(0.78, pal.c3);
+      bg.addColorStop(1,    pal.c2);
+    }
+    const path = SHAPES[shp](s);
+    ctx.fillStyle = bg;
+    ctx.fill(path);
+
+    /* veins */
+    ctx.save();
+    ctx.globalAlpha *= isBack ? 0.28 : 0.44;
+    ctx.strokeStyle  = isBack ? 'rgba(0,0,0,0.38)' : 'rgba(240,230,190,0.72)';
+    ctx.lineWidth    = Math.max(0.4, s * 0.023);
+    ctx.lineCap      = 'round';
+    ctx.beginPath(); ctx.moveTo(0, -s*0.45); ctx.lineTo(0, s*0.45); ctx.stroke();
+    ctx.lineWidth = Math.max(0.28, s * 0.013);
+    ctx.globalAlpha *= 0.68;
+    [
+      [0,-s*0.18, s*0.30,-s*0.04], [0,-s*0.18,-s*0.30,-s*0.04],
+      [0, s*0.06, s*0.26, s*0.20], [0, s*0.06,-s*0.26, s*0.20],
+      [0, s*0.28, s*0.18, s*0.38], [0, s*0.28,-s*0.18, s*0.38],
+    ].forEach(([x0,y0,x1,y1]) => {
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    });
+    ctx.restore();
+
+    /* specular sheen */
+    if (!isBack && this.li >= 1) {
+      const sA = this.shF + t * 0.35;
+      const sx = Math.cos(sA) * s * 0.5;
+      const sy = Math.sin(sA) * s * 0.2;
+      const sg = ctx.createLinearGradient(sx-s*0.35, sy-s*0.35, sx+s*0.35, sy+s*0.35);
+      sg.addColorStop(0,    'rgba(255,255,255,0)');
+      sg.addColorStop(0.42, 'rgba(255,255,255,0.20)');
+      sg.addColorStop(0.58, 'rgba(255,255,255,0.10)');
+      sg.addColorStop(1,    'rgba(255,255,255,0)');
+      ctx.save();
+      ctx.globalAlpha *= 0.60;
+      ctx.fillStyle = sg; ctx.fill(path);
+      ctx.restore();
+    }
+
+    /* rim light */
+    ctx.save();
+    ctx.globalAlpha *= isBack ? 0.20 : 0.38;
+    ctx.strokeStyle  = isBack
+      ? 'rgba(0,0,0,0.45)'
+      : `rgba(${pal.gR + 60},${pal.gG + 40},${pal.gB},0.75)`;
+    ctx.lineWidth = Math.max(0.3, s * 0.018);
+    ctx.stroke(path);
+    ctx.restore();
+
+    ctx.restore();
+  }
+}
+
+/* ── init pool ── */
+const leaves = [];
+LAYERS.forEach((_, li) => {
+  for (let i = 0; i < LAYERS[li].n; i++) leaves.push(new Leaf(li, true));
+});
+leaves.sort((a, b) => a.li - b.li);
+
+/* ── RAF loop with delta-time for consistent speed ── */
+let t = 0;
+let last = performance.now();
+
+(function loop(now) {
+  const dt = Math.min((now - last) / 16.667, 2.5); // cap at 2.5× frame
+  last = now;
+  t += dt / 60;
+
+  ctx.clearRect(0, 0, W, H);
+  for (const lf of leaves) { lf.update(t); lf.draw(t); }
+
+  requestAnimationFrame(loop);
+})(performance.now());
+</script>
 </body>
 </html>
