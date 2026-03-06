@@ -8,7 +8,7 @@ mysql.init_app(app)
 app.secret_key = app.config["SECRET_KEY"]
 
 
-@app.before_request
+@app.before_first_request
 def configure_db():
     set_mysql_timezone()
 
@@ -30,6 +30,7 @@ app.register_blueprint(savings_bp)
 
 from routes.secret import secret_bp
 app.register_blueprint(secret_bp)
+
 
 @app.route("/how")
 def how():
