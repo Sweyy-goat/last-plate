@@ -31,6 +31,10 @@ app.register_blueprint(savings_bp)
 from routes.secret import secret_bp
 app.register_blueprint(secret_bp)
 
+@app.route("/how")
+def how():
+    return render_template("how.html")
+
 
 @app.route("/")
 def home():
