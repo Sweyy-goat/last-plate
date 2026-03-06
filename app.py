@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from utils.db import mysql
+from utils.db import mysql, set_mysql_timezone
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -7,10 +7,11 @@ app.config.from_pyfile("config.py")
 mysql.init_app(app)
 app.secret_key = app.config["SECRET_KEY"]
 
-# 🔥 FORCE MYSQL TIMEZONE TO IST
-with app.app_context():
-    from utils.db import set_mysql_timezone
+
+@app.before_request
+def configure_db():
     set_mysql_timezone()
+
 
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp)
@@ -34,6 +35,7 @@ app.register_blueprint(secret_bp)
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run()
