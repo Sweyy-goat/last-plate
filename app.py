@@ -7,10 +7,12 @@ app.config.from_pyfile("config.py")
 mysql.init_app(app)
 app.secret_key = app.config["SECRET_KEY"]
 
-
-@app.before_first_request
-def configure_db():
-    set_mysql_timezone()
+# Run DB initialization once safely
+with app.app_context():
+    try:
+        set_mysql_timezone()
+    except Exception as e:
+        print("Timezone init skipped:", e)
 
 
 from routes.auth import auth_bp
