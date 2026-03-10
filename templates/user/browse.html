@@ -38,6 +38,10 @@
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
   --bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+
+  /* Bottom nav height var — used everywhere */
+  --bnav-h: 72px;
+  --bnav-safe: calc(var(--bnav-h) + env(safe-area-inset-bottom));
 }
 
 /* =====================
@@ -71,66 +75,34 @@ html.dark {
    COLORBLIND MODES
 ===================== */
 html.cb-deuteranopia {
-  --green:    #0077BB;
-  --green-l:  #0099DD;
-  --green-bg: #E6F3FB;
-  --green-bd: #9BCCE8;
-  --shadow-green: 0 8px 32px rgba(0,119,187,0.25);
-  --red:      #EE7733;
-  --gold:     #AA3377;
-  --gold-bg:  #F5E8F0;
+  --green:    #0077BB; --green-l:  #0099DD; --green-bg: #E6F3FB;
+  --green-bd: #9BCCE8; --shadow-green: 0 8px 32px rgba(0,119,187,0.25);
+  --red:      #EE7733; --gold:     #AA3377; --gold-bg:  #F5E8F0;
 }
 html.dark.cb-deuteranopia {
-  --green:    #33BBEE;
-  --green-l:  #44CCFF;
-  --green-bg: #0A2535;
-  --green-bd: #1A5070;
-  --shadow-green: 0 8px 32px rgba(51,187,238,0.2);
-  --red:      #EE7733;
-  --gold:     #CC66AA;
-  --gold-bg:  #1F0A18;
+  --green:    #33BBEE; --green-l:  #44CCFF; --green-bg: #0A2535;
+  --green-bd: #1A5070; --shadow-green: 0 8px 32px rgba(51,187,238,0.2);
+  --red:      #EE7733; --gold:     #CC66AA; --gold-bg:  #1F0A18;
 }
-
 html.cb-protanopia {
-  --green:    #0066CC;
-  --green-l:  #0088FF;
-  --green-bg: #E5F0FA;
-  --green-bd: #99C3E8;
-  --shadow-green: 0 8px 32px rgba(0,102,204,0.25);
-  --red:      #F0A500;
-  --gold:     #7B4EA0;
-  --gold-bg:  #F0EAF7;
+  --green:    #0066CC; --green-l:  #0088FF; --green-bg: #E5F0FA;
+  --green-bd: #99C3E8; --shadow-green: 0 8px 32px rgba(0,102,204,0.25);
+  --red:      #F0A500; --gold:     #7B4EA0; --gold-bg:  #F0EAF7;
 }
 html.dark.cb-protanopia {
-  --green:    #4499FF;
-  --green-l:  #66BBFF;
-  --green-bg: #080F1F;
-  --green-bd: #153060;
-  --shadow-green: 0 8px 32px rgba(68,153,255,0.2);
-  --red:      #F0A500;
-  --gold:     #9B6EC0;
-  --gold-bg:  #120A1F;
+  --green:    #4499FF; --green-l:  #66BBFF; --green-bg: #080F1F;
+  --green-bd: #153060; --shadow-green: 0 8px 32px rgba(68,153,255,0.2);
+  --red:      #F0A500; --gold:     #9B6EC0; --gold-bg:  #120A1F;
 }
-
 html.cb-tritanopia {
-  --green:    #009988;
-  --green-l:  #00BB9F;
-  --green-bg: #E5F5F3;
-  --green-bd: #99D9D2;
-  --shadow-green: 0 8px 32px rgba(0,153,136,0.25);
-  --red:      #CC3311;
-  --gold:     #EE3377;
-  --gold-bg:  #FCE8F0;
+  --green:    #009988; --green-l:  #00BB9F; --green-bg: #E5F5F3;
+  --green-bd: #99D9D2; --shadow-green: 0 8px 32px rgba(0,153,136,0.25);
+  --red:      #CC3311; --gold:     #EE3377; --gold-bg:  #FCE8F0;
 }
 html.dark.cb-tritanopia {
-  --green:    #00CCBB;
-  --green-l:  #00EEDD;
-  --green-bg: #001F1C;
-  --green-bd: #004040;
-  --shadow-green: 0 8px 32px rgba(0,204,187,0.2);
-  --red:      #FF6644;
-  --gold:     #FF4499;
-  --gold-bg:  #1F0010;
+  --green:    #00CCBB; --green-l:  #00EEDD; --green-bg: #001F1C;
+  --green-bd: #004040; --shadow-green: 0 8px 32px rgba(0,204,187,0.2);
+  --red:      #FF6644; --gold:     #FF4499; --gold-bg:  #1F0010;
 }
 
 /* =====================
@@ -146,7 +118,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   transition: background 0.4s ease, color 0.4s ease;
-  padding-bottom: 80px;
+  /* Only pad for bottom nav — NO extra padding */
+  padding-bottom: var(--bnav-safe);
 }
 
 a { text-decoration: none; color: inherit; }
@@ -172,6 +145,7 @@ html.dark body::before { opacity: 0.06; }
   border-radius: 0 2px 2px 0;
   box-shadow: 0 0 8px rgba(58,117,40,0.4);
 }
+
 .card-location {
   display: flex; align-items: center; gap: 4px;
   font-size: 0.62rem; font-weight: 500;
@@ -589,13 +563,9 @@ html.dark .theme-icon-moon { display: none; }
 .toggle.on { background: var(--green); border-color: var(--green); }
 .toggle.on .toggle-thumb { transform: translateX(22px); background: #fff; box-shadow: 0 2px 8px rgba(58,117,40,0.3); }
 
-/* =====================
-   COLORBLIND PICKER IN DRAWER
-===================== */
+/* Colorblind picker */
 .drawer-section-title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; }
-.cb-picker-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px;
-}
+.cb-picker-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
 .cb-chip {
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
   padding: 13px 14px;
@@ -607,14 +577,12 @@ html.dark .theme-icon-moon { display: none; }
 .cb-chip:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 .cb-chip.active { border-color: var(--green); background: var(--green-bg); box-shadow: 0 4px 16px rgba(58,117,40,0.14); }
 .cb-chip.active::after { content: '✓'; position: absolute; top: 9px; right: 12px; font-size: 0.72rem; font-weight: 800; color: var(--green); }
-.cb-swatch {
-  display: flex; gap: 4px; margin-bottom: 4px;
-}
+.cb-swatch { display: flex; gap: 4px; margin-bottom: 4px; }
 .cb-dot { width: 12px; height: 12px; border-radius: 50%; }
 .cb-chip-name { font-size: 0.72rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
 .cb-chip-desc { font-size: 0.59rem; color: var(--ink-3); line-height: 1.35; }
 
-/* history */
+/* History */
 .history-item { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r-md); padding: 16px 18px; margin-bottom: 8px; transition: all 0.25s var(--spring); }
 .history-item:hover { border-color: var(--border-2); transform: translateX(4px); box-shadow: var(--shadow-xs); }
 .history-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
@@ -675,353 +643,570 @@ footer { border-top: 1px solid var(--border); padding: 48px 40px; max-width: 120
 }
 
 /* =====================
-   BOTTOM NAV
+   BOTTOM NAV — FIXED HEIGHT, NO OVERFLOW
 ===================== */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: 72px;
-  background: rgba(244,242,236,0.92); border-top: 1.5px solid var(--border);
+  height: var(--bnav-h);
+  background: rgba(244,242,236,0.96);
+  border-top: 1.5px solid var(--border);
   display: flex; align-items: stretch; z-index: 2000;
   backdrop-filter: blur(28px) saturate(1.5);
-  padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -8px 40px rgba(26,25,22,0.09), 0 -1px 0 var(--border);
+  /* Use padding-bottom for safe area, don't change height */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(26,25,22,0.07), 0 -1px 0 var(--border);
   transition: transform 0.4s var(--spring);
+  /* Clip everything — no overflow, no bleed */
+  overflow: hidden;
 }
-html.dark .bottom-nav { background: rgba(17,19,16,0.93); box-shadow: 0 -8px 40px rgba(0,0,0,0.4); }
+html.dark .bottom-nav { background: rgba(17,19,16,0.96); box-shadow: 0 -4px 24px rgba(0,0,0,0.35); }
+
 .bn-item {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 5px; flex: 1; height: 100%;
   background: none; border: none; cursor: pointer;
   color: var(--ink-3); transition: color 0.3s var(--spring), background 0.3s;
   position: relative; text-decoration: none;
+  /* Prevent any overflow from children */
+  overflow: hidden;
 }
 .bn-item + .bn-item::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 1px; background: var(--border); }
-.bn-item:hover { background: var(--bg-2); color: var(--ink-2); }
+.bn-item:hover { background: rgba(58,117,40,0.04); color: var(--ink-2); }
 .bn-item.active { color: var(--green); }
-.bn-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 2.5px; background: linear-gradient(90deg, var(--green), var(--green-l)); border-radius: 0 0 4px 4px; box-shadow: 0 2px 10px rgba(58,117,40,0.35); animation: slideDown 0.45s var(--bounce) forwards; }
+.bn-item.active::after {
+  content: ''; position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 36px; height: 2.5px;
+  background: linear-gradient(90deg, var(--green), var(--green-l));
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 1px 6px rgba(58,117,40,0.3);
+  animation: slideDown 0.45s var(--bounce) forwards;
+}
 @keyframes slideDown { from { transform: translateX(-50%) scaleX(0); } to { transform: translateX(-50%) scaleX(1); } }
-.bn-icon { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.3s var(--bounce); }
+.bn-icon {
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; transition: transform 0.3s var(--bounce);
+  /* Clip badge overflow */
+  overflow: visible;
+}
 .bn-item:hover .bn-icon { transform: translateY(-2px); }
 .bn-item.active .bn-icon { transform: translateY(-1px); }
 .bn-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; transition: opacity 0.2s; }
-.bn-badge { position: absolute; top: -3px; right: -5px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--bg); animation: urgentPulse 2.2s ease infinite; }
+.bn-badge {
+  position: absolute; top: -4px; right: -6px;
+  width: 8px; height: 8px;
+  background: var(--red); border-radius: 50%;
+  border: 2px solid var(--bg);
+  animation: urgentPulse 2.2s ease infinite;
+  /* Must not affect layout */
+  pointer-events: none;
+}
 html.dark .bn-badge { border-color: var(--bg); }
 
 /* =====================
-   SECRET MENU SHEET — REDESIGNED
+   CHEF'S SECRET MENU SHEET — FULLY REBUILT
+   ============================================
+   KEY FIXES:
+   1. Drag-to-close: only fires if user STARTS at top of sheet AND drags DOWN
+      with no Y-scrolling intent — threshold raised, velocity checked.
+   2. Sheet bottom padding matches bottom nav height exactly — no white gap.
+   3. Proper flex layout so body scrolls independently.
 ===================== */
-.secret-sheet-overlay { position: fixed; inset: 0; z-index: 3000; pointer-events: none; }
+.secret-sheet-overlay {
+  position: fixed; inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+  /* Isolate from page */
+}
 .secret-sheet-overlay.open { pointer-events: all; }
+
 .secret-scrim {
   position: absolute; inset: 0;
-  background: rgba(26,25,22,0); backdrop-filter: blur(0px);
+  background: rgba(26,25,22,0);
+  backdrop-filter: blur(0px);
   transition: background 0.45s var(--ease-out), backdrop-filter 0.45s var(--ease-out);
+  /* Cursor tap target */
+  cursor: default;
 }
-.secret-sheet-overlay.open .secret-scrim { background: rgba(26,25,22,0.6); backdrop-filter: blur(24px) saturate(1.3); }
+.secret-sheet-overlay.open .secret-scrim {
+  background: rgba(26,25,22,0.6);
+  backdrop-filter: blur(20px) saturate(1.4);
+}
 
 .secret-sheet {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: var(--white); border-top: 1.5px solid var(--border);
-  border-radius: 28px 28px 0 0;
-  box-shadow: 0 -24px 80px rgba(26,25,22,0.22);
-  transform: translateY(100%); transition: transform 0.6s var(--spring);
-  height: 92vh; max-height: 92vh;
-  display: flex; flex-direction: column; overflow: hidden;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
-}
-.secret-sheet-overlay.open .secret-sheet { transform: translateY(0); }
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
 
-/* Handle + gradient stripe */
-.sheet-top-bar {
-  padding: 10px 0 0;
+  /* Exact height: viewport minus a small top safe zone */
+  height: calc(100dvh - 56px);
+  max-height: calc(100dvh - 56px);
+
   background: var(--white);
-  position: relative;
-  flex-shrink: 0;
+  border-top: 1.5px solid var(--border);
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -20px 60px rgba(26,25,22,0.18), 0 -1px 0 var(--border);
+
+  /* Stack: handle + header (fixed) + body (scrolls) + CTA bar */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* children manage their own scroll */
+
+  /* Bottom: account for bottom nav exactly */
+  padding-bottom: var(--bnav-safe);
+
+  transform: translateY(100%);
+  transition: transform 0.55s var(--spring);
+  will-change: transform;
 }
-.sheet-top-bar::after {
+.secret-sheet-overlay.open .secret-sheet {
+  transform: translateY(0);
+}
+
+/* ---- DRAG HANDLE ZONE ---- */
+.sheet-drag-zone {
+  flex-shrink: 0;
+  padding: 12px 0 6px;
+  background: var(--white);
+  cursor: grab;
+  user-select: none;
+  touch-action: none; /* We handle touch manually */
+  position: relative;
+}
+.sheet-drag-zone:active { cursor: grabbing; }
+
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border-2);
+  border-radius: 2px;
+  margin: 0 auto;
+  transition: background 0.2s, width 0.3s var(--spring), transform 0.2s;
+}
+.sheet-drag-zone:active .sheet-handle {
+  background: var(--ink-3);
+  width: 48px;
+}
+
+/* Drag ghost line below handle */
+.sheet-drag-zone::after {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0; height: 1px;
+  bottom: 0; left: 24px; right: 24px;
+  height: 1px;
   background: linear-gradient(90deg, transparent, var(--border), transparent);
 }
 
-.sheet-handle {
-  width: 40px; height: 4px; background: var(--border-2);
-  border-radius: 2px; margin: 0 auto 14px;
-  transition: background 0.2s, width 0.3s var(--spring);
-}
-.secret-sheet:hover .sheet-handle { background: var(--ink-3); width: 52px; }
-
-/* Header area */
+/* ---- FIXED HEADER ---- */
 .sheet-header {
-  padding: 20px 26px 0;
   flex-shrink: 0;
-}
-.sheet-title-row {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 18px;
-}
-.sheet-hero-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 5px 12px;
-  background: var(--ink); color: rgba(255,255,255,0.75);
-  border-radius: 100px; font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  margin-bottom: 10px; box-shadow: 0 4px 12px rgba(26,25,22,0.25);
-}
-html.dark .sheet-hero-badge { background: var(--bg-2); border: 1px solid var(--border-2); }
-.sheet-hero-badge-dot { width: 5px; height: 5px; background: var(--green-l); border-radius: 50%; animation: liveBlink 2s ease infinite; }
-
-.sheet-title-group { flex: 1; }
-.sheet-title-text {
-  font-family: 'Instrument Serif', serif;
-  font-size: 1.9rem; font-weight: 400;
-  letter-spacing: -0.03em; color: var(--ink);
-  line-height: 1.1; margin-bottom: 4px;
-}
-.sheet-title-sub { font-size: 0.66rem; color: var(--ink-3); font-weight: 500; letter-spacing: 0.01em; }
-
-.sheet-close {
-  width: 36px; height: 36px; background: var(--bg-2); border: 1.5px solid var(--border);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--ink-2); flex-shrink: 0; margin-left: 12px;
-  transition: all 0.3s var(--spring);
-}
-.sheet-close:hover { background: var(--border); color: var(--ink); transform: rotate(90deg) scale(1.1); }
-
-/* Stat bar */
-.sheet-stat-bar {
-  display: flex; gap: 0;
-  background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: var(--r-md); margin-bottom: 16px;
-  overflow: hidden;
-}
-.sheet-stat {
-  flex: 1; padding: 13px 16px; text-align: center;
+  padding: 16px 22px 0;
+  background: var(--white);
+  /* Subtle bottom shadow to separate from scroll body */
   position: relative;
 }
-.sheet-stat + .sheet-stat::before {
-  content: ''; position: absolute; left: 0; top: 12px; bottom: 12px;
+.sheet-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+/* Identity row */
+.sheet-id-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px; gap: 12px;
+}
+.sheet-id-left { flex: 1; min-width: 0; }
+
+.sheet-exclusive-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px 4px 8px;
+  background: var(--ink); color: rgba(255,255,255,0.6);
+  border-radius: 100px; font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 10px rgba(26,25,22,0.2);
+}
+html.dark .sheet-exclusive-badge {
+  background: var(--bg-2); border: 1px solid var(--border-2);
+  color: var(--ink-3);
+}
+.sheet-exclusive-dot {
+  width: 5px; height: 5px; background: var(--green-l);
+  border-radius: 50%; animation: liveBlink 2s ease infinite;
+  flex-shrink: 0;
+}
+
+.sheet-title-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.75rem; font-weight: 400;
+  letter-spacing: -0.03em; color: var(--ink);
+  line-height: 1.1; margin-bottom: 2px;
+}
+.sheet-title-sub {
+  font-size: 0.64rem; color: var(--ink-3); font-weight: 500;
+}
+
+.sheet-close-btn {
+  width: 34px; height: 34px; flex-shrink: 0;
+  background: var(--bg-2); border: 1.5px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--ink-2); margin-top: 2px;
+  transition: all 0.3s var(--spring); font-size: 0.8rem;
+}
+.sheet-close-btn:hover {
+  background: var(--border); color: var(--ink);
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Stat strip */
+.sheet-stats-strip {
+  display: flex; gap: 0; margin-bottom: 14px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+}
+.sheet-strip-stat {
+  flex: 1; padding: 11px 0; text-align: center;
+  position: relative;
+}
+.sheet-strip-stat + .sheet-strip-stat::before {
+  content: ''; position: absolute; left: 0; top: 10px; bottom: 10px;
   width: 1px; background: var(--border);
 }
-.sheet-stat-num {
+.sheet-strip-num {
   font-family: 'Instrument Serif', serif;
-  font-size: 1.4rem; color: var(--ink); line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: 1.3rem; color: var(--ink); line-height: 1;
+  letter-spacing: -0.02em; display: block;
 }
-.sheet-stat-label {
-  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink-3); margin-top: 2px;
+.sheet-strip-lbl {
+  font-size: 0.56rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3);
+  margin-top: 2px; display: block;
 }
 
 /* Tabs */
 .sheet-tabs {
   display: flex; background: var(--bg-2); border: 1.5px solid var(--border);
-  border-radius: 14px; padding: 4px; margin-bottom: 14px;
+  border-radius: 13px; padding: 3px; margin-bottom: 12px;
 }
 .sheet-tab {
-  flex: 1; padding: 10px 14px; background: none; border: none; border-radius: 11px;
-  font-family: 'Sora', sans-serif; font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.04em; color: var(--ink-3); cursor: pointer;
-  transition: all 0.35s var(--spring); display: flex; align-items: center; justify-content: center; gap: 6px;
+  flex: 1; padding: 9px 10px; background: none; border: none; border-radius: 10px;
+  font-family: 'Sora', sans-serif; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.03em; color: var(--ink-3); cursor: pointer;
+  transition: all 0.3s var(--spring);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  white-space: nowrap;
 }
-.sheet-tab.active { background: var(--white); color: var(--ink); box-shadow: var(--shadow-sm); }
+.sheet-tab.active {
+  background: var(--white); color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
 html.dark .sheet-tab.active { background: var(--bg); }
-.sheet-tab-badge {
-  min-width: 18px; height: 18px; padding: 0 5px;
+.sheet-tab-count {
+  min-width: 17px; height: 17px; padding: 0 4px;
   background: var(--green-bg); border: 1px solid var(--green-bd);
-  border-radius: 100px; font-size: 0.58rem; font-weight: 800;
+  border-radius: 100px; font-size: 0.56rem; font-weight: 800;
   color: var(--green); display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
 }
-.sheet-tab.active .sheet-tab-badge { background: var(--green); border-color: var(--green); color: #fff; }
+.sheet-tab.active .sheet-tab-count {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
 
 /* Search */
-.sheet-search-box {
-  display: flex; align-items: center; gap: 10px; background: var(--bg);
-  border: 1.5px solid var(--border); border-radius: var(--r-md);
-  padding: 11px 16px; margin-bottom: 4px;
-  transition: border-color 0.25s, box-shadow 0.3s;
+.sheet-search-wrap {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 10px 14px; margin-bottom: 1px;
+  transition: border-color 0.25s, box-shadow 0.3s, background 0.2s;
 }
-.sheet-search-box:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(58,117,40,0.1); background: var(--white); }
-.sheet-search-box svg { color: var(--ink-3); flex-shrink: 0; transition: color 0.2s; }
-.sheet-search-box:focus-within svg { color: var(--green); }
-.sheet-search-box input { flex: 1; border: none; background: transparent; font-family: 'Sora', sans-serif; font-size: 0.82rem; color: var(--ink); font-weight: 400; }
-.sheet-search-box input:focus { outline: none; }
-.sheet-search-box input::placeholder { color: var(--ink-3); }
-.sheet-search-clear { background: var(--bg-2); border: 1.5px solid var(--border); color: var(--ink-3); cursor: pointer; font-size: 0.7rem; padding: 3px 7px; border-radius: 6px; transition: color 0.2s, background 0.2s; flex-shrink: 0; }
+.sheet-search-wrap:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(58,117,40,0.1);
+  background: var(--white);
+}
+.sheet-search-wrap svg { color: var(--ink-3); flex-shrink: 0; transition: color 0.2s; }
+.sheet-search-wrap:focus-within svg { color: var(--green); }
+.sheet-search-input {
+  flex: 1; border: none; background: transparent;
+  font-family: 'Sora', sans-serif; font-size: 0.82rem; color: var(--ink);
+}
+.sheet-search-input:focus { outline: none; }
+.sheet-search-input::placeholder { color: var(--ink-3); }
+.sheet-search-clear {
+  background: var(--bg-2); border: 1px solid var(--border);
+  color: var(--ink-3); cursor: pointer; font-size: 0.68rem;
+  padding: 3px 8px; border-radius: 6px; transition: all 0.2s;
+  flex-shrink: 0; display: none;
+}
 .sheet-search-clear:hover { color: var(--ink); background: var(--border); }
 
-/* Body */
+/* ---- SCROLLABLE BODY ---- */
 .sheet-body {
-  flex: 1; overflow-y: auto; padding: 16px 26px 24px;
-  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 22px 20px;
+  /* Momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  /* Don't let scrolling propagate to page */
 }
-.sheet-body::-webkit-scrollbar { width: 4px; }
+.sheet-body::-webkit-scrollbar { width: 3px; }
 .sheet-body::-webkit-scrollbar-track { background: transparent; }
-.sheet-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sheet-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-.tab-panel { display: none; }
-.tab-panel.active { display: block; animation: riseIn 0.4s var(--spring) both; }
+/* Tab panels */
+.tab-panel { display: none; animation: riseIn 0.35s var(--spring) both; }
+.tab-panel.active { display: block; }
 
-/* Search results */
-.search-results-panel { padding-top: 4px; }
-.search-result-card {
-  display: flex; align-items: center; gap: 14px; padding: 13px 16px;
+/* Search results overlay */
+.sheet-search-results {
+  display: none;
+  padding-top: 4px;
+}
+.sheet-search-results.visible { display: block; animation: riseIn 0.3s var(--spring) both; }
+
+.search-result-item {
+  display: flex; align-items: center; gap: 13px;
+  padding: 12px 14px;
   background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 16px; margin-bottom: 8px; cursor: pointer;
-  transition: all 0.3s var(--spring); text-decoration: none; color: inherit;
+  border-radius: 15px; margin-bottom: 7px; cursor: pointer;
+  transition: all 0.25s var(--spring);
+  text-decoration: none; color: inherit;
 }
-.search-result-card:hover { border-color: var(--green-bd); transform: translateX(4px); box-shadow: var(--shadow-sm); background: var(--green-bg); }
-.search-result-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: var(--bg-2); }
-.search-result-info { flex: 1; min-width: 0; }
-.search-result-name { font-size: 0.86rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.search-result-kitchen { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
-.search-result-price { font-size: 0.95rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; flex-shrink: 0; }
-.search-no-results { padding: 36px 20px; text-align: center; font-size: 0.78rem; color: var(--ink-3); }
+.search-result-item:hover {
+  border-color: var(--green-bd); background: var(--green-bg);
+  transform: translateX(3px); box-shadow: var(--shadow-sm);
+}
+.search-result-img {
+  width: 48px; height: 48px; border-radius: 11px;
+  object-fit: cover; flex-shrink: 0; background: var(--bg-2);
+}
+.search-result-name { font-size: 0.84rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 2px; }
+.search-result-meta { font-size: 0.61rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.search-result-price { font-size: 0.9rem; font-weight: 700; color: var(--ink); flex-shrink: 0; }
+.search-no-results { padding: 32px 16px; text-align: center; font-size: 0.78rem; color: var(--ink-3); }
 
-/* Restaurant chips */
-.rest-chip-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 14px; margin-bottom: 4px; }
-.rest-chip-row::-webkit-scrollbar { display: none; }
-.rest-chip {
-  flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-start;
-  padding: 10px 16px; background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: 14px; cursor: pointer; transition: all 0.3s var(--spring);
-  font-family: 'Sora', sans-serif; text-align: left;
+/* Kitchen filter chips */
+.kitchen-chips-row {
+  display: flex; gap: 7px; overflow-x: auto;
+  scrollbar-width: none; padding-bottom: 12px; margin-bottom: 2px;
 }
-.rest-chip:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.rest-chip.active { background: var(--green-bg); border-color: var(--green-bd); box-shadow: 0 4px 16px rgba(58,117,40,0.14); }
-.rest-chip-name { font-size: 0.75rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; display: block; }
-.rest-chip-count { font-size: 0.6rem; color: var(--ink-3); margin-top: 2px; }
-.rest-chip.active .rest-chip-name { color: var(--green); }
+.kitchen-chips-row::-webkit-scrollbar { display: none; }
+.kitchen-chip {
+  flex-shrink: 0; padding: 8px 14px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 12px; cursor: pointer;
+  transition: all 0.25s var(--spring); font-family: 'Sora', sans-serif;
+  display: flex; flex-direction: column; align-items: flex-start;
+  text-align: left;
+}
+.kitchen-chip:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.kitchen-chip.active { background: var(--green-bg); border-color: var(--green-bd); }
+.kitchen-chip-name { font-size: 0.73rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; display: block; }
+.kitchen-chip.active .kitchen-chip-name { color: var(--green); }
+.kitchen-chip-count { font-size: 0.58rem; color: var(--ink-3); margin-top: 1px; display: block; }
 
-/* Special cards — enhanced */
-.special-card {
-  background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px;
-  overflow: hidden; margin-bottom: 10px; cursor: pointer;
-  transition: all 0.35s var(--spring); display: flex;
-  position: relative;
+/* Section labels */
+.sheet-section-lbl {
+  font-size: 0.59rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin: 14px 0 9px;
+  display: flex; align-items: center; gap: 8px;
 }
-.special-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(58,117,40,0.04) 0%, transparent 60%);
-  opacity: 0; transition: opacity 0.35s; pointer-events: none;
-  border-radius: inherit;
-}
-.special-card:hover { border-color: var(--green-bd); box-shadow: var(--shadow-md); transform: translateY(-3px); }
-.special-card:hover::before { opacity: 1; }
-.special-img-wrap { width: 110px; min-height: 110px; overflow: hidden; flex-shrink: 0; position: relative; }
-.special-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--spring); display: block; }
-.special-card:hover .special-img { transform: scale(1.08); }
-.special-img-wrap::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 70%, var(--bg) 100%);
-  pointer-events: none;
-}
-.special-body { padding: 15px 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-height: 110px; }
-.special-tag {
-  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
-  background: var(--gold-bg); border: 1px solid rgba(166,112,37,0.2); border-radius: 6px;
-  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 6px; width: fit-content;
-}
-.special-name { font-family: 'Instrument Serif', serif; font-size: 1.1rem; font-weight: 400; letter-spacing: -0.01em; color: var(--ink); line-height: 1.2; margin-bottom: 3px; transition: color 0.25s; }
-.special-card:hover .special-name { color: var(--green); }
-.special-kitchen { font-size: 0.62rem; color: var(--ink-3); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
-.special-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 8px; }
-.special-price { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); }
-.special-price .mrp { font-size: 0.65rem; font-weight: 400; color: var(--ink-3); text-decoration: line-through; margin-right: 4px; }
-.special-btn {
-  padding: 7px 14px; background: var(--green); color: #fff;
-  border: none; border-radius: 10px; font-size: 0.62rem; font-weight: 700;
-  letter-spacing: 0.04em; cursor: pointer; transition: all 0.3s var(--spring);
-  white-space: nowrap; flex-shrink: 0;
-}
-.special-btn:hover { background: var(--green-l); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(58,117,40,0.3); }
-.special-desc { font-size: 0.64rem; color: var(--ink-3); line-height: 1.5; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.special-disc { display: inline-block; margin-left: 5px; padding: 2px 7px; background: var(--gold-bg); border: 1px solid rgba(166,112,37,0.2); border-radius: 6px; font-size: 0.59rem; font-weight: 700; color: var(--gold); letter-spacing: 0.04em; vertical-align: middle; }
+.sheet-section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* Stock indicator */
-.special-stock-bar {
-  height: 3px; background: var(--border);
-  border-radius: 2px; overflow: hidden; margin-top: 6px;
+/* Exclusive notice banner */
+.exclusive-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #1A1916 0%, #252720 100%);
+  border-radius: 13px; margin-bottom: 14px;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  box-shadow: 0 2px 12px rgba(26,25,22,0.18);
 }
-.special-stock-fill {
-  height: 100%; border-radius: 2px; background: var(--green);
-  transition: width 0.6s var(--spring);
+html.dark .exclusive-banner {
+  background: var(--bg-2); border: 1px solid var(--border-2);
+  color: var(--ink-3); box-shadow: none;
 }
-
-/* Exclusive notice — polished */
-.exclusive-notice {
-  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-  background: linear-gradient(135deg, var(--ink) 0%, #2A2C26 100%);
-  border-radius: 14px; margin-bottom: 16px;
-  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-  color: rgba(255,255,255,0.6);
-  box-shadow: 0 4px 16px rgba(26,25,22,0.2);
-}
-html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--border-2); color: var(--ink-3); box-shadow: none; }
-.exclusive-notice-icon {
-  width: 28px; height: 28px; background: rgba(255,255,255,0.1);
+.exclusive-banner-icon {
+  width: 26px; height: 26px; background: rgba(255,255,255,0.08);
   border-radius: 8px; display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
-/* Tomorrow cards — polished */
-.tomorrow-intro {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--bg-2); border: 1.5px solid var(--border);
-  border-radius: 16px; padding: 16px 18px; margin-bottom: 14px;
-}
-.tomorrow-intro-icon { font-size: 1.6rem; }
-.tomorrow-intro-title { font-size: 0.83rem; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
-.tomorrow-intro-sub { font-size: 0.68rem; color: var(--ink-3); }
-
-.tomorrow-card {
+/* ---- DISH CARDS (Today — Exclusive) ---- */
+.dish-card {
   background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: 16px; padding: 15px 16px; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 13px; transition: all 0.3s var(--spring);
-  position: relative; overflow: hidden;
+  border-radius: 18px; overflow: hidden; margin-bottom: 9px;
+  display: flex; cursor: pointer;
+  transition: all 0.3s var(--spring); position: relative;
 }
-.tomorrow-card::after {
+.dish-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(58,117,40,0.04), transparent 60%);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none; border-radius: inherit;
+}
+.dish-card:hover { border-color: var(--green-bd); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.dish-card:hover::before { opacity: 1; }
+
+.dish-card-img {
+  width: 104px; min-height: 104px; flex-shrink: 0;
+  overflow: hidden; position: relative;
+}
+.dish-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s var(--spring); display: block;
+}
+.dish-card:hover .dish-card-img img { transform: scale(1.08); }
+/* Gradient fade into body */
+.dish-card-img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 65%, var(--bg) 100%);
+  pointer-events: none;
+}
+
+.dish-card-body {
+  padding: 13px 14px 13px 12px; flex: 1;
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 104px;
+}
+.dish-cuisine-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  background: var(--gold-bg); border: 1px solid rgba(166,112,37,0.18);
+  border-radius: 5px; font-size: 0.57rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 5px; width: fit-content;
+}
+.dish-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.08rem; font-weight: 400; letter-spacing: -0.01em;
+  color: var(--ink); line-height: 1.2; margin-bottom: 2px;
+  transition: color 0.2s;
+}
+.dish-card:hover .dish-name { color: var(--green); }
+.dish-kitchen {
+  font-size: 0.6rem; color: var(--ink-3); font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;
+}
+.dish-desc {
+  font-size: 0.62rem; color: var(--ink-3); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 6px;
+}
+
+/* Stock bar */
+.dish-stock-row {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 7px;
+}
+.dish-stock-bar {
+  flex: 1; height: 2.5px; background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.dish-stock-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.6s var(--spring);
+}
+.dish-stock-txt { font-size: 0.58rem; font-weight: 700; color: var(--ink-3); flex-shrink: 0; }
+
+.dish-card-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.dish-price {
+  display: flex; align-items: baseline; gap: 5px;
+}
+.dish-price-mrp { font-size: 0.63rem; color: var(--ink-3); text-decoration: line-through; }
+.dish-price-now { font-size: 1.0rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.dish-disc-pill {
+  padding: 2px 7px; background: var(--gold-bg);
+  border: 1px solid rgba(166,112,37,0.18); border-radius: 5px;
+  font-size: 0.57rem; font-weight: 700; color: var(--gold);
+}
+.dish-reserve-btn {
+  padding: 7px 13px; background: var(--green); color: #fff;
+  border: none; border-radius: 9px; font-size: 0.61rem; font-weight: 700;
+  letter-spacing: 0.04em; cursor: pointer;
+  transition: all 0.25s var(--spring); flex-shrink: 0; white-space: nowrap;
+}
+.dish-reserve-btn:hover { background: var(--green-l); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(58,117,40,0.3); }
+.dish-reserve-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* ---- TOMORROW CARDS ---- */
+.tomorrow-banner {
+  display: flex; align-items: center; gap: 13px;
+  background: var(--bg-2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+}
+.tomorrow-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
+.tomorrow-banner-title { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.tomorrow-banner-sub { font-size: 0.66rem; color: var(--ink-3); }
+
+.tomorrow-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 13px 14px; margin-bottom: 8px;
+  transition: all 0.25s var(--spring); position: relative; overflow: hidden;
+}
+.tomorrow-row::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0;
   width: 3px; background: linear-gradient(to bottom, var(--green), var(--green-l));
-  opacity: 0; transition: opacity 0.3s;
+  opacity: 0; transition: opacity 0.25s; border-radius: 0 2px 2px 0;
 }
-.tomorrow-card:hover { border-color: var(--border-2); transform: translateX(4px); box-shadow: var(--shadow-sm); }
-.tomorrow-card:hover::after { opacity: 1; }
+.tomorrow-row:hover { border-color: var(--border-2); transform: translateX(4px); box-shadow: var(--shadow-sm); }
+.tomorrow-row:hover::before { opacity: 1; }
+
 .tomorrow-emoji {
-  width: 46px; height: 46px; background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 13px; display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem; flex-shrink: 0; transition: transform 0.3s var(--bounce);
-  box-shadow: var(--shadow-xs);
+  width: 44px; height: 44px; background: var(--white);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem; flex-shrink: 0;
+  transition: transform 0.3s var(--bounce); box-shadow: var(--shadow-xs);
 }
-.tomorrow-card:hover .tomorrow-emoji { transform: scale(1.1) rotate(-5deg); }
+.tomorrow-row:hover .tomorrow-emoji { transform: scale(1.1) rotate(-5deg); }
+
 .tomorrow-info { flex: 1; min-width: 0; }
-.tomorrow-name { font-size: 0.88rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 2px; }
-.tomorrow-kitchen { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
-.tomorrow-hint { font-size: 0.63rem; color: var(--ink-3); }
-.tomorrow-notify {
-  display: flex; align-items: center; gap: 5px; padding: 8px 13px;
+.tomorrow-name { font-size: 0.86rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 2px; }
+.tomorrow-kitchen { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+.tomorrow-hint { font-size: 0.61rem; color: var(--ink-3); }
+
+.tomorrow-notify-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px;
   background: var(--white); border: 1.5px solid var(--border);
-  border-radius: 10px; font-size: 0.61rem; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--ink-2); cursor: pointer; flex-shrink: 0;
-  transition: all 0.3s var(--spring); font-family: 'Sora', sans-serif;
+  border-radius: 9px; font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink-2); cursor: pointer; flex-shrink: 0;
+  transition: all 0.25s var(--spring); font-family: 'Sora', sans-serif;
 }
-.tomorrow-notify:hover { border-color: var(--green-bd); background: var(--green-bg); color: var(--green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(58,117,40,0.15); }
-.tomorrow-notify.notified { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+.tomorrow-notify-btn:hover { border-color: var(--green-bd); background: var(--green-bg); color: var(--green); transform: translateY(-2px); }
+.tomorrow-notify-btn.notified { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
 
-/* Skeleton secret */
-.skel-secret-card { display: flex; background: var(--white); border: 1.5px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 10px; }
-.skel-secret-img { width: 110px; min-height: 100px; flex-shrink: 0; background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%); background-size: 400% 100%; animation: shimmer 1.8s ease-in-out infinite; }
-.skel-secret-body { flex: 1; padding: 16px 18px; }
-.secret-empty { padding: 48px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-
-/* Section label in body */
-.sheet-section-label {
-  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--ink-3); margin: 16px 0 10px; display: flex; align-items: center; gap: 8px;
+/* Skeleton cards */
+.skel-dish {
+  display: flex; background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 18px; overflow: hidden; margin-bottom: 9px;
 }
-.sheet-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.skel-dish-img {
+  width: 104px; min-height: 104px; flex-shrink: 0;
+  background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
+  background-size: 400% 100%; animation: shimmer 1.8s ease-in-out infinite;
+}
+.skel-dish-body { flex: 1; padding: 14px 16px; }
+
+/* Empty/error states */
+.sheet-empty {
+  padding: 40px 16px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.sheet-empty-icon { font-size: 2rem; margin-bottom: 4px; }
+.sheet-empty-title { font-family: 'Instrument Serif', serif; font-size: 1.2rem; color: var(--ink-2); font-weight: 400; }
+.sheet-empty-sub { font-size: 0.74rem; color: var(--ink-3); line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -1131,7 +1316,7 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
   </footer>
 </div>
 
-<!-- MODAL -->
+<!-- ======================== MODAL ======================== -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox">
     <div class="modal-img-wrap">
@@ -1154,7 +1339,7 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
   </div>
 </div>
 
-<!-- PROFILE DRAWER -->
+<!-- ======================== PROFILE DRAWER ======================== -->
 <div class="drawer-overlay" id="drawerOverlay">
   <div class="drawer-scrim" id="drawerScrim"></div>
   <div class="drawer-panel">
@@ -1166,7 +1351,6 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
       <div class="drawer-value" id="profileName">Syncing…</div>
     </div>
 
-    <!-- Dark mode toggle -->
     <div class="drawer-row" style="margin-top:12px;">
       <span class="drawer-row-label">
         <svg class="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1176,7 +1360,6 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
       <div class="toggle" id="themeToggle"><div class="toggle-thumb"></div></div>
     </div>
 
-    <!-- Colour Blind Mode -->
     <div style="margin-bottom: 6px;">
       <div class="drawer-section-title" style="margin-bottom:12px;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:5px;vertical-align:middle"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -1184,54 +1367,36 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
       </div>
       <div class="cb-picker-row" id="cbPickerRow">
         <button class="cb-chip active" data-cb="none" onclick="setColorblindMode('none',this)">
-          <div class="cb-swatch">
-            <div class="cb-dot" style="background:#3A7528"></div>
-            <div class="cb-dot" style="background:#C8391A"></div>
-            <div class="cb-dot" style="background:#A67025"></div>
-          </div>
+          <div class="cb-swatch"><div class="cb-dot" style="background:#3A7528"></div><div class="cb-dot" style="background:#C8391A"></div><div class="cb-dot" style="background:#A67025"></div></div>
           <div class="cb-chip-name">Standard</div>
           <div class="cb-chip-desc">Default colours</div>
         </button>
         <button class="cb-chip" data-cb="deuteranopia" onclick="setColorblindMode('deuteranopia',this)">
-          <div class="cb-swatch">
-            <div class="cb-dot" style="background:#0077BB"></div>
-            <div class="cb-dot" style="background:#EE7733"></div>
-            <div class="cb-dot" style="background:#AA3377"></div>
-          </div>
+          <div class="cb-swatch"><div class="cb-dot" style="background:#0077BB"></div><div class="cb-dot" style="background:#EE7733"></div><div class="cb-dot" style="background:#AA3377"></div></div>
           <div class="cb-chip-name">Deuteranopia</div>
           <div class="cb-chip-desc">Green-blind</div>
         </button>
         <button class="cb-chip" data-cb="protanopia" onclick="setColorblindMode('protanopia',this)">
-          <div class="cb-swatch">
-            <div class="cb-dot" style="background:#0066CC"></div>
-            <div class="cb-dot" style="background:#F0A500"></div>
-            <div class="cb-dot" style="background:#7B4EA0"></div>
-          </div>
+          <div class="cb-swatch"><div class="cb-dot" style="background:#0066CC"></div><div class="cb-dot" style="background:#F0A500"></div><div class="cb-dot" style="background:#7B4EA0"></div></div>
           <div class="cb-chip-name">Protanopia</div>
           <div class="cb-chip-desc">Red-blind</div>
         </button>
         <button class="cb-chip" data-cb="tritanopia" onclick="setColorblindMode('tritanopia',this)">
-          <div class="cb-swatch">
-            <div class="cb-dot" style="background:#009988"></div>
-            <div class="cb-dot" style="background:#CC3311"></div>
-            <div class="cb-dot" style="background:#EE3377"></div>
-          </div>
+          <div class="cb-swatch"><div class="cb-dot" style="background:#009988"></div><div class="cb-dot" style="background:#CC3311"></div><div class="cb-dot" style="background:#EE3377"></div></div>
           <div class="cb-chip-name">Tritanopia</div>
           <div class="cb-chip-desc">Blue-blind</div>
         </button>
       </div>
     </div>
 
-    <!-- History -->
     <div class="drawer-section-title">Rescue History</div>
     <div id="historyList"></div>
-
     <button class="drawer-logout" onclick="location.href='/logout'">Sign Out</button>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
+<!-- ======================== BOTTOM NAV ======================== -->
+<nav class="bottom-nav" id="bottomNav">
   <button class="bn-item active" id="bnBrowse" onclick="setActiveNav('bnBrowse'); window.scrollTo({top:0,behavior:'smooth'})">
     <div class="bn-icon">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1259,83 +1424,94 @@ html.dark .exclusive-notice { background: var(--bg-2); border: 1px solid var(--b
   </button>
 </nav>
 
-<!-- CHEF'S SECRET MENU SHEET -->
-<div class="secret-sheet-overlay" id="secretSheet">
+<!-- ======================== CHEF'S SECRET MENU SHEET ======================== -->
+<div class="secret-sheet-overlay" id="secretSheetOverlay">
   <div class="secret-scrim" id="secretScrim"></div>
-  <div class="secret-sheet">
 
-    <!-- Top bar with handle -->
-    <div class="sheet-top-bar">
-      <div class="sheet-handle"></div>
+  <div class="secret-sheet" id="secretSheet">
+
+    <!-- Drag zone — only this area triggers drag-to-close -->
+    <div class="sheet-drag-zone" id="sheetDragZone">
+      <div class="sheet-handle" id="sheetHandle"></div>
     </div>
 
-    <!-- Header -->
+    <!-- Fixed header -->
     <div class="sheet-header">
-      <div class="sheet-title-row">
-        <div class="sheet-title-group">
-          <div class="sheet-hero-badge">
-            <div class="sheet-hero-badge-dot"></div>
-            Exclusive Access Only
+      <!-- Identity -->
+      <div class="sheet-id-row">
+        <div class="sheet-id-left">
+          <div class="sheet-exclusive-badge">
+            <div class="sheet-exclusive-dot"></div>
+            Exclusive Access
           </div>
           <div class="sheet-title-text">Chef's Secret Menu</div>
-          <div class="sheet-title-sub">Hidden dishes, not on the main browse feed</div>
+          <div class="sheet-title-sub">Hidden dishes · not on main browse</div>
         </div>
-        <button class="sheet-close" id="secretClose">✕</button>
+        <button class="sheet-close-btn" id="secretCloseBtn">✕</button>
       </div>
 
-      <!-- Stats bar -->
-      <div class="sheet-stat-bar">
-        <div class="sheet-stat">
-          <div class="sheet-stat-num" id="sheetStatDishes">—</div>
-          <div class="sheet-stat-label">Dishes</div>
+      <!-- Stats strip -->
+      <div class="sheet-stats-strip">
+        <div class="sheet-strip-stat">
+          <span class="sheet-strip-num" id="statDishes">—</span>
+          <span class="sheet-strip-lbl">Dishes</span>
         </div>
-        <div class="sheet-stat">
-          <div class="sheet-stat-num" id="sheetStatKitchens">—</div>
-          <div class="sheet-stat-label">Kitchens</div>
+        <div class="sheet-strip-stat">
+          <span class="sheet-strip-num" id="statKitchens">—</span>
+          <span class="sheet-strip-lbl">Kitchens</span>
         </div>
-        <div class="sheet-stat">
-          <div class="sheet-stat-num" id="sheetStatDisc">—</div>
-          <div class="sheet-stat-label">Avg Off</div>
+        <div class="sheet-strip-stat">
+          <span class="sheet-strip-num" id="statDiscount">—</span>
+          <span class="sheet-strip-lbl">Avg Off</span>
         </div>
       </div>
 
       <!-- Tabs -->
       <div class="sheet-tabs">
-        <button class="sheet-tab active" data-tab="tabToday">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Exclusives
-          <span class="sheet-tab-badge" id="badgeToday">·</span>
+        <button class="sheet-tab active" data-tab="panelToday">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Tonight's Exclusives
+          <span class="sheet-tab-count" id="countToday">—</span>
         </button>
-        <button class="sheet-tab" data-tab="tabTomorrow">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <button class="sheet-tab" data-tab="panelTomorrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Tomorrow
-          <span class="sheet-tab-badge" id="badgeTomorrow">·</span>
+          <span class="sheet-tab-count" id="countTomorrow">—</span>
         </button>
       </div>
 
       <!-- Search -->
-      <div class="sheet-search-box">
+      <div class="sheet-search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="secretSearch" placeholder="Search dish or kitchen…" autocomplete="off">
-        <button class="sheet-search-clear" id="secretSearchClear" style="display:none">✕</button>
+        <input class="sheet-search-input" id="secretSearch" type="text" placeholder="Search dish or kitchen…" autocomplete="off">
+        <button class="sheet-search-clear" id="secretClearBtn">✕</button>
       </div>
-    </div>
+    </div><!-- /sheet-header -->
 
-    <!-- Body -->
-    <div class="sheet-body">
-      <div class="tab-panel active" id="tabToday"></div>
-      <div class="tab-panel" id="tabTomorrow"></div>
-    </div>
+    <!-- Scrollable body -->
+    <div class="sheet-body" id="sheetBody">
 
-  </div>
-</div>
+      <!-- Search results (overlaid when searching) -->
+      <div class="sheet-search-results" id="searchResults"></div>
+
+      <!-- Tab panels -->
+      <div class="tab-panel active" id="panelToday"></div>
+      <div class="tab-panel" id="panelTomorrow"></div>
+
+    </div><!-- /sheet-body -->
+
+  </div><!-- /secret-sheet -->
+</div><!-- /overlay -->
 
 <script>
-function openWalkinList() { window.location.href = "/walkin"; }
+/* ================================================================
+   UTILITIES
+================================================================ */
+function openWalkinList() { window.location.href = '/walkin'; }
 
-/* ========================
-   DARK MODE
-======================== */
+/* ================================================================
+   THEME
+================================================================ */
 const html = document.documentElement;
 
 function applyTheme(dark) {
@@ -1344,87 +1520,77 @@ function applyTheme(dark) {
   document.getElementById('themeLabel').textContent = dark ? 'Light Mode' : 'Dark Mode';
   try { localStorage.setItem('lp-theme', dark ? 'dark' : 'light'); } catch {}
 }
-
 (function initTheme() {
-  let saved;
-  try { saved = localStorage.getItem('lp-theme'); } catch {}
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(saved === 'dark' || (!saved && prefersDark));
+  let saved; try { saved = localStorage.getItem('lp-theme'); } catch {}
+  applyTheme(saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches));
 })();
-
-document.getElementById('themeToggle').onclick = function() {
-  applyTheme(!html.classList.contains('dark'));
-  if (window.navigator.vibrate) window.navigator.vibrate(10);
-};
+document.getElementById('themeToggle').onclick =
 document.getElementById('navThemeBtn').onclick = function() {
   applyTheme(!html.classList.contains('dark'));
   if (window.navigator.vibrate) window.navigator.vibrate(10);
 };
 
-/* ========================
-   COLOUR BLIND MODE
-======================== */
-const CB_CLASSES = ['cb-deuteranopia', 'cb-protanopia', 'cb-tritanopia'];
-
-function setColorblindMode(mode, chipEl) {
+/* ================================================================
+   COLOUR BLIND
+================================================================ */
+const CB_CLASSES = ['cb-deuteranopia','cb-protanopia','cb-tritanopia'];
+function setColorblindMode(mode, el) {
   CB_CLASSES.forEach(c => html.classList.remove(c));
   if (mode !== 'none') html.classList.add('cb-' + mode);
-  // Update active chip
   document.querySelectorAll('.cb-chip').forEach(c => c.classList.remove('active'));
-  if (chipEl) chipEl.classList.add('active');
+  if (el) el.classList.add('active');
   try { localStorage.setItem('lp-cb', mode); } catch {}
   if (window.navigator.vibrate) window.navigator.vibrate(8);
 }
-
 (function initCB() {
-  let saved;
-  try { saved = localStorage.getItem('lp-cb'); } catch {}
-  if (saved && saved !== 'none') {
-    const chip = document.querySelector(`.cb-chip[data-cb="${saved}"]`);
-    setColorblindMode(saved, chip);
-  }
+  let saved; try { saved = localStorage.getItem('lp-cb'); } catch {}
+  if (saved && saved !== 'none') setColorblindMode(saved, document.querySelector(`.cb-chip[data-cb="${saved}"]`));
 })();
 
-/* ========================
-   SCROLL
-======================== */
+/* ================================================================
+   SCROLL BAR
+================================================================ */
 window.addEventListener('scroll', () => {
   const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
   document.getElementById('scrollBar').style.width = (pct * 100) + '%';
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
 
-/* ========================
+/* ================================================================
    IMAGE MAP
-======================== */
+================================================================ */
 function getFoodImage(name) {
   const n = (name || '').toLowerCase();
   const map = [
-    [['butter chicken', 'butter'], 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&q=80'],
-    [['biriyani', 'biryani', 'briyani'], 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPkrextD5AUzleyWSR6wLohiJc4HD6ronEyg&s'],
-    [['mandhi', 'mandi'], 'https://images.unsplash.com/photo-1628294896516-344152572c7b?w=800&q=80'],
-    [['chapati', 'chapatti', 'chappa'], 'https://images.unsplash.com/photo-1595295333158-4de421a3d3c4?w=800&q=80'],
-    [['parotta', 'porotta'], 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=800&q=80'],
-    [['alfaham', 'al fahm'], 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=800&q=80'],
+    [['butter chicken','butter'], 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&q=80'],
+    [['biriyani','biryani','briyani'], 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPkrextD5AUzleyWSR6wLohiJc4HD6ronEyg&s'],
+    [['mandhi','mandi'], 'https://images.unsplash.com/photo-1628294896516-344152572c7b?w=800&q=80'],
+    [['chapati','chapatti','chappa'], 'https://images.unsplash.com/photo-1595295333158-4de421a3d3c4?w=800&q=80'],
+    [['parotta','porotta'], 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=800&q=80'],
+    [['alfaham','al fahm'], 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=800&q=80'],
     [['shawarma'], 'https://images.unsplash.com/photo-1561651188-d207bbec4ec3?w=800&q=80'],
     [['pizza'], 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80'],
     [['burger'], 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80'],
-    [['rice', 'fried rice'], 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=800&q=80'],
+    [['rice','fried rice'], 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=800&q=80'],
     [['curry'], 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&q=80'],
-    [['noodle', 'noodles'], 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=80'],
+    [['noodle','noodles'], 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=80'],
     [['sandwich'], 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&q=80'],
     [['soup'], 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80'],
-    [['cake', 'dessert', 'sweet'], 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80'],
+    [['cake','dessert','sweet'], 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80'],
   ];
-  for (const [keys, url] of map) {
-    if (keys.some(k => n.includes(k))) return url;
-  }
+  for (const [keys, url] of map) { if (keys.some(k => n.includes(k))) return url; }
   return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80';
 }
 
-/* ========================
-   STATE
-======================== */
+function cuisineEmoji(c) {
+  if (!c) return '🍽️';
+  const m = { kerala:'🥥', arabic:'🫕', mughlai:'🍗', continental:'🥗', dessert:'🍮', chinese:'🥢', italian:'🍝', seafood:'🐟', biryani:'🍛' };
+  return m[(c||'').toLowerCase()] || '🍽️';
+}
+
+/* ================================================================
+   BROWSE — STATE & RENDER
+================================================================ */
 let allFoods = [];
 let currentLoc = 'all';
 
@@ -1433,13 +1599,9 @@ function discount(mrp, price) {
   return Math.round(((mrp - price) / mrp) * 100);
 }
 
-/* ========================
-   RENDER FOOD CARDS
-======================== */
 function render(foods) {
   const grid = document.getElementById('foodGrid');
   document.getElementById('plateCount').textContent = `${foods.length} plate${foods.length !== 1 ? 's' : ''}`;
-
   if (!foods.length) {
     grid.innerHTML = `
       <div class="empty-state">
@@ -1449,7 +1611,6 @@ function render(foods) {
       </div>`;
     return;
   }
-
   grid.innerHTML = foods.map((f, i) => {
     const disc = discount(f.mrp, f.price);
     const urgent = f.minutes_left <= 15;
@@ -1494,88 +1655,19 @@ function applyFilters() {
   render(filtered);
 }
 
-/* ========================
-   MODAL
-======================== */
-function openModal(raw) {
-  const f = JSON.parse(raw);
-  document.getElementById('modalImg').src = getFoodImage(f.name);
-  document.getElementById('modalKicker').textContent = `${f.available_quantity} plates  ·  ${f.minutes_left}m left`;
-  document.getElementById('modalTitle').textContent = f.name;
-  document.getElementById('modalRestaurant').textContent = '📍 ' + f.restaurant_name;
-  document.getElementById('modalMrp').textContent = f.mrp ? `MRP ₹${f.mrp}` : '';
-  document.getElementById('modalPrice').textContent = '₹' + Math.ceil(f.price);
-  document.getElementById('modalCta').href = `/checkout/${f.id}`;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (window.navigator.vibrate) window.navigator.vibrate(8);
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-document.getElementById('modalClose').onclick = closeModal;
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDrawer(); closeSecretMenu(); } });
-
-/* ========================
-   DRAWER
-======================== */
-function openDrawer() {
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.body.classList.add('page-pushed');
-  loadProfile();
-}
-function closeDrawer() {
-  document.getElementById('drawerOverlay').classList.remove('open');
-  document.body.classList.remove('page-pushed');
-}
-document.getElementById('openProfile').onclick = openDrawer;
-document.getElementById('closeProfile').onclick = closeDrawer;
-document.getElementById('drawerScrim').onclick = closeDrawer;
-
-async function loadProfile() {
-  try {
-    const [uRes, oRes] = await Promise.all([
-      fetch('/api/user/profile').catch(() => null),
-      fetch('/api/user/orders').catch(() => null)
-    ]);
-    const u = uRes?.ok ? await uRes.json() : { name: 'Rescue Agent' };
-    const orders = oRes?.ok ? await oRes.json() : [];
-    document.getElementById('profileName').textContent = u.name || 'Agent';
-    const hist = document.getElementById('historyList');
-    hist.innerHTML = orders.length
-      ? orders.map(o => `
-          <div class="history-item">
-            <div class="history-name">${o.food}</div>
-            <div class="history-meta">₹${o.total_amount} · ${o.status}</div>
-          </div>`).join('')
-      : `<p style="font-size:0.78rem;color:var(--ink-3);padding:12px 0">No rescue history yet.</p>`;
-  } catch { document.getElementById('profileName').textContent = 'Guest'; }
-}
-
-/* ========================
-   INIT — FOOD BROWSE
-======================== */
 document.getElementById('foodSearch').addEventListener('input', applyFilters);
 
 const locationRow = document.getElementById('locationRow');
-
-function setActiveChip(activeEl) {
+function setActiveChip(el) {
   locationRow.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  activeEl.classList.add('active');
+  el.classList.add('active');
 }
-
 document.getElementById('resetChip').onclick = () => {
-  currentLoc = 'all';
-  setActiveChip(document.getElementById('resetChip'));
-  applyFilters();
+  currentLoc = 'all'; setActiveChip(document.getElementById('resetChip')); applyFilters();
 };
 
 fetch('/api/foods')
-  .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+  .then(r => { if (!r.ok) throw 0; return r.json(); })
   .then(data => {
     allFoods = data.foods || [];
     const locKey = f => f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
@@ -1592,9 +1684,54 @@ fetch('/api/foods')
   })
   .catch(() => { allFoods = []; render([]); });
 
-/* ========================
+/* ================================================================
+   MODAL
+================================================================ */
+function openModal(raw) {
+  const f = JSON.parse(raw);
+  document.getElementById('modalImg').src = getFoodImage(f.name);
+  document.getElementById('modalKicker').textContent = `${f.available_quantity} plates  ·  ${f.minutes_left}m left`;
+  document.getElementById('modalTitle').textContent = f.name;
+  document.getElementById('modalRestaurant').textContent = '📍 ' + f.restaurant_name;
+  document.getElementById('modalMrp').textContent = f.mrp ? `MRP ₹${f.mrp}` : '';
+  document.getElementById('modalPrice').textContent = '₹' + Math.ceil(f.price);
+  document.getElementById('modalCta').href = `/checkout/${f.id}`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.navigator.vibrate) window.navigator.vibrate(8);
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+/* ================================================================
+   DRAWER
+================================================================ */
+function openDrawer() { document.getElementById('drawerOverlay').classList.add('open'); document.body.classList.add('page-pushed'); loadProfile(); }
+function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.body.classList.remove('page-pushed'); }
+document.getElementById('openProfile').onclick = openDrawer;
+document.getElementById('closeProfile').onclick = closeDrawer;
+document.getElementById('drawerScrim').onclick = closeDrawer;
+
+async function loadProfile() {
+  try {
+    const [uRes, oRes] = await Promise.all([fetch('/api/user/profile').catch(() => null), fetch('/api/user/orders').catch(() => null)]);
+    const u = uRes?.ok ? await uRes.json() : { name: 'Rescue Agent' };
+    const orders = oRes?.ok ? await oRes.json() : [];
+    document.getElementById('profileName').textContent = u.name || 'Agent';
+    const hist = document.getElementById('historyList');
+    hist.innerHTML = orders.length
+      ? orders.map(o => `<div class="history-item"><div class="history-name">${o.food}</div><div class="history-meta">₹${o.total_amount} · ${o.status}</div></div>`).join('')
+      : `<p style="font-size:0.78rem;color:var(--ink-3);padding:12px 0">No rescue history yet.</p>`;
+  } catch { document.getElementById('profileName').textContent = 'Guest'; }
+}
+
+/* ================================================================
    BOTTOM NAV
-======================== */
+================================================================ */
 function setActiveNav(id) {
   document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1602,16 +1739,40 @@ function setActiveNav(id) {
 }
 setActiveNav('bnBrowse');
 
-/* ========================
-   SECRET MENU — STATE
-======================== */
-let secretRestaurants = [];
-let secretLoaded = false;
-const secretDishCache = {};
+/* ================================================================
+   ESCAPE KEY
+================================================================ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeDrawer(); closeSecretMenu(); }
+});
 
+/* ================================================================
+   CHEF'S SECRET MENU
+   ================================================================
+   Architecture:
+   - Sheet open/close with proper body lock
+   - Bottom nav hides on open, restores on close
+   - Drag-to-close: ONLY from drag-zone, threshold 100px, velocity check,
+     ignores if body is scrolled, cancels on horizontal swipe
+   - Body scrolls independently, doesn't trigger close
+   - Tabs switch without re-fetching
+   - Kitchen chips filter dishes in-panel
+================================================================ */
+const secretOverlay = document.getElementById('secretSheetOverlay');
+const secretSheet   = document.getElementById('secretSheet');
+const secretScrim   = document.getElementById('secretScrim');
+const sheetBody     = document.getElementById('sheetBody');
+const bottomNav     = document.getElementById('bottomNav');
+
+let secretLoaded    = false;
+let secretRestaurants = [];
+const dishCache     = {}; // rid → [dishes]
+let activeTab       = 'panelToday';
+
+/* --- Open / Close --- */
 function openSecretMenu() {
-  document.getElementById('secretSheet').classList.add('open');
-  document.querySelector('.bottom-nav').style.transform = 'translateY(100%)';
+  secretOverlay.classList.add('open');
+  bottomNav.style.transform = 'translateY(100%)';
   document.body.style.overflow = 'hidden';
   setActiveNav('bnSecret');
   if (window.navigator.vibrate) window.navigator.vibrate(12);
@@ -1619,60 +1780,134 @@ function openSecretMenu() {
 }
 
 function closeSecretMenu() {
-  document.getElementById('secretSheet').classList.remove('open');
-  document.querySelector('.bottom-nav').style.transform = '';
+  secretOverlay.classList.remove('open');
+  bottomNav.style.transform = '';
   document.body.style.overflow = '';
   setActiveNav('bnBrowse');
 }
 
-document.addEventListener('click', function(e) {
-  if (e.target.id === 'secretScrim' || e.target.closest('#secretClose')) closeSecretMenu();
+document.getElementById('secretCloseBtn').addEventListener('click', closeSecretMenu);
+secretScrim.addEventListener('click', closeSecretMenu);
+
+/* --- Tab switching --- */
+secretSheet.querySelectorAll('.sheet-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const target = this.dataset.tab;
+    secretSheet.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+    secretSheet.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById(target).classList.add('active');
+    activeTab = target;
+    // Hide search results on tab switch
+    clearSearch();
+  });
 });
 
-/* ========================
-   SECRET MENU — SEARCH
-======================== */
-async function prefetchAllDishes(restaurants) {
-  await Promise.all(restaurants.map(async r => {
-    if (secretDishCache[r.restaurant_id]) return;
-    try {
-      const res  = await fetch(`/api/secret-menu/${r.restaurant_id}`);
-      const data = await res.json();
-      secretDishCache[r.restaurant_id] = (data.dishes || []).map(d => ({ ...d, restaurant_name: r.restaurant_name }));
-    } catch { secretDishCache[r.restaurant_id] = []; }
-  }));
-}
+/* --- Drag-to-close (HANDLE ZONE ONLY) ---
+   Rules:
+   1. Touch must START on the drag zone
+   2. Must drag downward by > 100px
+   3. Must not be primarily a horizontal swipe
+   4. Body scroll position must be 0 (or user hasn't scrolled body)
+   5. Velocity check: fast swipe = lower threshold
+*/
+const dragZone = document.getElementById('sheetDragZone');
+
+let drag = {
+  active:   false,
+  startY:   0,
+  startX:   0,
+  lastY:    0,
+  startTime:0,
+  moved:    false,
+};
+
+dragZone.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  drag.active    = true;
+  drag.startY    = t.clientY;
+  drag.startX    = t.clientX;
+  drag.lastY     = t.clientY;
+  drag.startTime = Date.now();
+  drag.moved     = false;
+}, { passive: true });
+
+dragZone.addEventListener('touchmove', e => {
+  if (!drag.active) return;
+  const t      = e.touches[0];
+  const deltaY = t.clientY - drag.startY;
+  const deltaX = Math.abs(t.clientX - drag.startX);
+
+  // If horizontal movement > vertical, cancel drag
+  if (deltaX > Math.abs(deltaY) + 10) { drag.active = false; return; }
+
+  // Only pull downward
+  if (deltaY < 0) { drag.active = false; return; }
+
+  drag.moved = true;
+  drag.lastY = t.clientY;
+
+  // Visual rubber-band feedback (damped)
+  const damped = Math.min(deltaY * 0.45, 80);
+  secretSheet.style.transform = `translateY(${damped}px)`;
+  secretSheet.style.transition = 'none';
+}, { passive: true });
+
+dragZone.addEventListener('touchend', e => {
+  if (!drag.active || !drag.moved) {
+    secretSheet.style.transform = '';
+    secretSheet.style.transition = '';
+    drag.active = false;
+    return;
+  }
+
+  const elapsed = Date.now() - drag.startTime;
+  const deltaY  = drag.lastY - drag.startY;
+  const velocity = deltaY / elapsed; // px/ms
+
+  // Reset sheet position with spring
+  secretSheet.style.transform = '';
+  secretSheet.style.transition = '';
+
+  // Close if dragged far enough OR fast flick
+  const THRESHOLD = 90;  // px
+  const VELOCITY  = 0.55; // px/ms
+  if (deltaY > THRESHOLD || velocity > VELOCITY) {
+    closeSecretMenu();
+  }
+
+  drag.active = false;
+}, { passive: true });
+
+/* Also prevent drag from firing on body scroll */
+sheetBody.addEventListener('touchstart', e => {
+  // Mark that a body scroll touch has started — drag zone ignores these
+  drag.active = false;
+}, { passive: true });
+
+/* --- Search --- */
+const searchInput = document.getElementById('secretSearch');
+const clearBtn    = document.getElementById('secretClearBtn');
+const searchPanel = document.getElementById('searchResults');
 
 function getAllCachedDishes() {
-  return Object.values(secretDishCache).flat();
+  return Object.values(dishCache).flat();
 }
 
-function handleSecretSearch(q) {
-  const clearBtn = document.getElementById('secretSearchClear');
-  const tabToday = document.getElementById('tabToday');
-  const tabTomorrow = document.getElementById('tabTomorrow');
-  const existing = document.getElementById('searchResultsPanel');
-
+function runSearch(q) {
   q = q.trim().toLowerCase();
   clearBtn.style.display = q ? 'block' : 'none';
 
   if (!q) {
-    if (existing) existing.remove();
-    tabToday.style.display = '';
-    tabTomorrow.style.display = '';
+    searchPanel.classList.remove('visible');
+    searchPanel.innerHTML = '';
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
     return;
   }
 
-  tabToday.style.display = 'none';
-  tabTomorrow.style.display = 'none';
-
-  let panel = existing;
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'searchResultsPanel';
-    panel.className = 'search-results-panel';
-    tabToday.parentNode.appendChild(panel);
-  }
+  // Hide tab panels while searching
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  searchPanel.classList.add('visible');
 
   const results = getAllCachedDishes().filter(d =>
     (d.name || '').toLowerCase().includes(q) ||
@@ -1681,197 +1916,243 @@ function handleSecretSearch(q) {
   );
 
   if (!results.length) {
-    panel.innerHTML = `<div class="search-no-results">🍃 No dishes found for "<strong>${q}</strong>"</div>`;
+    searchPanel.innerHTML = `<div class="search-no-results">🍃 No dishes found for "<strong>${q}</strong>"</div>`;
     return;
   }
 
-  panel.innerHTML = results.map(d => `
-    <a class="search-result-card" href="/checkout/secret/${d.id}">
-      <img class="search-result-img" src="${d.img || getFoodImage(d.name)}" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=70'">
-      <div class="search-result-info">
+  searchPanel.innerHTML = results.map(d => `
+    <a class="search-result-item" href="/checkout/secret/${d.id}">
+      <img class="search-result-img" src="${d.img || getFoodImage(d.name)}"
+           onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=70'" loading="lazy">
+      <div style="flex:1;min-width:0">
         <div class="search-result-name">${d.name}</div>
-        <div class="search-result-kitchen">${d.restaurant_name}${d.cuisine ? ' · ' + d.cuisine : ''}</div>
+        <div class="search-result-meta">${d.restaurant_name || ''}${d.cuisine ? ' · ' + d.cuisine : ''}</div>
       </div>
       <div class="search-result-price">₹${Math.ceil(d.price)}</div>
     </a>
   `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const input    = document.getElementById('secretSearch');
-  const clearBtn = document.getElementById('secretSearchClear');
-  if (!input) return;
-  input.addEventListener('input', () => handleSecretSearch(input.value));
-  clearBtn.onclick = () => { input.value = ''; handleSecretSearch(''); input.focus(); };
-});
+function clearSearch() {
+  searchInput.value = '';
+  runSearch('');
+}
 
-/* ========================
-   SECRET MENU — TAB SWITCH
-======================== */
-document.querySelectorAll('.sheet-tab').forEach(tab => {
-  tab.onclick = function() {
-    const target = this.dataset.tab;
-    document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    this.classList.add('active');
-    document.getElementById(target).classList.add('active');
-  };
-});
+searchInput.addEventListener('input', () => runSearch(searchInput.value));
+clearBtn.addEventListener('click', () => { clearSearch(); searchInput.focus(); });
 
-/* ========================
-   SECRET MENU — LOAD
-======================== */
+/* --- Load restaurants --- */
 async function loadSecretRestaurants() {
   secretLoaded = true;
-  const tabToday    = document.getElementById('tabToday');
-  const tabTomorrow = document.getElementById('tabTomorrow');
-  tabToday.innerHTML    = secretSkelList(3);
-  tabTomorrow.innerHTML = secretSkelList(2);
+
+  document.getElementById('panelToday').innerHTML    = skelDishList(3);
+  document.getElementById('panelTomorrow').innerHTML = skelDishList(2);
 
   try {
     const res  = await fetch('/api/secret-menu/restaurants');
     const data = await res.json();
     secretRestaurants = data.restaurants || [];
 
-    // Update stat bar
-    document.getElementById('sheetStatKitchens').textContent = secretRestaurants.length || '—';
     const totalDishes = secretRestaurants.reduce((s, r) => s + (r.dish_count || 0), 0);
-    document.getElementById('sheetStatDishes').textContent = totalDishes || '—';
-    document.getElementById('sheetStatDisc').textContent = totalDishes ? '35%+' : '—';
-
-    // Update tab badges
-    document.getElementById('badgeToday').textContent = totalDishes || '0';
-    document.getElementById('badgeTomorrow').textContent = secretRestaurants.length || '0';
+    document.getElementById('statDishes').textContent   = totalDishes || '0';
+    document.getElementById('statKitchens').textContent = secretRestaurants.length || '0';
+    document.getElementById('statDiscount').textContent = totalDishes ? '35%+' : '—';
+    document.getElementById('countToday').textContent    = totalDishes || '0';
+    document.getElementById('countTomorrow').textContent = secretRestaurants.length || '0';
 
     if (!secretRestaurants.length) {
-      tabToday.innerHTML    = secretEmpty('No secret specials tonight.');
-      tabTomorrow.innerHTML = secretEmpty('Nothing coming up yet — check back later.');
+      document.getElementById('panelToday').innerHTML    = emptyState('No exclusive dishes tonight.');
+      document.getElementById('panelTomorrow').innerHTML = emptyState('Nothing coming up yet.');
       return;
     }
 
-    prefetchAllDishes(secretRestaurants);
-    renderSecretRestaurants(tabToday, secretRestaurants, 'today');
-    renderSecretRestaurants(tabTomorrow, secretRestaurants, 'tomorrow');
+    // Prefetch all dishes
+    prefetchAll(secretRestaurants);
 
-    setTimeout(() => {
-      if (secretRestaurants[0]) loadDishesForRestaurant(secretRestaurants[0], tabToday, 'today');
-    }, 0);
+    // Render both panels
+    renderTodayPanel(secretRestaurants);
+    renderTomorrowPanel(secretRestaurants);
 
-  } catch(e) {
-    console.error('Secret menu load error:', e);
-    tabToday.innerHTML    = secretError();
-    tabTomorrow.innerHTML = secretError();
+  } catch(err) {
+    console.error(err);
+    document.getElementById('panelToday').innerHTML    = errorState();
+    document.getElementById('panelTomorrow').innerHTML = errorState();
   }
 }
 
-function renderSecretRestaurants(container, restaurants, mode) {
-  const notice = mode === 'today'
-    ? `<div class="exclusive-notice">
-        <div class="exclusive-notice-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        Only visible here — hidden from main browse
-      </div>`
-    : `<div class="tomorrow-intro">
-        <div class="tomorrow-intro-icon">🌙</div>
-        <div>
-          <div class="tomorrow-intro-title">Tomorrow's drops are being prepped.</div>
-          <div class="tomorrow-intro-sub">Check back after 5 PM to see them unlock.</div>
-        </div>
-      </div>`;
-
-  const restaurantBtns = restaurants.map((r, i) => `
-    <button class="rest-chip ${i === 0 && mode === 'today' ? 'active' : ''}"
-            onclick="loadDishesForRestaurant(${JSON.stringify(r).replace(/"/g, '&quot;')}, document.getElementById('${mode === 'today' ? 'tabToday' : 'tabTomorrow'}'), '${mode}', this)"
-            data-rid="${r.restaurant_id}">
-      <span class="rest-chip-name">${r.restaurant_name}</span>
-      <span class="rest-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
-    </button>
-  `).join('');
-
-  container.innerHTML = `
-    ${notice}
-    <div class="sheet-section-label">Kitchens</div>
-    <div class="rest-chip-row" id="restChips_${mode}">${restaurantBtns}</div>
-    <div class="sheet-section-label">Dishes</div>
-    <div class="dishes-list" id="dishesList_${mode}">${secretSkelList(2)}</div>
-  `;
+async function prefetchAll(restaurants) {
+  await Promise.all(restaurants.map(async r => {
+    if (dishCache[r.restaurant_id]) return;
+    try {
+      const res  = await fetch(`/api/secret-menu/${r.restaurant_id}`);
+      const data = await res.json();
+      dishCache[r.restaurant_id] = (data.dishes || []).map(d => ({ ...d, restaurant_name: r.restaurant_name }));
+    } catch { dishCache[r.restaurant_id] = []; }
+  }));
 }
 
-async function loadDishesForRestaurant(restaurant, container, mode, chipEl) {
-  const chipsContainer = document.getElementById(`restChips_${mode}`);
-  if (chipsContainer) {
-    chipsContainer.querySelectorAll('.rest-chip').forEach(c => c.classList.remove('active'));
+/* --- Render today panel --- */
+function renderTodayPanel(restaurants) {
+  const panel = document.getElementById('panelToday');
+
+  // Exclusive banner
+  const banner = `
+    <div class="exclusive-banner">
+      <div class="exclusive-banner-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      Only visible here — hidden from main browse feed
+    </div>`;
+
+  // Kitchen chips
+  const chips = `
+    <div class="sheet-section-lbl">Kitchens</div>
+    <div class="kitchen-chips-row" id="kitchenChipsToday">
+      ${restaurants.map((r, i) => `
+        <button class="kitchen-chip ${i === 0 ? 'active' : ''}"
+                data-rid="${r.restaurant_id}"
+                onclick="selectKitchen('today', '${r.restaurant_id}', this)">
+          <span class="kitchen-chip-name">${r.restaurant_name}</span>
+          <span class="kitchen-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
+        </button>`).join('')}
+    </div>`;
+
+  const dishesContainer = `
+    <div class="sheet-section-lbl">Dishes</div>
+    <div id="dishesToday">${skelDishList(2)}</div>`;
+
+  panel.innerHTML = banner + chips + dishesContainer;
+
+  // Auto-load first kitchen
+  if (restaurants[0]) {
+    loadKitchenDishes('today', restaurants[0].restaurant_id);
+  }
+}
+
+/* --- Render tomorrow panel --- */
+function renderTomorrowPanel(restaurants) {
+  const panel = document.getElementById('panelTomorrow');
+
+  const banner = `
+    <div class="tomorrow-banner">
+      <div class="tomorrow-banner-icon">🌙</div>
+      <div>
+        <div class="tomorrow-banner-title">Tomorrow's drops are being prepped.</div>
+        <div class="tomorrow-banner-sub">Check back after 5 PM to see them unlock.</div>
+      </div>
+    </div>`;
+
+  const chips = `
+    <div class="sheet-section-lbl">Kitchens</div>
+    <div class="kitchen-chips-row" id="kitchenChipsTomorrow">
+      ${restaurants.map((r, i) => `
+        <button class="kitchen-chip ${i === 0 ? 'active' : ''}"
+                data-rid="${r.restaurant_id}"
+                onclick="selectKitchen('tomorrow', '${r.restaurant_id}', this)">
+          <span class="kitchen-chip-name">${r.restaurant_name}</span>
+          <span class="kitchen-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
+        </button>`).join('')}
+    </div>`;
+
+  const dishesContainer = `
+    <div class="sheet-section-lbl">Coming Tomorrow</div>
+    <div id="dishesTomorrow">${skelDishList(2)}</div>`;
+
+  panel.innerHTML = banner + chips + dishesContainer;
+
+  if (restaurants[0]) {
+    loadKitchenDishes('tomorrow', restaurants[0].restaurant_id);
+  }
+}
+
+/* --- Select kitchen chip --- */
+function selectKitchen(mode, rid, chipEl) {
+  const chipsRow = document.getElementById(`kitchenChips${mode === 'today' ? 'Today' : 'Tomorrow'}`);
+  if (chipsRow) {
+    chipsRow.querySelectorAll('.kitchen-chip').forEach(c => c.classList.remove('active'));
     if (chipEl) chipEl.classList.add('active');
-    else {
-      const fc = chipsContainer.querySelector(`[data-rid="${restaurant.restaurant_id}"]`);
-      if (fc) fc.classList.add('active');
-    }
   }
-  const dishesEl = document.getElementById(`dishesList_${mode}`);
-  if (dishesEl) dishesEl.innerHTML = secretSkelList(2);
+  loadKitchenDishes(mode, rid);
+}
+
+/* --- Load dishes for a kitchen --- */
+async function loadKitchenDishes(mode, rid) {
+  const containerId = mode === 'today' ? 'dishesToday' : 'dishesTomorrow';
+  const container   = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = skelDishList(2);
+
+  // Use cache if available
+  if (dishCache[rid]) {
+    renderDishes(container, dishCache[rid], mode);
+    return;
+  }
+
   try {
-    const res  = await fetch(`/api/secret-menu/${restaurant.restaurant_id}`);
+    const res  = await fetch(`/api/secret-menu/${rid}`);
     const data = await res.json();
-    const dishes = data.dishes || [];
-    if (!dishes.length) {
-      if (dishesEl) dishesEl.innerHTML = secretEmpty('No dishes available from this kitchen right now.');
-      return;
-    }
-    if (dishesEl) dishesEl.innerHTML = dishes.map(d => renderSecretDishCard(d, mode)).join('');
+    const dishes = (data.dishes || []).map(d => ({
+      ...d,
+      restaurant_name: secretRestaurants.find(r => r.restaurant_id === rid)?.restaurant_name || ''
+    }));
+    dishCache[rid] = dishes;
+    renderDishes(container, dishes, mode);
   } catch {
-    if (dishesEl) dishesEl.innerHTML = secretError();
+    container.innerHTML = errorState();
   }
 }
 
-function renderSecretDishCard(d, mode) {
+function renderDishes(container, dishes, mode) {
+  if (!dishes.length) {
+    container.innerHTML = emptyState('No dishes from this kitchen right now.');
+    return;
+  }
+  if (mode === 'tomorrow') {
+    container.innerHTML = dishes.map(d => renderTomorrowRow(d)).join('');
+  } else {
+    container.innerHTML = dishes.map(d => renderDishCard(d)).join('');
+  }
+}
+
+/* --- Dish card HTML (today / exclusive) --- */
+function renderDishCard(d) {
   const img  = d.img || getFoodImage(d.name);
   const disc = d.mrp && d.mrp > d.price ? Math.round(((d.mrp - d.price) / d.mrp) * 100) : null;
-  const tag  = d.cuisine ? `<div class="special-tag">${cuisineEmoji(d.cuisine)} ${d.cuisine}</div>` : '';
-  const stockPct = d.stock && d.total_stock ? Math.round((d.stock / d.total_stock) * 100) : 60;
+  const stockPct   = d.stock && d.total_stock ? Math.round((d.stock / d.total_stock) * 100) : 60;
   const stockColor = stockPct < 25 ? 'var(--red)' : stockPct < 50 ? 'var(--gold)' : 'var(--green)';
-
-  if (mode === 'tomorrow') {
-    return `
-      <div class="tomorrow-card">
-        <div class="tomorrow-emoji">${cuisineEmoji(d.cuisine)}</div>
-        <div class="tomorrow-info">
-          <div class="tomorrow-name">${d.name}</div>
-          <div class="tomorrow-kitchen">${d.restaurant_name || ''}</div>
-          <div class="tomorrow-hint">🕕 Unlocks tomorrow evening</div>
-        </div>
-        <button class="tomorrow-notify" onclick="notifyMe(this)">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          Notify
-        </button>
-      </div>`;
-  }
+  const soldOut    = d.stock === 0;
 
   return `
-    <div class="special-card" onclick="location.href='/checkout/secret/${d.id}'">
-      <div class="special-img-wrap">
-        <img class="special-img" src="${img}" alt="${d.name}" loading="lazy"
+    <div class="dish-card" onclick="${soldOut ? '' : `location.href='/checkout/secret/${d.id}'`}"
+         style="${soldOut ? 'opacity:0.6;cursor:default' : ''}">
+      <div class="dish-card-img">
+        <img src="${img}" alt="${d.name}" loading="lazy"
              onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80'">
       </div>
-      <div class="special-body">
+      <div class="dish-card-body">
         <div>
-          ${tag}
-          <div class="special-name">${d.name}</div>
-          <div class="special-kitchen">${d.restaurant_name || ''} · ${d.stock} left</div>
-          ${d.description ? `<div class="special-desc">${d.description}</div>` : ''}
+          ${d.cuisine ? `<div class="dish-cuisine-tag">${cuisineEmoji(d.cuisine)} ${d.cuisine}</div>` : ''}
+          <div class="dish-name">${d.name}</div>
+          <div class="dish-kitchen">${d.restaurant_name}${d.stock != null ? ' · ' + d.stock + ' left' : ''}</div>
+          ${d.description ? `<div class="dish-desc">${d.description}</div>` : ''}
         </div>
         <div>
-          <div class="special-stock-bar">
-            <div class="special-stock-fill" style="width:${Math.min(stockPct,100)}%;background:${stockColor}"></div>
-          </div>
-          <div class="special-footer">
-            <div class="special-price">
-              ${d.mrp ? `<span class="mrp">₹${d.mrp}</span>` : ''}
-              ₹${Math.ceil(d.price)}
-              ${disc ? `<span class="special-disc">${disc}% off</span>` : ''}
+          <div class="dish-stock-row">
+            <div class="dish-stock-bar">
+              <div class="dish-stock-fill" style="width:${Math.min(stockPct,100)}%;background:${stockColor}"></div>
             </div>
-            <button class="special-btn" ${d.stock === 0 ? 'disabled style="opacity:0.45;cursor:not-allowed"' : ''}>
-              ${d.stock === 0 ? 'Sold Out' : 'Reserve ↗'}
+            <span class="dish-stock-txt">${soldOut ? 'Sold out' : stockPct + '%'}</span>
+          </div>
+          <div class="dish-card-footer">
+            <div class="dish-price">
+              ${d.mrp ? `<span class="dish-price-mrp">₹${d.mrp}</span>` : ''}
+              <span class="dish-price-now">₹${Math.ceil(d.price)}</span>
+              ${disc ? `<span class="dish-disc-pill">${disc}% off</span>` : ''}
+            </div>
+            <button class="dish-reserve-btn" ${soldOut ? 'disabled' : ''}
+                    onclick="${soldOut ? '' : `event.stopPropagation();location.href='/checkout/secret/${d.id}'`}">
+              ${soldOut ? 'Sold Out' : 'Reserve ↗'}
             </button>
           </div>
         </div>
@@ -1879,45 +2160,58 @@ function renderSecretDishCard(d, mode) {
     </div>`;
 }
 
-function cuisineEmoji(c) {
-  if (!c) return '🍽️';
-  const map = { kerala:'🥥', arabic:'🫕', mughlai:'🍗', continental:'🥗', dessert:'🍮', chinese:'🥢', italian:'🍝', seafood:'🐟', biryani:'🍛' };
-  return map[(c || '').toLowerCase()] || '🍽️';
-}
-
-function secretSkelList(n) {
-  return Array.from({length: n}, () => `
-    <div class="skel-secret-card">
-      <div class="skel-secret-img"></div>
-      <div class="skel-secret-body">
-        <div class="skel-line" style="width:35%;height:9px"></div>
-        <div class="skel-line" style="width:65%;height:17px"></div>
-        <div class="skel-line" style="width:45%;height:10px;margin-top:20px"></div>
+/* --- Tomorrow row HTML --- */
+function renderTomorrowRow(d) {
+  return `
+    <div class="tomorrow-row">
+      <div class="tomorrow-emoji">${cuisineEmoji(d.cuisine)}</div>
+      <div class="tomorrow-info">
+        <div class="tomorrow-name">${d.name}</div>
+        <div class="tomorrow-kitchen">${d.restaurant_name || ''}</div>
+        <div class="tomorrow-hint">🕕 Unlocks tomorrow evening</div>
       </div>
-    </div>`).join('');
+      <button class="tomorrow-notify-btn" onclick="handleNotify(this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notify
+      </button>
+    </div>`;
 }
 
-function secretEmpty(msg) {
-  return `<div class="secret-empty"><div style="font-size:2rem;margin-bottom:10px">🍃</div><div style="font-size:0.78rem;color:var(--ink-3)">${msg}</div></div>`;
-}
-function secretError() {
-  return `<div class="secret-empty"><div style="font-size:2rem;margin-bottom:10px">⚠️</div><div style="font-size:0.78rem;color:var(--ink-3)">Couldn't load — check your connection.</div></div>`;
-}
-
-function notifyMe(btn) {
-  btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Set!`;
+function handleNotify(btn) {
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Set!`;
   btn.classList.add('notified');
   btn.disabled = true;
   if (window.navigator.vibrate) window.navigator.vibrate(6);
 }
 
-/* Drag to close */
-let startY = 0;
-const sheet = document.querySelector('.secret-sheet');
-sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-sheet.addEventListener('touchend', e => {
-  if (e.changedTouches[0].clientY - startY > 80) closeSecretMenu();
-}, { passive: true });
+/* --- Helper templates --- */
+function skelDishList(n) {
+  return Array.from({length: n}, () => `
+    <div class="skel-dish">
+      <div class="skel-dish-img"></div>
+      <div class="skel-dish-body">
+        <div class="skel-line" style="width:35%;height:9px;margin-bottom:8px"></div>
+        <div class="skel-line" style="width:65%;height:16px;margin-bottom:6px"></div>
+        <div class="skel-line" style="width:45%;height:9px;margin-top:14px"></div>
+      </div>
+    </div>`).join('');
+}
+
+function emptyState(msg) {
+  return `<div class="sheet-empty">
+    <div class="sheet-empty-icon">🍃</div>
+    <div class="sheet-empty-title">Nothing here yet</div>
+    <div class="sheet-empty-sub">${msg}</div>
+  </div>`;
+}
+
+function errorState() {
+  return `<div class="sheet-empty">
+    <div class="sheet-empty-icon">⚠️</div>
+    <div class="sheet-empty-title">Couldn't load</div>
+    <div class="sheet-empty-sub">Check your connection and try again.</div>
+  </div>`;
+}
 </script>
 </body>
 </html>
