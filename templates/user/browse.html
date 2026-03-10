@@ -738,22 +738,22 @@ html.dark .bn-badge { border-color: var(--bg); }
   position: absolute;
   bottom: 0; left: 0; right: 0;
 
-  /* Exact height: viewport minus a small top safe zone */
-  height: calc(100dvh - 56px);
-  max-height: calc(100dvh - 56px);
+  /* True full screen — bottom nav is hidden when sheet is open */
+  height: 100dvh;
+  max-height: 100dvh;
 
   background: var(--white);
-  border-top: 1.5px solid var(--border);
+  border-top: none;
   border-radius: 26px 26px 0 0;
-  box-shadow: 0 -20px 60px rgba(26,25,22,0.18), 0 -1px 0 var(--border);
+  box-shadow: 0 -20px 60px rgba(26,25,22,0.18);
 
-  /* Stack: handle + header (fixed) + body (scrolls) + CTA bar */
+  /* Stack: handle + header (fixed) + body (scrolls) */
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* children manage their own scroll */
+  overflow: hidden;
 
-  /* Bottom: account for bottom nav exactly */
-  padding-bottom: var(--bnav-safe);
+  /* Safe area at bottom for notch phones, no extra nav padding */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 
   transform: translateY(100%);
   transition: transform 0.55s var(--spring);
