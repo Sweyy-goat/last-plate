@@ -6,6 +6,7 @@ auth_bp = Blueprint("auth", __name__)
 
 # ================= USER PAGES =================
 @auth_bp.route("/login")
+@limiter.limit("5 per minute")
 def user_login_page():
     return render_template("auth/user_login.html")
 
