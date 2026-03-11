@@ -112,6 +112,15 @@
       background: var(--accent); transform: translateY(-5px) scale(1.02);
       box-shadow: 0 20px 50px var(--accent-glow);
     }
+    select{
+  width:100%;
+  background: rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px 24px;
+  color:white;
+  font-size:16px;
+}
   </style>
 </head>
 
@@ -129,7 +138,15 @@
     <label>Dish Designation</label>
     <input id="name" placeholder="Name of the item" autocomplete="off">
   </div>
-
+<div class="field">
+  <label>Food Type</label>
+  <select id="food_type">
+    <option value="">Select Type</option>
+    <option value="veg">🟢 Veg</option>
+    <option value="egg">🟡 Egg</option>
+    <option value="nonveg">🔴 Non-Veg</option>
+  </select>
+</div>
   <div class="grid-row">
     <div class="field">
       <label>Market Price (₹)</label>
