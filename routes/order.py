@@ -5,6 +5,7 @@ import math
 import razorpay, os, random
 from utils.emailer import send_email
 import time
+from app import limiter
 
 order_bp = Blueprint("order", __name__)
 
@@ -37,6 +38,7 @@ def checkout(food_id):
 
 # ================= CREATE ORDER =================
 @order_bp.route("/api/create-order", methods=["POST"])
+@limiter.limit("10 per minute")
 def create_order():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
@@ -93,6 +95,7 @@ def create_order():
 
 # ================= VERIFY PAYMENT =================
 @order_bp.route("/api/verify-payment", methods=["POST"])
+@limiter.limit("20 per minute")
 def verify_payment():
     data = request.json
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
