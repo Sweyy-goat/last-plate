@@ -110,6 +110,9 @@ def add_food_page():
 # -----------------------------
 # ADD FOOD API
 # -----------------------------
+# -----------------------------
+# ADD FOOD API
+# -----------------------------
 @restaurant_bp.route("/api/add-food", methods=["POST"])
 def add_food():
     if not restaurant_required():
@@ -128,13 +131,20 @@ def add_food():
     if price <= 0 or quantity <= 0:
         return jsonify({"error": "Invalid price or quantity"}), 400
 
+    food_type = data.get("food_type")
+
+    if food_type not in ["veg", "egg", "nonveg"]:
+        return jsonify({"error": "Invalid food type"}), 400
+
     cur = mysql.connection.cursor()
 
     cur.execute("""
         INSERT INTO foods
         (restaurant_id, name, original_price, price,
-         available_quantity, pickup_start, pickup_end, is_active, created_at)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,1, CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+         available_quantity, pickup_start, pickup_end,
+         food_type, is_active, created_at)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,1,
+        CONVERT_TZ(NOW(), '+00:00', '+05:30'))
     """, (
         restaurant_id,
         data["name"],
@@ -142,12 +152,13 @@ def add_food():
         price,
         quantity,
         data["pickup_start"],
-        data["pickup_end"]
+        data["pickup_end"],
+        food_type
     ))
 
     mysql.connection.commit()
-    return jsonify({"success": True})
 
+    return jsonify({"success": True})
 
 # -----------------------------
 # GET MY FOODS
