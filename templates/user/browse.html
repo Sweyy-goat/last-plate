@@ -39,7 +39,6 @@
   --bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
 
-  /* Bottom nav height var — used everywhere */
   --bnav-h: 72px;
   --bnav-safe: calc(var(--bnav-h) + env(safe-area-inset-bottom));
 }
@@ -118,7 +117,6 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   transition: background 0.4s ease, color 0.4s ease;
-  /* Only pad for bottom nav — NO extra padding */
   padding-bottom: var(--bnav-safe);
 }
 
@@ -152,6 +150,113 @@ html.dark body::before { opacity: 0.06; }
   color: var(--ink-3); margin-bottom: 8px; letter-spacing: 0.01em;
 }
 .card-location svg { flex-shrink: 0; opacity: 0.7; }
+
+/* =====================
+   FOOD TYPE INDICATOR
+   Standard FSSAI-style labelling
+===================== */
+.food-type-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px 3px 5px;
+  border-radius: 6px;
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  width: fit-content; flex-shrink: 0;
+  margin-bottom: 14px;
+  transition: transform 0.2s var(--spring);
+}
+.food-card:hover .food-type-badge { transform: scale(1.04); }
+
+.ftype-symbol {
+  width: 13px; height: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; position: relative;
+}
+
+/* Veg — green square + green dot */
+.ftype-symbol.veg {
+  border: 1.5px solid #3A7528;
+  border-radius: 2px;
+}
+.ftype-symbol.veg::after {
+  content: '';
+  width: 6px; height: 6px;
+  background: #3A7528;
+  border-radius: 50%;
+}
+.food-type-badge.veg {
+  color: #3A7528;
+  background: rgba(58,117,40,0.07);
+  border-color: #3A7528;
+}
+
+/* Non-veg — brown square + brown triangle */
+.ftype-symbol.nonveg {
+  border: 1.5px solid #B84C1A;
+  border-radius: 2px;
+}
+.ftype-symbol.nonveg::after {
+  content: '';
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 7px solid #B84C1A;
+  margin-top: -1px;
+}
+.food-type-badge.nonveg {
+  color: #B84C1A;
+  background: rgba(184,76,26,0.07);
+  border-color: #B84C1A;
+}
+
+/* Egg — amber square + amber dot */
+.ftype-symbol.egg {
+  border: 1.5px solid #C08030;
+  border-radius: 2px;
+}
+.ftype-symbol.egg::after {
+  content: '';
+  width: 6px; height: 6px;
+  background: #C08030;
+  border-radius: 50%;
+}
+.food-type-badge.egg {
+  color: #C08030;
+  background: rgba(192,128,48,0.07);
+  border-color: #C08030;
+}
+
+html.dark .food-type-badge.veg    { background: rgba(58,117,40,0.15); }
+html.dark .food-type-badge.nonveg { background: rgba(184,76,26,0.15); }
+html.dark .food-type-badge.egg    { background: rgba(192,128,48,0.15); }
+
+/* Modal food type */
+.modal-food-type { margin-bottom: 16px; }
+
+/* Chef's secret sheet — smaller variant */
+.dish-food-type {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px 2px 4px;
+  border-radius: 5px;
+  font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  width: fit-content;
+}
+.dish-food-type .ftype-symbol { width: 11px; height: 11px; }
+.dish-food-type .ftype-symbol.veg::after   { width: 5px; height: 5px; }
+.dish-food-type .ftype-symbol.egg::after   { width: 5px; height: 5px; }
+.dish-food-type .ftype-symbol.nonveg::after {
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 6px solid #B84C1A;
+}
+.dish-food-type.veg    { color: #3A7528; background: rgba(58,117,40,0.07);   border-color: #3A7528; }
+.dish-food-type.nonveg { color: #B84C1A; background: rgba(184,76,26,0.07);  border-color: #B84C1A; }
+.dish-food-type.egg    { color: #C08030; background: rgba(192,128,48,0.07); border-color: #C08030; }
+html.dark .dish-food-type.veg    { background: rgba(58,117,40,0.15); }
+html.dark .dish-food-type.nonveg { background: rgba(184,76,26,0.15); }
+html.dark .dish-food-type.egg    { background: rgba(192,128,48,0.15); }
 
 /* =====================
    NAVBAR
@@ -427,7 +532,7 @@ html.dark .icon-btn .moon-icon { display: none; }
   font-family: 'Instrument Serif', serif;
   font-size: 1.45rem; font-weight: 400;
   letter-spacing: -0.015em; color: var(--ink);
-  line-height: 1.2; margin-bottom: 20px; transition: color 0.25s;
+  line-height: 1.2; margin-bottom: 10px; transition: color 0.25s;
 }
 .food-card:hover .card-name { color: var(--green); }
 .card-footer {
@@ -505,7 +610,8 @@ html.dark .card-reserve-btn { background: var(--border-2); color: var(--ink); }
 .modal-kicker { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 .modal-kicker::before { content: ''; width: 4px; height: 4px; background: var(--green); border-radius: 50%; animation: liveBlink 2.5s ease infinite; }
 .modal-title { font-family: 'Instrument Serif', serif; font-size: 2rem; font-weight: 400; letter-spacing: -0.025em; color: var(--ink); line-height: 1.1; margin-bottom: 8px; }
-.modal-restaurant { font-size: 0.78rem; color: var(--ink-3); font-weight: 500; margin-bottom: 22px; }
+.modal-restaurant { font-size: 0.78rem; color: var(--ink-3); font-weight: 500; margin-bottom: 12px; }
+.modal-food-type { margin-bottom: 16px; }
 .modal-desc-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 20px; font-size: 0.8rem; line-height: 1.75; color: var(--ink-2); margin-bottom: 26px; border-left: 3px solid var(--green-bd); }
 .modal-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .modal-mrp { font-size: 0.72rem; color: var(--ink-3); text-decoration: line-through; display: block; margin-bottom: 3px; }
@@ -563,7 +669,6 @@ html.dark .theme-icon-moon { display: none; }
 .toggle.on { background: var(--green); border-color: var(--green); }
 .toggle.on .toggle-thumb { transform: translateX(22px); background: #fff; box-shadow: 0 2px 8px rgba(58,117,40,0.3); }
 
-/* Colorblind picker */
 .drawer-section-title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; }
 .cb-picker-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
 .cb-chip {
@@ -582,7 +687,6 @@ html.dark .theme-icon-moon { display: none; }
 .cb-chip-name { font-size: 0.72rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
 .cb-chip-desc { font-size: 0.59rem; color: var(--ink-3); line-height: 1.35; }
 
-/* History */
 .history-item { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r-md); padding: 16px 18px; margin-bottom: 8px; transition: all 0.25s var(--spring); }
 .history-item:hover { border-color: var(--border-2); transform: translateX(4px); box-shadow: var(--shadow-xs); }
 .history-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
@@ -643,7 +747,7 @@ footer { border-top: 1px solid var(--border); padding: 48px 40px; max-width: 120
 }
 
 /* =====================
-   BOTTOM NAV — FIXED HEIGHT, NO OVERFLOW
+   BOTTOM NAV
 ===================== */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
@@ -652,11 +756,9 @@ footer { border-top: 1px solid var(--border); padding: 48px 40px; max-width: 120
   border-top: 1.5px solid var(--border);
   display: flex; align-items: stretch; z-index: 2000;
   backdrop-filter: blur(28px) saturate(1.5);
-  /* Use padding-bottom for safe area, don't change height */
   padding-bottom: env(safe-area-inset-bottom, 0px);
   box-shadow: 0 -4px 24px rgba(26,25,22,0.07), 0 -1px 0 var(--border);
   transition: transform 0.4s var(--spring);
-  /* Clip everything — no overflow, no bleed */
   overflow: hidden;
 }
 html.dark .bottom-nav { background: rgba(17,19,16,0.96); box-shadow: 0 -4px 24px rgba(0,0,0,0.35); }
@@ -667,7 +769,6 @@ html.dark .bottom-nav { background: rgba(17,19,16,0.96); box-shadow: 0 -4px 24px
   background: none; border: none; cursor: pointer;
   color: var(--ink-3); transition: color 0.3s var(--spring), background 0.3s;
   position: relative; text-decoration: none;
-  /* Prevent any overflow from children */
   overflow: hidden;
 }
 .bn-item + .bn-item::before { content: ''; position: absolute; left: 0; top: 18px; bottom: 18px; width: 1px; background: var(--border); }
@@ -687,7 +788,6 @@ html.dark .bottom-nav { background: rgba(17,19,16,0.96); box-shadow: 0 -4px 24px
   width: 26px; height: 26px;
   display: flex; align-items: center; justify-content: center;
   position: relative; transition: transform 0.3s var(--bounce);
-  /* Clip badge overflow */
   overflow: visible;
 }
 .bn-item:hover .bn-icon { transform: translateY(-2px); }
@@ -699,25 +799,17 @@ html.dark .bottom-nav { background: rgba(17,19,16,0.96); box-shadow: 0 -4px 24px
   background: var(--red); border-radius: 50%;
   border: 2px solid var(--bg);
   animation: urgentPulse 2.2s ease infinite;
-  /* Must not affect layout */
   pointer-events: none;
 }
 html.dark .bn-badge { border-color: var(--bg); }
 
 /* =====================
-   CHEF'S SECRET MENU SHEET — FULLY REBUILT
-   ============================================
-   KEY FIXES:
-   1. Drag-to-close: only fires if user STARTS at top of sheet AND drags DOWN
-      with no Y-scrolling intent — threshold raised, velocity checked.
-   2. Sheet bottom padding matches bottom nav height exactly — no white gap.
-   3. Proper flex layout so body scrolls independently.
+   CHEF'S SECRET MENU SHEET
 ===================== */
 .secret-sheet-overlay {
   position: fixed; inset: 0;
   z-index: 3000;
   pointer-events: none;
-  /* Isolate from page */
 }
 .secret-sheet-overlay.open { pointer-events: all; }
 
@@ -726,7 +818,6 @@ html.dark .bn-badge { border-color: var(--bg); }
   background: rgba(26,25,22,0);
   backdrop-filter: blur(0px);
   transition: background 0.45s var(--ease-out), backdrop-filter 0.45s var(--ease-out);
-  /* Cursor tap target */
   cursor: default;
 }
 .secret-sheet-overlay.open .secret-scrim {
@@ -737,24 +828,16 @@ html.dark .bn-badge { border-color: var(--bg); }
 .secret-sheet {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-
-  /* True full screen — bottom nav is hidden when sheet is open */
   height: 100dvh;
   max-height: 100dvh;
-
   background: var(--white);
   border-top: none;
   border-radius: 26px 26px 0 0;
   box-shadow: 0 -20px 60px rgba(26,25,22,0.18);
-
-  /* Stack: handle + header (fixed) + body (scrolls) */
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
-  /* Safe area at bottom for notch phones, no extra nav padding */
   padding-bottom: env(safe-area-inset-bottom, 0px);
-
   transform: translateY(100%);
   transition: transform 0.55s var(--spring);
   will-change: transform;
@@ -763,14 +846,13 @@ html.dark .bn-badge { border-color: var(--bg); }
   transform: translateY(0);
 }
 
-/* ---- DRAG HANDLE ZONE ---- */
 .sheet-drag-zone {
   flex-shrink: 0;
   padding: 12px 0 6px;
   background: var(--white);
   cursor: grab;
   user-select: none;
-  touch-action: none; /* We handle touch manually */
+  touch-action: none;
   position: relative;
 }
 .sheet-drag-zone:active { cursor: grabbing; }
@@ -787,7 +869,6 @@ html.dark .bn-badge { border-color: var(--bg); }
   width: 48px;
 }
 
-/* Drag ghost line below handle */
 .sheet-drag-zone::after {
   content: '';
   position: absolute;
@@ -796,12 +877,10 @@ html.dark .bn-badge { border-color: var(--bg); }
   background: linear-gradient(90deg, transparent, var(--border), transparent);
 }
 
-/* ---- FIXED HEADER ---- */
 .sheet-header {
   flex-shrink: 0;
   padding: 16px 22px 0;
   background: var(--white);
-  /* Subtle bottom shadow to separate from scroll body */
   position: relative;
 }
 .sheet-header::after {
@@ -813,7 +892,6 @@ html.dark .bn-badge { border-color: var(--bg); }
   pointer-events: none;
 }
 
-/* Identity row */
 .sheet-id-row {
   display: flex; align-items: flex-start; justify-content: space-between;
   margin-bottom: 14px; gap: 12px;
@@ -861,7 +939,6 @@ html.dark .sheet-exclusive-badge {
   transform: rotate(90deg) scale(1.1);
 }
 
-/* Stat strip */
 .sheet-stats-strip {
   display: flex; gap: 0; margin-bottom: 14px;
   background: var(--bg); border: 1.5px solid var(--border);
@@ -886,7 +963,6 @@ html.dark .sheet-exclusive-badge {
   margin-top: 2px; display: block;
 }
 
-/* Tabs */
 .sheet-tabs {
   display: flex; background: var(--bg-2); border: 1.5px solid var(--border);
   border-radius: 13px; padding: 3px; margin-bottom: 12px;
@@ -915,7 +991,6 @@ html.dark .sheet-tab.active { background: var(--bg); }
   background: var(--green); border-color: var(--green); color: #fff;
 }
 
-/* Search */
 .sheet-search-wrap {
   display: flex; align-items: center; gap: 9px;
   background: var(--bg); border: 1.5px solid var(--border);
@@ -943,28 +1018,23 @@ html.dark .sheet-tab.active { background: var(--bg); }
 }
 .sheet-search-clear:hover { color: var(--ink); background: var(--border); }
 
-/* ---- SCROLLABLE BODY ---- */
 .sheet-body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px 22px 20px;
-  /* Momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
-  /* Don't let scrolling propagate to page */
 }
 .sheet-body::-webkit-scrollbar { width: 3px; }
 .sheet-body::-webkit-scrollbar-track { background: transparent; }
 .sheet-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* Tab panels */
 .tab-panel { display: none; animation: riseIn 0.35s var(--spring) both; }
 .tab-panel.active { display: block; }
 
-/* Search results overlay */
 .sheet-search-results {
   display: none;
   padding-top: 4px;
@@ -992,7 +1062,6 @@ html.dark .sheet-tab.active { background: var(--bg); }
 .search-result-price { font-size: 0.9rem; font-weight: 700; color: var(--ink); flex-shrink: 0; }
 .search-no-results { padding: 32px 16px; text-align: center; font-size: 0.78rem; color: var(--ink-3); }
 
-/* Kitchen filter chips */
 .kitchen-chips-row {
   display: flex; gap: 7px; overflow-x: auto;
   scrollbar-width: none; padding-bottom: 12px; margin-bottom: 2px;
@@ -1012,7 +1081,6 @@ html.dark .sheet-tab.active { background: var(--bg); }
 .kitchen-chip.active .kitchen-chip-name { color: var(--green); }
 .kitchen-chip-count { font-size: 0.58rem; color: var(--ink-3); margin-top: 1px; display: block; }
 
-/* Section labels */
 .sheet-section-lbl {
   font-size: 0.59rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ink-3); margin: 14px 0 9px;
@@ -1020,7 +1088,6 @@ html.dark .sheet-tab.active { background: var(--bg); }
 }
 .sheet-section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* Exclusive notice banner */
 .exclusive-banner {
   display: flex; align-items: center; gap: 10px;
   padding: 11px 14px;
@@ -1040,7 +1107,6 @@ html.dark .exclusive-banner {
   flex-shrink: 0;
 }
 
-/* ---- DISH CARDS (Today — Exclusive) ---- */
 .dish-card {
   background: var(--bg); border: 1.5px solid var(--border);
   border-radius: 18px; overflow: hidden; margin-bottom: 9px;
@@ -1064,7 +1130,6 @@ html.dark .exclusive-banner {
   transition: transform 0.5s var(--spring); display: block;
 }
 .dish-card:hover .dish-card-img img { transform: scale(1.08); }
-/* Gradient fade into body */
 .dish-card-img::after {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(90deg, transparent 65%, var(--bg) 100%);
@@ -1082,7 +1147,7 @@ html.dark .exclusive-banner {
   background: var(--gold-bg); border: 1px solid rgba(166,112,37,0.18);
   border-radius: 5px; font-size: 0.57rem; font-weight: 700;
   letter-spacing: 0.07em; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 5px; width: fit-content;
+  color: var(--gold); width: fit-content;
 }
 .dish-name {
   font-family: 'Instrument Serif', serif;
@@ -1101,7 +1166,6 @@ html.dark .exclusive-banner {
   margin-bottom: 6px;
 }
 
-/* Stock bar */
 .dish-stock-row {
   display: flex; align-items: center; gap: 7px; margin-bottom: 7px;
 }
@@ -1137,7 +1201,6 @@ html.dark .exclusive-banner {
 .dish-reserve-btn:hover { background: var(--green-l); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(58,117,40,0.3); }
 .dish-reserve-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-/* ---- TOMORROW CARDS ---- */
 .tomorrow-banner {
   display: flex; align-items: center; gap: 13px;
   background: var(--bg-2); border: 1.5px solid var(--border);
@@ -1187,7 +1250,6 @@ html.dark .exclusive-banner {
 .tomorrow-notify-btn:hover { border-color: var(--green-bd); background: var(--green-bg); color: var(--green); transform: translateY(-2px); }
 .tomorrow-notify-btn.notified { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
 
-/* Skeleton cards */
 .skel-dish {
   display: flex; background: var(--white); border: 1.5px solid var(--border);
   border-radius: 18px; overflow: hidden; margin-bottom: 9px;
@@ -1199,7 +1261,6 @@ html.dark .exclusive-banner {
 }
 .skel-dish-body { flex: 1; padding: 14px 16px; }
 
-/* Empty/error states */
 .sheet-empty {
   padding: 40px 16px; text-align: center;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -1207,6 +1268,12 @@ html.dark .exclusive-banner {
 .sheet-empty-icon { font-size: 2rem; margin-bottom: 4px; }
 .sheet-empty-title { font-family: 'Instrument Serif', serif; font-size: 1.2rem; color: var(--ink-2); font-weight: 400; }
 .sheet-empty-sub { font-size: 0.74rem; color: var(--ink-3); line-height: 1.6; }
+
+/* dish tag row helper */
+.dish-tag-row {
+  display: flex; align-items: center; gap: 5px;
+  flex-wrap: wrap; margin-bottom: 3px;
+}
 </style>
 </head>
 <body>
@@ -1327,6 +1394,7 @@ html.dark .exclusive-banner {
       <div class="modal-kicker" id="modalKicker"></div>
       <h2 class="modal-title" id="modalTitle"></h2>
       <p class="modal-restaurant" id="modalRestaurant"></p>
+      <div class="modal-food-type" id="modalFoodType"></div>
       <div class="modal-desc-box">Rescue mission active. Perfectly good food waiting for a home — reserved for the mindful few.</div>
       <div class="modal-footer">
         <div class="modal-price-block">
@@ -1429,15 +1497,11 @@ html.dark .exclusive-banner {
   <div class="secret-scrim" id="secretScrim"></div>
 
   <div class="secret-sheet" id="secretSheet">
-
-    <!-- Drag zone — only this area triggers drag-to-close -->
     <div class="sheet-drag-zone" id="sheetDragZone">
       <div class="sheet-handle" id="sheetHandle"></div>
     </div>
 
-    <!-- Fixed header -->
     <div class="sheet-header">
-      <!-- Identity -->
       <div class="sheet-id-row">
         <div class="sheet-id-left">
           <div class="sheet-exclusive-badge">
@@ -1450,7 +1514,6 @@ html.dark .exclusive-banner {
         <button class="sheet-close-btn" id="secretCloseBtn">✕</button>
       </div>
 
-      <!-- Stats strip -->
       <div class="sheet-stats-strip">
         <div class="sheet-strip-stat">
           <span class="sheet-strip-num" id="statDishes">—</span>
@@ -1466,7 +1529,6 @@ html.dark .exclusive-banner {
         </div>
       </div>
 
-      <!-- Tabs -->
       <div class="sheet-tabs">
         <button class="sheet-tab active" data-tab="panelToday">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1480,28 +1542,20 @@ html.dark .exclusive-banner {
         </button>
       </div>
 
-      <!-- Search -->
       <div class="sheet-search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="sheet-search-input" id="secretSearch" type="text" placeholder="Search dish or kitchen…" autocomplete="off">
         <button class="sheet-search-clear" id="secretClearBtn">✕</button>
       </div>
-    </div><!-- /sheet-header -->
+    </div>
 
-    <!-- Scrollable body -->
     <div class="sheet-body" id="sheetBody">
-
-      <!-- Search results (overlaid when searching) -->
       <div class="sheet-search-results" id="searchResults"></div>
-
-      <!-- Tab panels -->
       <div class="tab-panel active" id="panelToday"></div>
       <div class="tab-panel" id="panelTomorrow"></div>
-
-    </div><!-- /sheet-body -->
-
-  </div><!-- /secret-sheet -->
-</div><!-- /overlay -->
+    </div>
+  </div>
+</div>
 
 <script>
 /* ================================================================
@@ -1589,6 +1643,27 @@ function cuisineEmoji(c) {
 }
 
 /* ================================================================
+   FOOD TYPE BADGE — FSSAI standard symbols
+   Handles: 'veg', 'non-veg', 'nonveg', 'egg'
+   size: 'normal' (browse cards / modal) | 'small' (chef's sheet)
+================================================================ */
+function getFoodTypeBadge(type, size) {
+  if (!type) return '';
+  const t = type.toString().toLowerCase().trim();
+
+  let cls, label;
+  if (t === 'veg')                          { cls = 'veg';    label = 'Veg'; }
+  else if (t === 'egg')                     { cls = 'egg';    label = 'Egg'; }
+  else if (t.includes('non') || t === 'nonveg') { cls = 'nonveg'; label = 'Non-Veg'; }
+  else return '';
+
+  if (size === 'small') {
+    return `<span class="dish-food-type ${cls}"><span class="ftype-symbol ${cls}"></span>${label}</span>`;
+  }
+  return `<span class="food-type-badge ${cls}"><span class="ftype-symbol ${cls}"></span>${label}</span>`;
+}
+
+/* ================================================================
    BROWSE — STATE & RENDER
 ================================================================ */
 let allFoods = [];
@@ -1632,6 +1707,7 @@ function render(foods) {
           ${f.restaurant_short_address}
         </div>` : ''}
         <div class="card-name">${f.name}</div>
+        ${getFoodTypeBadge(f.food_type)}
         <div class="card-footer">
           <div class="price-group">
             ${f.mrp ? `<span class="price-mrp">₹${f.mrp}</span>` : ''}
@@ -1696,6 +1772,7 @@ function openModal(raw) {
   document.getElementById('modalMrp').textContent = f.mrp ? `MRP ₹${f.mrp}` : '';
   document.getElementById('modalPrice').textContent = '₹' + Math.ceil(f.price);
   document.getElementById('modalCta').href = `/checkout/${f.id}`;
+  document.getElementById('modalFoodType').innerHTML = getFoodTypeBadge(f.food_type);
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   if (window.navigator.vibrate) window.navigator.vibrate(8);
@@ -1748,15 +1825,6 @@ document.addEventListener('keydown', e => {
 
 /* ================================================================
    CHEF'S SECRET MENU
-   ================================================================
-   Architecture:
-   - Sheet open/close with proper body lock
-   - Bottom nav hides on open, restores on close
-   - Drag-to-close: ONLY from drag-zone, threshold 100px, velocity check,
-     ignores if body is scrolled, cancels on horizontal swipe
-   - Body scrolls independently, doesn't trigger close
-   - Tabs switch without re-fetching
-   - Kitchen chips filter dishes in-panel
 ================================================================ */
 const secretOverlay = document.getElementById('secretSheetOverlay');
 const secretSheet   = document.getElementById('secretSheet');
@@ -1766,10 +1834,9 @@ const bottomNav     = document.getElementById('bottomNav');
 
 let secretLoaded    = false;
 let secretRestaurants = [];
-const dishCache     = {}; // rid → [dishes]
+const dishCache     = {};
 let activeTab       = 'panelToday';
 
-/* --- Open / Close --- */
 function openSecretMenu() {
   secretOverlay.classList.add('open');
   bottomNav.style.transform = 'translateY(100%)';
@@ -1789,7 +1856,6 @@ function closeSecretMenu() {
 document.getElementById('secretCloseBtn').addEventListener('click', closeSecretMenu);
 secretScrim.addEventListener('click', closeSecretMenu);
 
-/* --- Tab switching --- */
 secretSheet.querySelectorAll('.sheet-tab').forEach(tab => {
   tab.addEventListener('click', function() {
     const target = this.dataset.tab;
@@ -1798,56 +1864,28 @@ secretSheet.querySelectorAll('.sheet-tab').forEach(tab => {
     this.classList.add('active');
     document.getElementById(target).classList.add('active');
     activeTab = target;
-    // Hide search results on tab switch
     clearSearch();
   });
 });
 
-/* --- Drag-to-close (HANDLE ZONE ONLY) ---
-   Rules:
-   1. Touch must START on the drag zone
-   2. Must drag downward by > 100px
-   3. Must not be primarily a horizontal swipe
-   4. Body scroll position must be 0 (or user hasn't scrolled body)
-   5. Velocity check: fast swipe = lower threshold
-*/
+/* Drag-to-close */
 const dragZone = document.getElementById('sheetDragZone');
-
-let drag = {
-  active:   false,
-  startY:   0,
-  startX:   0,
-  lastY:    0,
-  startTime:0,
-  moved:    false,
-};
+let drag = { active: false, startY: 0, startX: 0, lastY: 0, startTime: 0, moved: false };
 
 dragZone.addEventListener('touchstart', e => {
   const t = e.touches[0];
-  drag.active    = true;
-  drag.startY    = t.clientY;
-  drag.startX    = t.clientX;
-  drag.lastY     = t.clientY;
-  drag.startTime = Date.now();
-  drag.moved     = false;
+  drag.active = true; drag.startY = t.clientY; drag.startX = t.clientX;
+  drag.lastY = t.clientY; drag.startTime = Date.now(); drag.moved = false;
 }, { passive: true });
 
 dragZone.addEventListener('touchmove', e => {
   if (!drag.active) return;
-  const t      = e.touches[0];
+  const t = e.touches[0];
   const deltaY = t.clientY - drag.startY;
   const deltaX = Math.abs(t.clientX - drag.startX);
-
-  // If horizontal movement > vertical, cancel drag
   if (deltaX > Math.abs(deltaY) + 10) { drag.active = false; return; }
-
-  // Only pull downward
   if (deltaY < 0) { drag.active = false; return; }
-
-  drag.moved = true;
-  drag.lastY = t.clientY;
-
-  // Visual rubber-band feedback (damped)
+  drag.moved = true; drag.lastY = t.clientY;
   const damped = Math.min(deltaY * 0.45, 80);
   secretSheet.style.transform = `translateY(${damped}px)`;
   secretSheet.style.transition = 'none';
@@ -1855,124 +1893,88 @@ dragZone.addEventListener('touchmove', e => {
 
 dragZone.addEventListener('touchend', e => {
   if (!drag.active || !drag.moved) {
-    secretSheet.style.transform = '';
-    secretSheet.style.transition = '';
-    drag.active = false;
-    return;
+    secretSheet.style.transform = ''; secretSheet.style.transition = ''; drag.active = false; return;
   }
-
   const elapsed = Date.now() - drag.startTime;
   const deltaY  = drag.lastY - drag.startY;
-  const velocity = deltaY / elapsed; // px/ms
-
-  // Reset sheet position with spring
-  secretSheet.style.transform = '';
-  secretSheet.style.transition = '';
-
-  // Close if dragged far enough OR fast flick
-  const THRESHOLD = 90;  // px
-  const VELOCITY  = 0.55; // px/ms
-  if (deltaY > THRESHOLD || velocity > VELOCITY) {
-    closeSecretMenu();
-  }
-
+  const velocity = deltaY / elapsed;
+  secretSheet.style.transform = ''; secretSheet.style.transition = '';
+  if (deltaY > 90 || velocity > 0.55) closeSecretMenu();
   drag.active = false;
 }, { passive: true });
 
-/* Also prevent drag from firing on body scroll */
-sheetBody.addEventListener('touchstart', e => {
-  // Mark that a body scroll touch has started — drag zone ignores these
-  drag.active = false;
-}, { passive: true });
+sheetBody.addEventListener('touchstart', () => { drag.active = false; }, { passive: true });
 
-/* --- Search --- */
+/* Search */
 const searchInput = document.getElementById('secretSearch');
 const clearBtn    = document.getElementById('secretClearBtn');
 const searchPanel = document.getElementById('searchResults');
 
-function getAllCachedDishes() {
-  return Object.values(dishCache).flat();
-}
+function getAllCachedDishes() { return Object.values(dishCache).flat(); }
 
 function runSearch(q) {
   q = q.trim().toLowerCase();
   clearBtn.style.display = q ? 'block' : 'none';
-
   if (!q) {
-    searchPanel.classList.remove('visible');
-    searchPanel.innerHTML = '';
+    searchPanel.classList.remove('visible'); searchPanel.innerHTML = '';
     document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
     return;
   }
-
-  // Hide tab panels while searching
   document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
   searchPanel.classList.add('visible');
-
   const results = getAllCachedDishes().filter(d =>
     (d.name || '').toLowerCase().includes(q) ||
     (d.restaurant_name || '').toLowerCase().includes(q) ||
     (d.cuisine || '').toLowerCase().includes(q)
   );
-
   if (!results.length) {
     searchPanel.innerHTML = `<div class="search-no-results">🍃 No dishes found for "<strong>${q}</strong>"</div>`;
     return;
   }
-
   searchPanel.innerHTML = results.map(d => `
     <a class="search-result-item" href="/checkout/secret/${d.id}">
       <img class="search-result-img" src="${d.img || getFoodImage(d.name)}"
            onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=70'" loading="lazy">
       <div style="flex:1;min-width:0">
         <div class="search-result-name">${d.name}</div>
-        <div class="search-result-meta">${d.restaurant_name || ''}${d.cuisine ? ' · ' + d.cuisine : ''}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+          <span class="search-result-meta">${d.restaurant_name || ''}${d.cuisine ? ' · ' + d.cuisine : ''}</span>
+          ${getFoodTypeBadge(d.food_type, 'small')}
+        </div>
       </div>
       <div class="search-result-price">₹${Math.ceil(d.price)}</div>
     </a>
   `).join('');
 }
 
-function clearSearch() {
-  searchInput.value = '';
-  runSearch('');
-}
+function clearSearch() { searchInput.value = ''; runSearch(''); }
 
 searchInput.addEventListener('input', () => runSearch(searchInput.value));
 clearBtn.addEventListener('click', () => { clearSearch(); searchInput.focus(); });
 
-/* --- Load restaurants --- */
+/* Load restaurants */
 async function loadSecretRestaurants() {
   secretLoaded = true;
-
   document.getElementById('panelToday').innerHTML    = skelDishList(3);
   document.getElementById('panelTomorrow').innerHTML = skelDishList(2);
-
   try {
     const res  = await fetch('/api/secret-menu/restaurants');
     const data = await res.json();
     secretRestaurants = data.restaurants || [];
-
     const totalDishes = secretRestaurants.reduce((s, r) => s + (r.dish_count || 0), 0);
     document.getElementById('statDishes').textContent   = totalDishes || '0';
     document.getElementById('statKitchens').textContent = secretRestaurants.length || '0';
     document.getElementById('statDiscount').textContent = totalDishes ? '35%+' : '—';
     document.getElementById('countToday').textContent    = totalDishes || '0';
     document.getElementById('countTomorrow').textContent = secretRestaurants.length || '0';
-
     if (!secretRestaurants.length) {
       document.getElementById('panelToday').innerHTML    = emptyState('No exclusive dishes tonight.');
       document.getElementById('panelTomorrow').innerHTML = emptyState('Nothing coming up yet.');
       return;
     }
-
-    // Prefetch all dishes
     prefetchAll(secretRestaurants);
-
-    // Render both panels
     renderTodayPanel(secretRestaurants);
     renderTomorrowPanel(secretRestaurants);
-
   } catch(err) {
     console.error(err);
     document.getElementById('panelToday').innerHTML    = errorState();
@@ -1991,11 +1993,8 @@ async function prefetchAll(restaurants) {
   }));
 }
 
-/* --- Render today panel --- */
 function renderTodayPanel(restaurants) {
   const panel = document.getElementById('panelToday');
-
-  // Exclusive banner
   const banner = `
     <div class="exclusive-banner">
       <div class="exclusive-banner-icon">
@@ -2003,8 +2002,6 @@ function renderTodayPanel(restaurants) {
       </div>
       Only visible here — hidden from main browse feed
     </div>`;
-
-  // Kitchen chips
   const chips = `
     <div class="sheet-section-lbl">Kitchens</div>
     <div class="kitchen-chips-row" id="kitchenChipsToday">
@@ -2016,23 +2013,15 @@ function renderTodayPanel(restaurants) {
           <span class="kitchen-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
         </button>`).join('')}
     </div>`;
-
   const dishesContainer = `
     <div class="sheet-section-lbl">Dishes</div>
     <div id="dishesToday">${skelDishList(2)}</div>`;
-
   panel.innerHTML = banner + chips + dishesContainer;
-
-  // Auto-load first kitchen
-  if (restaurants[0]) {
-    loadKitchenDishes('today', restaurants[0].restaurant_id);
-  }
+  if (restaurants[0]) loadKitchenDishes('today', restaurants[0].restaurant_id);
 }
 
-/* --- Render tomorrow panel --- */
 function renderTomorrowPanel(restaurants) {
   const panel = document.getElementById('panelTomorrow');
-
   const banner = `
     <div class="tomorrow-banner">
       <div class="tomorrow-banner-icon">🌙</div>
@@ -2041,7 +2030,6 @@ function renderTomorrowPanel(restaurants) {
         <div class="tomorrow-banner-sub">Check back after 5 PM to see them unlock.</div>
       </div>
     </div>`;
-
   const chips = `
     <div class="sheet-section-lbl">Kitchens</div>
     <div class="kitchen-chips-row" id="kitchenChipsTomorrow">
@@ -2053,19 +2041,13 @@ function renderTomorrowPanel(restaurants) {
           <span class="kitchen-chip-count">${r.dish_count} dish${r.dish_count !== 1 ? 'es' : ''}</span>
         </button>`).join('')}
     </div>`;
-
   const dishesContainer = `
     <div class="sheet-section-lbl">Coming Tomorrow</div>
     <div id="dishesTomorrow">${skelDishList(2)}</div>`;
-
   panel.innerHTML = banner + chips + dishesContainer;
-
-  if (restaurants[0]) {
-    loadKitchenDishes('tomorrow', restaurants[0].restaurant_id);
-  }
+  if (restaurants[0]) loadKitchenDishes('tomorrow', restaurants[0].restaurant_id);
 }
 
-/* --- Select kitchen chip --- */
 function selectKitchen(mode, rid, chipEl) {
   const chipsRow = document.getElementById(`kitchenChips${mode === 'today' ? 'Today' : 'Tomorrow'}`);
   if (chipsRow) {
@@ -2075,47 +2057,31 @@ function selectKitchen(mode, rid, chipEl) {
   loadKitchenDishes(mode, rid);
 }
 
-/* --- Load dishes for a kitchen --- */
 async function loadKitchenDishes(mode, rid) {
   const containerId = mode === 'today' ? 'dishesToday' : 'dishesTomorrow';
   const container   = document.getElementById(containerId);
   if (!container) return;
-
   container.innerHTML = skelDishList(2);
-
-  // Use cache if available
-  if (dishCache[rid]) {
-    renderDishes(container, dishCache[rid], mode);
-    return;
-  }
-
+  if (dishCache[rid]) { renderDishes(container, dishCache[rid], mode); return; }
   try {
     const res  = await fetch(`/api/secret-menu/${rid}`);
     const data = await res.json();
     const dishes = (data.dishes || []).map(d => ({
-      ...d,
-      restaurant_name: secretRestaurants.find(r => r.restaurant_id === rid)?.restaurant_name || ''
+      ...d, restaurant_name: secretRestaurants.find(r => r.restaurant_id === rid)?.restaurant_name || ''
     }));
     dishCache[rid] = dishes;
     renderDishes(container, dishes, mode);
-  } catch {
-    container.innerHTML = errorState();
-  }
+  } catch { container.innerHTML = errorState(); }
 }
 
 function renderDishes(container, dishes, mode) {
-  if (!dishes.length) {
-    container.innerHTML = emptyState('No dishes from this kitchen right now.');
-    return;
-  }
-  if (mode === 'tomorrow') {
-    container.innerHTML = dishes.map(d => renderTomorrowRow(d)).join('');
-  } else {
-    container.innerHTML = dishes.map(d => renderDishCard(d)).join('');
-  }
+  if (!dishes.length) { container.innerHTML = emptyState('No dishes from this kitchen right now.'); return; }
+  container.innerHTML = mode === 'tomorrow'
+    ? dishes.map(d => renderTomorrowRow(d)).join('')
+    : dishes.map(d => renderDishCard(d)).join('');
 }
 
-/* --- Dish card HTML (today / exclusive) --- */
+/* Dish card — Chef's Secret (with food type badge) */
 function renderDishCard(d) {
   const img  = d.img || getFoodImage(d.name);
   const disc = d.mrp && d.mrp > d.price ? Math.round(((d.mrp - d.price) / d.mrp) * 100) : null;
@@ -2132,7 +2098,10 @@ function renderDishCard(d) {
       </div>
       <div class="dish-card-body">
         <div>
-          ${d.cuisine ? `<div class="dish-cuisine-tag">${cuisineEmoji(d.cuisine)} ${d.cuisine}</div>` : ''}
+          <div class="dish-tag-row">
+            ${d.cuisine ? `<div class="dish-cuisine-tag">${cuisineEmoji(d.cuisine)} ${d.cuisine}</div>` : ''}
+            ${getFoodTypeBadge(d.food_type, 'small')}
+          </div>
           <div class="dish-name">${d.name}</div>
           <div class="dish-kitchen">${d.restaurant_name}${d.stock != null ? ' · ' + d.stock + ' left' : ''}</div>
           ${d.description ? `<div class="dish-desc">${d.description}</div>` : ''}
@@ -2160,14 +2129,16 @@ function renderDishCard(d) {
     </div>`;
 }
 
-/* --- Tomorrow row HTML --- */
 function renderTomorrowRow(d) {
   return `
     <div class="tomorrow-row">
       <div class="tomorrow-emoji">${cuisineEmoji(d.cuisine)}</div>
       <div class="tomorrow-info">
         <div class="tomorrow-name">${d.name}</div>
-        <div class="tomorrow-kitchen">${d.restaurant_name || ''}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+          <span class="tomorrow-kitchen">${d.restaurant_name || ''}</span>
+          ${getFoodTypeBadge(d.food_type, 'small')}
+        </div>
         <div class="tomorrow-hint">🕕 Unlocks tomorrow evening</div>
       </div>
       <button class="tomorrow-notify-btn" onclick="handleNotify(this)">
@@ -2184,7 +2155,6 @@ function handleNotify(btn) {
   if (window.navigator.vibrate) window.navigator.vibrate(6);
 }
 
-/* --- Helper templates --- */
 function skelDishList(n) {
   return Array.from({length: n}, () => `
     <div class="skel-dish">
