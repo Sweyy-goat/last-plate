@@ -32,7 +32,7 @@ def food_list():
     # UPDATED QUERY: Added f.original_price to the SELECT list
     query = """
     SELECT 
-        f.id, f.name, f.original_price, f.price, f.available_quantity,
+        f.id, f.name, f.original_price, f.price, f.available_quantity,f.food_type,
         f.pickup_start, f.pickup_end,
         r.name AS restaurant_name,
         r.address AS restaurant_address,
@@ -87,6 +87,7 @@ def food_list():
         foods.append({
             "id": f["id"],
             "name": f["name"],
+            "food_type": f["food_type"],
             "price": platform_selling_price, # Actual Price
             "mrp": display_mrp,              # Strike-through Price
             "available_quantity": f["available_quantity"],
