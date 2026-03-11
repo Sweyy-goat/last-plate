@@ -44,7 +44,9 @@ app.register_blueprint(savings_bp)
 from routes.secret import secret_bp
 app.register_blueprint(secret_bp)
 
-
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return render_template("429.html"), 429
 
 
 @app.route("/how")
