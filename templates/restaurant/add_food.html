@@ -535,7 +535,11 @@
 
       <div class="field">
         <label>Food Type</label>
-        <select id="food_type"></select>
+        <select id="food_type">
+        <option value="veg">Veg</option>
+        <option value="egg">Egg</option>
+        <option value="nonveg">Non-Veg</option>
+      </select>
         <div class="type-selector">
           <button class="type-btn veg"    onclick="setType('veg')"    id="btn-veg">
             <div class="dot"></div> Veg
@@ -652,6 +656,9 @@
       });
       invalid = true;
     }
+
+    // Sync selectedType into hidden select so addFood() can read it
+    document.getElementById('food_type').value = selectedType;
 
     if (invalid) {
       haptic('error');
