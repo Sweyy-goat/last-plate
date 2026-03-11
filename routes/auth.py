@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, session, render_template, redirect
 from utils.db import mysql
 from utils.security import hash_password, verify_password
+from app import limiter
 
 auth_bp = Blueprint("auth", __name__)
 
