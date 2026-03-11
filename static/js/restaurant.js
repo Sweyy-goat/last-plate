@@ -13,17 +13,23 @@ window.addFood = function () {
       price: document.getElementById("price").value,
       quantity: document.getElementById("quantity").value,
       pickup_start: document.getElementById("pickup_start").value,
-      pickup_end: document.getElementById("pickup_end").value
+      pickup_end: document.getElementById("pickup_end").value,
+      food_type: document.getElementById("food_type").value   // ✅ NEW
     })
   })
   .then(res => res.json())
   .then(data => {
     alert("Response received");
+
     if (data.success) {
       alert("Food added successfully");
       window.location.href = "/restaurant/dashboard";
     } else {
-      alert("Backend error");
+      alert(data.error || "Backend error");
     }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Network error");
   });
 };
