@@ -119,7 +119,225 @@ body {
   transition: background 0.4s ease, color 0.4s ease;
   padding-bottom: var(--bnav-safe);
 }
-
+.filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+}
+ 
+/* Active-filters summary pill row */
+.active-filters-row {
+  display: flex; align-items: center; gap: 6px;
+  flex-wrap: wrap; overflow: hidden;
+  max-height: 0; opacity: 0;
+  transition: max-height 0.4s var(--spring), opacity 0.3s, margin 0.3s;
+  margin: 0;
+}
+.active-filters-row.has-filters {
+  max-height: 80px; opacity: 1; margin-top: 8px;
+}
+.af-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 100px;
+  background: var(--green-bg); border: 1px solid var(--green-bd);
+  font-size: 0.64rem; font-weight: 700; color: var(--green);
+  letter-spacing: 0.03em; white-space: nowrap;
+  animation: pillIn 0.25s var(--spring) both;
+}
+@keyframes pillIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: none; }
+}
+.af-pill-remove {
+  background: none; border: none; cursor: pointer; color: var(--green);
+  padding: 0; font-size: 0.75rem; line-height: 1;
+  display: flex; align-items: center; opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.af-pill-remove:hover { opacity: 1; transform: scale(1.2); }
+.af-clear-all {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.05em;
+  color: var(--ink-3); text-decoration: underline;
+  transition: color 0.2s; padding: 0;
+}
+.af-clear-all:hover { color: var(--red); }
+ 
+/* Filter trigger button */
+.filter-trigger {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 12px 18px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); font-size: 0.78rem; font-weight: 700;
+  color: var(--ink-2); cursor: pointer; white-space: nowrap;
+  transition: all 0.3s var(--spring); box-shadow: var(--shadow-xs);
+  position: relative; letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.filter-trigger:hover { border-color: var(--border-2); color: var(--ink); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.filter-trigger.active { background: var(--green); border-color: var(--green); color: #fff; box-shadow: var(--shadow-green); }
+.filter-trigger .ft-icon { transition: transform 0.35s var(--spring); }
+.filter-trigger.active .ft-icon { transform: rotate(180deg); }
+.filter-count-badge {
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: rgba(255,255,255,0.3); border-radius: 100px;
+  font-size: 0.58rem; font-weight: 800;
+  display: none; align-items: center; justify-content: center;
+}
+.filter-trigger.active .filter-count-badge { display: flex; }
+ 
+/* Sort select */
+.sort-select-wrap {
+  position: relative; flex-shrink: 0;
+}
+.sort-select {
+  appearance: none; -webkit-appearance: none;
+  padding: 12px 36px 12px 16px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); font-family: 'Sora', sans-serif;
+  font-size: 0.78rem; font-weight: 700; color: var(--ink-2);
+  cursor: pointer; box-shadow: var(--shadow-xs);
+  transition: border-color 0.25s, box-shadow 0.3s var(--spring), color 0.2s;
+}
+.sort-select:hover { border-color: var(--border-2); color: var(--ink); }
+.sort-select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px rgba(58,117,40,0.1); }
+.sort-select-arrow {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%); pointer-events: none;
+  color: var(--ink-3);
+}
+ 
+/* Filter panel dropdown */
+.filter-panel {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); padding: 28px 28px 24px;
+  box-shadow: var(--shadow-lg);
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.5s var(--spring), opacity 0.35s ease, padding 0.4s var(--spring);
+  padding-top: 0; padding-bottom: 0;
+}
+.filter-panel.open {
+  max-height: 700px; opacity: 1;
+  padding-top: 28px; padding-bottom: 24px;
+}
+ 
+.fp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px 32px;
+}
+ 
+.fp-section { display: flex; flex-direction: column; gap: 10px; }
+.fp-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.fp-label-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+ 
+/* Toggle chips */
+.fp-toggle-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.fp-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: 100px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  color: var(--ink-2); letter-spacing: 0.02em;
+  transition: all 0.25s var(--spring); user-select: none;
+  white-space: nowrap;
+}
+.fp-chip:hover { border-color: var(--border-2); color: var(--ink); transform: translateY(-1px); }
+.fp-chip.on { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+ 
+/* Veg/non-veg/egg specific colors on active */
+.fp-chip[data-diet="veg"].on   { background: rgba(58,117,40,0.1);  border-color: #3A7528; color: #3A7528; }
+.fp-chip[data-diet="nonveg"].on{ background: rgba(184,76,26,0.1);  border-color: #B84C1A; color: #B84C1A; }
+.fp-chip[data-diet="egg"].on   { background: rgba(192,128,48,0.1); border-color: #C08030; color: #C08030; }
+ 
+/* Range slider */
+.fp-range-wrap { display: flex; flex-direction: column; gap: 8px; }
+.fp-range-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--ink-3); font-weight: 500; }
+.fp-range-value { color: var(--ink); font-weight: 700; }
+.fp-range { width: 100%; accent-color: var(--green); height: 4px; }
+.fp-range::-webkit-slider-thumb { background: var(--green); }
+ 
+/* Dual range (price) */
+.fp-dual-range { position: relative; height: 20px; }
+.fp-dual-range input[type=range] {
+  position: absolute; width: 100%; pointer-events: none;
+  -webkit-appearance: none; appearance: none;
+  background: transparent; height: 4px; top: 50%;
+  transform: translateY(-50%);
+  accent-color: var(--green);
+}
+.fp-dual-range input[type=range]::-webkit-slider-thumb { pointer-events: all; }
+.fp-dual-range-track {
+  position: absolute; height: 4px; border-radius: 2px;
+  background: var(--border); width: 100%; top: 50%;
+  transform: translateY(-50%);
+}
+.fp-dual-range-fill {
+  position: absolute; height: 4px; border-radius: 2px;
+  background: var(--green); top: 50%;
+  transform: translateY(-50%);
+}
+ 
+/* Urgency toggle */
+.fp-radio-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.fp-radio-btn {
+  padding: 7px 13px; border-radius: 100px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  color: var(--ink-2); transition: all 0.25s var(--spring);
+  user-select: none; white-space: nowrap;
+}
+.fp-radio-btn:hover { border-color: var(--border-2); }
+.fp-radio-btn.on { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+.fp-radio-btn[data-urgency="urgent"].on { background: rgba(200,57,26,0.08); border-color: rgba(200,57,26,0.4); color: var(--red); }
+ 
+/* Divider */
+.fp-divider {
+  height: 1px; background: var(--border); margin: 20px 0 4px;
+  grid-column: 1 / -1;
+}
+ 
+/* Footer actions */
+.fp-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border);
+}
+.fp-apply-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 24px; background: var(--green); color: #fff;
+  border: none; border-radius: var(--r-md);
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
+  cursor: pointer; transition: all 0.3s var(--spring);
+  font-family: 'Sora', sans-serif;
+}
+.fp-apply-btn:hover { background: var(--green-l); transform: translateY(-2px); box-shadow: var(--shadow-green); }
+.fp-reset-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+  color: var(--ink-3); transition: color 0.2s; text-decoration: underline;
+  font-family: 'Sora', sans-serif;
+}
+.fp-reset-btn:hover { color: var(--red); }
+ 
+/* Results counter inline */
+.fp-result-hint {
+  font-size: 0.68rem; color: var(--ink-3); font-weight: 500;
+  transition: color 0.2s;
+}
+.fp-result-hint.updated { color: var(--green); }
+ 
+@media (max-width: 860px) {
+  .fp-grid { grid-template-columns: 1fr 1fr; gap: 20px 20px; }
+  .filter-panel { padding: 20px 18px 18px; }
+  .filter-panel.open { padding: 20px 18px 18px; }
+}
+@media (max-width: 540px) {
+  .fp-grid { grid-template-columns: 1fr; }
+  .filter-bar { gap: 8px; }
+}
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; }
 input { font-family: inherit; }
@@ -1317,17 +1535,148 @@ html.dark .exclusive-banner {
     </div>
   </header>
 
-  <div class="controls">
-    <div class="search-row">
-      <div class="search-box">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="foodSearch" placeholder="Search dishes or kitchens…" autocomplete="off">
-      </div>
-    </div>
-    <div class="filter-scroll" id="locationRow">
-      <div class="chip active" id="resetChip">All Kitchens</div>
+<div class="controls" id="controlsBlock">
+  <!-- Search row -->
+  <div class="search-row">
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="foodSearch" placeholder="Search dishes or kitchens…" autocomplete="off">
     </div>
   </div>
+ 
+  <!-- Filter bar -->
+  <div class="filter-bar">
+ 
+    <!-- Kitchen location chips -->
+    <div class="filter-scroll" id="locationRow" style="flex:1;min-width:0">
+      <div class="chip active" id="resetChip">All Kitchens</div>
+    </div>
+ 
+    <!-- Sort -->
+    <div class="sort-select-wrap">
+      <select class="sort-select" id="sortSelect" aria-label="Sort plates">
+        <option value="default">Sort: Default</option>
+        <option value="price_asc">Price: Low → High</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="discount">Best Discount</option>
+        <option value="time_asc">Ending Soonest</option>
+        <option value="qty_desc">Most Available</option>
+      </select>
+      <svg class="sort-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+ 
+    <!-- Filter trigger -->
+    <button class="filter-trigger" id="filterTrigger" aria-expanded="false" aria-controls="filterPanel">
+      <svg class="ft-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filters
+      <span class="filter-count-badge" id="filterCountBadge">0</span>
+    </button>
+  </div>
+ 
+  <!-- Active filter pills -->
+  <div class="active-filters-row" id="activeFiltersRow">
+    <!-- Pills injected by JS -->
+  </div>
+ 
+  <!-- Filter panel (collapsible) -->
+  <div class="filter-panel" id="filterPanel" role="region" aria-label="Advanced filters">
+    <div class="fp-grid">
+ 
+      <!-- DIET TYPE -->
+      <div class="fp-section">
+        <div class="fp-label"><span class="fp-label-dot"></span>Diet Type</div>
+        <div class="fp-toggle-row">
+          <button class="fp-chip" data-diet="veg"    onclick="toggleDiet('veg',this)">
+            <span style="width:9px;height:9px;border-radius:50%;background:#3A7528;display:inline-block;flex-shrink:0"></span>Veg
+          </button>
+          <button class="fp-chip" data-diet="nonveg" onclick="toggleDiet('nonveg',this)">
+            <span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:8px solid #B84C1A;display:inline-block;flex-shrink:0"></span>Non-Veg
+          </button>
+          <button class="fp-chip" data-diet="egg"    onclick="toggleDiet('egg',this)">
+            <span style="width:9px;height:9px;border-radius:50%;background:#C08030;display:inline-block;flex-shrink:0"></span>Egg
+          </button>
+        </div>
+      </div>
+ 
+      <!-- URGENCY -->
+      <div class="fp-section">
+        <div class="fp-label"><span class="fp-label-dot"></span>Time Remaining</div>
+        <div class="fp-radio-row" id="urgencyRow">
+          <button class="fp-radio-btn on" data-urgency="all"    onclick="setUrgency('all',this)">All</button>
+          <button class="fp-radio-btn"    data-urgency="urgent" onclick="setUrgency('urgent',this)">🔥 Urgent (≤15 min)</button>
+          <button class="fp-radio-btn"    data-urgency="30"     onclick="setUrgency('30',this)">≤ 30 min</button>
+          <button class="fp-radio-btn"    data-urgency="60"     onclick="setUrgency('60',this)">≤ 60 min</button>
+        </div>
+      </div>
+ 
+      <!-- MIN DISCOUNT -->
+      <div class="fp-section">
+        <div class="fp-label"><span class="fp-label-dot"></span>Min Discount</div>
+        <div class="fp-range-wrap">
+          <div class="fp-range-labels">
+            <span>Any</span>
+            <span class="fp-range-value" id="discountLabel">0% off</span>
+          </div>
+          <input class="fp-range" type="range" min="0" max="70" step="5" value="0"
+                 id="discountRange"
+                 oninput="onDiscountInput(this.value)"
+                 style="accent-color:var(--green)">
+          <div class="fp-range-labels" style="justify-content:flex-end">
+            <span>70%+</span>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- PRICE RANGE -->
+      <div class="fp-section">
+        <div class="fp-label"><span class="fp-label-dot"></span>Price Range</div>
+        <div class="fp-range-wrap">
+          <div class="fp-range-labels">
+            <span>₹<span id="priceMinLabel">0</span></span>
+            <span>₹<span id="priceMaxLabel">1000</span></span>
+          </div>
+          <div class="fp-dual-range" id="dualRange">
+            <div class="fp-dual-range-track"></div>
+            <div class="fp-dual-range-fill" id="dualFill"></div>
+            <input type="range" id="priceMin" min="0" max="1000" step="10" value="0"
+                   oninput="onPriceRange()">
+            <input type="range" id="priceMax" min="0" max="1000" step="10" value="1000"
+                   oninput="onPriceRange()">
+          </div>
+        </div>
+      </div>
+ 
+      <!-- QUANTITY -->
+      <div class="fp-section">
+        <div class="fp-label"><span class="fp-label-dot"></span>Plates Available</div>
+        <div class="fp-toggle-row" id="qtyRow">
+          <button class="fp-chip on" data-qty="all"  onclick="setQty('all',this)">Any</button>
+          <button class="fp-chip"    data-qty="1"    onclick="setQty('1',this)">1+</button>
+          <button class="fp-chip"    data-qty="3"    onclick="setQty('3',this)">3+</button>
+          <button class="fp-chip"    data-qty="5"    onclick="setQty('5',this)">5+</button>
+        </div>
+      </div>
+ 
+      <!-- CUISINE / TAG SEARCH (optional, populated from data) -->
+      <div class="fp-section" id="cuisineSection" style="display:none">
+        <div class="fp-label"><span class="fp-label-dot"></span>Cuisine</div>
+        <div class="fp-toggle-row" id="cuisineRow"></div>
+      </div>
+ 
+    </div><!-- /fp-grid -->
+ 
+    <div class="fp-footer">
+      <div style="display:flex;align-items:center;gap:16px">
+        <button class="fp-reset-btn" id="fpReset" onclick="resetAllFilters()">Reset all</button>
+        <span class="fp-result-hint" id="fpResultHint">— plates</span>
+      </div>
+      <button class="fp-apply-btn" id="fpApply" onclick="commitFilters()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Apply Filters
+      </button>
+    </div>
+  </div><!-- /filter-panel -->
+</div>
 
   <div class="section-header">
     <span class="section-title">Available Now</span>
@@ -1666,14 +2015,109 @@ function getFoodTypeBadge(type, size) {
 /* ================================================================
    BROWSE — STATE & RENDER
 ================================================================ */
-let allFoods = [];
-let currentLoc = 'all';
-
-function discount(mrp, price) {
-  if (!mrp || mrp <= price) return null;
+let allFoods    = [];
+let currentLoc  = 'all';
+ 
+/* ── filter state ── */
+const F = {
+  diet:     new Set(),   /* 'veg' | 'nonveg' | 'egg' */
+  urgency:  'all',       /* 'all' | 'urgent' | '30' | '60' */
+  discount: 0,           /* minimum discount % */
+  priceMin: 0,
+  priceMax: 1000,
+  qty:      'all',       /* 'all' | '1' | '3' | '5' */
+  cuisines: new Set(),   /* free-form cuisine strings */
+  sort:     'default',
+};
+ 
+/* ── helpers ── */
+function calcDiscount(mrp, price) {
+  if (!mrp || mrp <= price) return 0;
   return Math.round(((mrp - price) / mrp) * 100);
 }
-
+ 
+function normDiet(raw) {
+  if (!raw) return null;
+  const t = raw.toString().toLowerCase().trim();
+  if (t === 'veg') return 'veg';
+  if (t === 'egg') return 'egg';
+  if (t.includes('non') || t === 'nonveg') return 'nonveg';
+  return null;
+}
+ 
+/* ── sort engine ── */
+function sortFoods(arr) {
+  const s = F.sort;
+  if (s === 'default') return arr;
+  return [...arr].sort((a, b) => {
+    if (s === 'price_asc')   return a.price - b.price;
+    if (s === 'price_desc')  return b.price - a.price;
+    if (s === 'discount')    return calcDiscount(b.mrp, b.price) - calcDiscount(a.mrp, a.price);
+    if (s === 'time_asc')    return (a.minutes_left || 999) - (b.minutes_left || 999);
+    if (s === 'qty_desc')    return (b.available_quantity || 0) - (a.available_quantity || 0);
+    return 0;
+  });
+}
+ 
+/* ── main filter engine ── */
+function getFiltered() {
+  const q = document.getElementById('foodSearch').value.toLowerCase();
+  return allFoods.filter(f => {
+    /* location */
+    const locKey = f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
+    if (currentLoc !== 'all' && locKey !== currentLoc) return false;
+ 
+    /* text search */
+    if (q && !(f.name||'').toLowerCase().includes(q) && !(f.restaurant_name||'').toLowerCase().includes(q)) return false;
+ 
+    /* diet */
+    if (F.diet.size > 0) {
+      const fd = normDiet(f.food_type);
+      if (!fd || !F.diet.has(fd)) return false;
+    }
+ 
+    /* urgency / time */
+    const mins = f.minutes_left || 9999;
+    if (F.urgency === 'urgent' && mins > 15) return false;
+    if (F.urgency === '30'     && mins > 30) return false;
+    if (F.urgency === '60'     && mins > 60) return false;
+ 
+    /* discount */
+    if (F.discount > 0 && calcDiscount(f.mrp, f.price) < F.discount) return false;
+ 
+    /* price */
+    const p = f.price || 0;
+    if (p < F.priceMin || p > F.priceMax) return false;
+ 
+    /* qty */
+    const qty = f.available_quantity || 0;
+    if (F.qty !== 'all' && qty < parseInt(F.qty, 10)) return false;
+ 
+    /* cuisine */
+    if (F.cuisines.size > 0) {
+      const fc = (f.cuisine || '').toLowerCase();
+      let match = false;
+      F.cuisines.forEach(c => { if (fc.includes(c)) match = true; });
+      if (!match) return false;
+    }
+ 
+    return true;
+  });
+}
+ 
+function applyFilters() {
+  const filtered = sortFoods(getFiltered());
+  render(filtered);
+  updateResultHint(filtered.length);
+  updateActivePills();
+}
+ 
+document.getElementById('foodSearch').addEventListener('input', applyFilters);
+document.getElementById('sortSelect').addEventListener('change', function() {
+  F.sort = this.value; applyFilters();
+});
+ 
+/* ── render ── */
 function render(foods) {
   const grid = document.getElementById('foodGrid');
   document.getElementById('plateCount').textContent = `${foods.length} plate${foods.length !== 1 ? 's' : ''}`;
@@ -1681,17 +2125,17 @@ function render(foods) {
     grid.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">🍃</div>
-        <div class="empty-title">No plates available right now</div>
-        <div class="empty-sub">Kitchens are preparing — check back soon.</div>
+        <div class="empty-title">No plates match your filters</div>
+        <div class="empty-sub">Try adjusting your filters or <button onclick="resetAllFilters()" style="background:none;border:none;cursor:pointer;color:var(--green);font-weight:700;font-size:inherit;padding:0">clear them all</button>.</div>
       </div>`;
     return;
   }
   grid.innerHTML = foods.map((f, i) => {
-    const disc = discount(f.mrp, f.price);
+    const disc   = calcDiscount(f.mrp, f.price);
     const urgent = f.minutes_left <= 15;
-    const safeF = encodeURIComponent(JSON.stringify(f));
+    const safeF  = encodeURIComponent(JSON.stringify(f));
     return `
-    <article class="food-card" style="animation-delay:${i * 0.06}s" onclick="openModal(decodeURIComponent('${safeF}'))">
+    <article class="food-card" style="animation-delay:${i * 0.055}s" onclick="openModal(decodeURIComponent('${safeF}'))">
       <div class="card-img-wrap">
         <img class="card-img" src="${getFoodImage(f.name)}" alt="${f.name}" loading="lazy">
         <div class="card-badges">
@@ -1719,20 +2163,174 @@ function render(foods) {
     </article>`;
   }).join('');
 }
-
-function applyFilters() {
-  const q = document.getElementById('foodSearch').value.toLowerCase();
-  const filtered = allFoods.filter(f => {
-    const key = f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
-    const locOk = currentLoc === 'all' || key === currentLoc;
-    const qOk = (f.name||'').toLowerCase().includes(q) || (f.restaurant_name||'').toLowerCase().includes(q);
-    return locOk && qOk;
-  });
-  render(filtered);
+ 
+/* ── filter panel toggle ── */
+const filterTrigger = document.getElementById('filterTrigger');
+const filterPanel   = document.getElementById('filterPanel');
+let panelOpen       = false;
+ 
+filterTrigger.addEventListener('click', () => {
+  panelOpen = !panelOpen;
+  filterPanel.classList.toggle('open', panelOpen);
+  filterTrigger.classList.toggle('active', panelOpen);
+  filterTrigger.setAttribute('aria-expanded', panelOpen);
+  if (window.navigator.vibrate) window.navigator.vibrate(8);
+});
+ 
+/* ── diet toggles ── */
+function toggleDiet(type, el) {
+  if (F.diet.has(type)) { F.diet.delete(type); el.classList.remove('on'); }
+  else                  { F.diet.add(type);    el.classList.add('on');    }
+  livePreview();
 }
-
-document.getElementById('foodSearch').addEventListener('input', applyFilters);
-
+ 
+/* ── urgency ── */
+function setUrgency(val, el) {
+  F.urgency = val;
+  document.querySelectorAll('#urgencyRow .fp-radio-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  livePreview();
+}
+ 
+/* ── discount slider ── */
+function onDiscountInput(v) {
+  F.discount = parseInt(v, 10);
+  document.getElementById('discountLabel').textContent = v > 0 ? `${v}%+ off` : 'Any';
+  livePreview();
+}
+ 
+/* ── dual price range ── */
+function onPriceRange() {
+  const minEl = document.getElementById('priceMin');
+  const maxEl = document.getElementById('priceMax');
+  let lo = parseInt(minEl.value, 10);
+  let hi = parseInt(maxEl.value, 10);
+  if (lo > hi - 50) { lo = hi - 50; minEl.value = lo; }
+  F.priceMin = lo;
+  F.priceMax = hi;
+  document.getElementById('priceMinLabel').textContent = lo;
+  document.getElementById('priceMaxLabel').textContent = hi === 1000 ? '1000+' : hi;
+  updateDualFill(lo, hi);
+  livePreview();
+}
+function updateDualFill(lo, hi) {
+  const fill = document.getElementById('dualFill');
+  const pct1 = (lo / 1000) * 100;
+  const pct2 = (hi / 1000) * 100;
+  fill.style.left  = pct1 + '%';
+  fill.style.width = (pct2 - pct1) + '%';
+}
+updateDualFill(0, 1000);
+ 
+/* ── qty chips ── */
+function setQty(val, el) {
+  F.qty = val;
+  document.querySelectorAll('#qtyRow .fp-chip').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  livePreview();
+}
+ 
+/* ── cuisine chips (populated after data loads) ── */
+function toggleCuisine(val, el) {
+  if (F.cuisines.has(val)) { F.cuisines.delete(val); el.classList.remove('on'); }
+  else                     { F.cuisines.add(val);    el.classList.add('on');    }
+  livePreview();
+}
+ 
+/* ── live preview (updates hint inside panel without closing) ── */
+function livePreview() {
+  const count = getFiltered().length;
+  updateResultHint(count);
+}
+ 
+function updateResultHint(count) {
+  const el = document.getElementById('fpResultHint');
+  el.textContent = `${count} plate${count !== 1 ? 's' : ''}`;
+  el.classList.add('updated');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('updated'), 800);
+}
+ 
+/* ── commit (close + apply) ── */
+function commitFilters() {
+  applyFilters();
+  panelOpen = false;
+  filterPanel.classList.remove('open');
+  filterTrigger.classList.remove('active');
+  filterTrigger.setAttribute('aria-expanded', false);
+  updateFilterBadge();
+  if (window.navigator.vibrate) window.navigator.vibrate(10);
+}
+ 
+/* ── reset ── */
+function resetAllFilters() {
+  F.diet.clear(); F.urgency = 'all'; F.discount = 0;
+  F.priceMin = 0; F.priceMax = 1000; F.qty = 'all';
+  F.cuisines.clear(); F.sort = 'default';
+  document.getElementById('sortSelect').value = 'default';
+  document.querySelectorAll('#urgencyRow .fp-radio-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('#urgencyRow [data-urgency="all"]').classList.add('on');
+  document.querySelectorAll('#qtyRow .fp-chip').forEach(b => b.classList.remove('on'));
+  document.querySelector('#qtyRow [data-qty="all"]').classList.add('on');
+  document.querySelectorAll('.fp-chip[data-diet]').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.fp-chip[data-cuisine]').forEach(b => b.classList.remove('on'));
+  document.getElementById('discountRange').value = 0;
+  document.getElementById('discountLabel').textContent = 'Any';
+  document.getElementById('priceMin').value = 0;
+  document.getElementById('priceMax').value = 1000;
+  document.getElementById('priceMinLabel').textContent = 0;
+  document.getElementById('priceMaxLabel').textContent = '1000+';
+  updateDualFill(0, 1000);
+  applyFilters();
+  updateFilterBadge();
+}
+ 
+/* ── filter count badge ── */
+function countActiveFilters() {
+  let n = 0;
+  if (F.diet.size)           n += F.diet.size;
+  if (F.urgency !== 'all')   n++;
+  if (F.discount > 0)        n++;
+  if (F.priceMin > 0 || F.priceMax < 1000) n++;
+  if (F.qty !== 'all')       n++;
+  if (F.cuisines.size)       n += F.cuisines.size;
+  return n;
+}
+ 
+function updateFilterBadge() {
+  const n = countActiveFilters();
+  const badge = document.getElementById('filterCountBadge');
+  badge.textContent = n;
+  filterTrigger.classList.toggle('active', n > 0);
+}
+ 
+/* ── active filter pills ── */
+function updateActivePills() {
+  const row = document.getElementById('activeFiltersRow');
+  const pills = [];
+  F.diet.forEach(d => pills.push({ label: d === 'veg' ? 'Veg' : d === 'egg' ? 'Egg' : 'Non-Veg', remove: () => { F.diet.delete(d); document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on'); applyFilters(); } }));
+  if (F.urgency !== 'all') {
+    const map = { urgent:'🔥 Urgent', '30':'≤ 30 min', '60':'≤ 60 min' };
+    pills.push({ label: map[F.urgency], remove: () => { F.urgency = 'all'; document.querySelector('[data-urgency="all"]')?.classList.add('on'); document.querySelector(`[data-urgency="${F.urgency}"]`)?.classList.remove('on'); setUrgency('all', document.querySelector('[data-urgency="all"]')); applyFilters(); } });
+  }
+  if (F.discount > 0) pills.push({ label: `${F.discount}%+ off`, remove: () => { F.discount = 0; document.getElementById('discountRange').value = 0; document.getElementById('discountLabel').textContent = 'Any'; applyFilters(); } });
+  if (F.priceMin > 0 || F.priceMax < 1000) pills.push({ label: `₹${F.priceMin}–${F.priceMax < 1000 ? F.priceMax : '1000+'}`, remove: () => { F.priceMin = 0; F.priceMax = 1000; document.getElementById('priceMin').value = 0; document.getElementById('priceMax').value = 1000; document.getElementById('priceMinLabel').textContent = 0; document.getElementById('priceMaxLabel').textContent = '1000+'; updateDualFill(0,1000); applyFilters(); } });
+  if (F.qty !== 'all') pills.push({ label: `${F.qty}+ plates`, remove: () => { F.qty = 'all'; document.querySelector('[data-qty="all"]')?.classList.add('on'); document.querySelector(`[data-qty="${F.qty}"]`)?.classList.remove('on'); applyFilters(); } });
+  F.cuisines.forEach(c => pills.push({ label: c.charAt(0).toUpperCase()+c.slice(1), remove: () => { F.cuisines.delete(c); document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on'); applyFilters(); } }));
+ 
+  if (!pills.length) {
+    row.classList.remove('has-filters');
+    row.innerHTML = '';
+    return;
+  }
+  row.classList.add('has-filters');
+  row.innerHTML = pills.map((p, i) =>
+    `<span class="af-pill">${p.label}<button class="af-pill-remove" aria-label="Remove ${p.label} filter" onclick="(${p.remove.toString()})()">✕</button></span>`
+  ).join('') + `<button class="af-clear-all" onclick="resetAllFilters()">Clear all</button>`;
+  updateFilterBadge();
+}
+ 
+/* ── location chips ── */
 const locationRow = document.getElementById('locationRow');
 function setActiveChip(el) {
   locationRow.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -1741,13 +2339,16 @@ function setActiveChip(el) {
 document.getElementById('resetChip').onclick = () => {
   currentLoc = 'all'; setActiveChip(document.getElementById('resetChip')); applyFilters();
 };
-
+ 
+/* ── DATA FETCH ── */
 fetch('/api/foods')
   .then(r => { if (!r.ok) throw 0; return r.json(); })
   .then(data => {
     allFoods = data.foods || [];
+ 
+    /* build location chips */
     const locKey = f => f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
-    const locs = [...new Set(allFoods.map(locKey).filter(Boolean))];
+    const locs   = [...new Set(allFoods.map(locKey).filter(Boolean))];
     locs.forEach(loc => {
       const count = allFoods.filter(f => locKey(f) === loc).length;
       const c = document.createElement('div');
@@ -1756,34 +2357,36 @@ fetch('/api/foods')
       c.onclick = () => { currentLoc = loc; setActiveChip(c); applyFilters(); };
       locationRow.appendChild(c);
     });
+ 
+    /* build cuisine chips */
+    const cuisines = [...new Set(allFoods.map(f => (f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
+    if (cuisines.length > 1) {
+      const sec = document.getElementById('cuisineSection');
+      const row = document.getElementById('cuisineRow');
+      sec.style.display = '';
+      cuisines.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'fp-chip';
+        btn.dataset.cuisine = c;
+        btn.textContent = c.charAt(0).toUpperCase() + c.slice(1);
+        btn.onclick = function() { toggleCuisine(c, this); };
+        row.appendChild(btn);
+      });
+    }
+ 
+    /* calibrate price range to real data */
+    const prices = allFoods.map(f => f.price || 0);
+    const maxP   = Math.ceil(Math.max(...prices) / 50) * 50 || 1000;
+    document.getElementById('priceMax').max   = maxP;
+    document.getElementById('priceMin').max   = maxP;
+    document.getElementById('priceMax').value = maxP;
+    F.priceMax = maxP;
+    document.getElementById('priceMaxLabel').textContent = maxP + '+';
+    updateDualFill(0, maxP);
+ 
     applyFilters();
   })
   .catch(() => { allFoods = []; render([]); });
-
-/* ================================================================
-   MODAL
-================================================================ */
-function openModal(raw) {
-  const f = JSON.parse(raw);
-  document.getElementById('modalImg').src = getFoodImage(f.name);
-  document.getElementById('modalKicker').textContent = `${f.available_quantity} plates  ·  ${f.minutes_left}m left`;
-  document.getElementById('modalTitle').textContent = f.name;
-  document.getElementById('modalRestaurant').textContent = '📍 ' + f.restaurant_name;
-  document.getElementById('modalMrp').textContent = f.mrp ? `MRP ₹${f.mrp}` : '';
-  document.getElementById('modalPrice').textContent = '₹' + Math.ceil(f.price);
-  document.getElementById('modalCta').href = `/checkout/${f.id}`;
-  document.getElementById('modalFoodType').innerHTML = getFoodTypeBadge(f.food_type);
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (window.navigator.vibrate) window.navigator.vibrate(8);
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.getElementById('modalClose').onclick = closeModal;
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-
 /* ================================================================
    DRAWER
 ================================================================ */
