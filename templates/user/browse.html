@@ -336,7 +336,10 @@ body {
 }
 @media (max-width: 540px) {
   .fp-grid { grid-template-columns: 1fr; }
-  .filter-bar { gap: 8px; }
+  .filter-bar { gap: 8px; flex-wrap: wrap; }
+  #locationRow { order: 2; flex-basis: 100%; min-width: 0; }
+  .sort-select-wrap { order: 1; }
+  .filter-trigger { order: 1; }
 }
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; }
