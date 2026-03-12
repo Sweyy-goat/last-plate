@@ -2157,7 +2157,7 @@ function render(foods) {
             ${f.mrp ? `<span class="price-mrp">₹${f.mrp}</span>` : ''}
             <span class="price-now">₹${Math.ceil(f.price)}</span>
           </div>
-          <button class="card-reserve-btn"><span>Reserve ↗</span></button>
+          <button class="card-reserve-btn" onclick="event.stopPropagation();location.href='/checkout/${f.id}'"><span>Reserve ↗</span></button>
         </div>
       </div>
     </article>`;
