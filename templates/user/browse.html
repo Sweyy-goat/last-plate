@@ -621,8 +621,8 @@ html.dark .icon-btn .moon-icon { display: none; }
 ===================== */
 .controls {
   max-width: 1200px; margin: 0 auto;
-  padding: 0 40px 44px;
-  display: flex; flex-direction: column; gap: 14px;
+  padding: 0 40px 28px;
+  display: flex; flex-direction: column; gap: 10px;
   opacity: 0; animation: riseIn 0.8s var(--spring) 0.5s forwards;
 }
 .search-row { display: flex; gap: 12px; align-items: center; }
@@ -1548,15 +1548,11 @@ html.dark .exclusive-banner {
   </div>
  
   <!-- Filter bar -->
-  <div class="filter-bar">
- 
-    <!-- Kitchen location chips -->
-    <div class="filter-scroll" id="locationRow" style="flex:1;min-width:0">
-      <div class="chip active" id="resetChip">All Kitchens</div>
-    </div>
+<!-- Filter bar -->
+  <div class="filter-bar" style="flex-wrap:wrap;">
  
     <!-- Sort -->
-    <div class="sort-select-wrap">
+    <div class="sort-select-wrap" style="margin-left:auto;">
       <select class="sort-select" id="sortSelect" aria-label="Sort plates">
         <option value="default">Sort: Default</option>
         <option value="price_asc">Price: Low → High</option>
@@ -1573,8 +1569,15 @@ html.dark .exclusive-banner {
       <svg class="ft-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
       Filters
       <span class="filter-count-badge" id="filterCountBadge">0</span>
-    </button>
+</button>
   </div>
+
+  <!-- Kitchen location chips — full width row below sort/filter -->
+  <div class="filter-scroll" id="locationRow" style="flex-basis:100%;min-width:0;padding:2px 0 0;">
+    <div class="chip active" id="resetChip">All Kitchens</div>
+  </div>
+ 
+  <!-- Active filter pills -->
  
   <!-- Active filter pills -->
   <div class="active-filters-row" id="activeFiltersRow">
