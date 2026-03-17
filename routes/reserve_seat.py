@@ -3,11 +3,11 @@ from app import limiter
 
 reserve_seat_bp = Blueprint("reserve_seat", __name__)
 
-@reservation_bp.route("/reserve-seat")
+@reserve_seat_bp.route("/reserve-seat")
 def reserve_page():
     return render_template("reserve-seat.html")
 
-@reservation_bp.route("/api/reserve-seat", methods=["POST"])
+@reserve_seat_bp.route("/api/reserve-seat", methods=["POST"])
 @limiter.limit("5 per minute")
 def reserve():
     data = request.json
