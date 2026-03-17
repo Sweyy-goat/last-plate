@@ -12,7 +12,8 @@ def reserve_page():
 @reserve_seat_bp.route("/api/reserve-seat", methods=["POST"])
 @limiter.limit("5 per minute")
 def reserve():
-    data = request.json
+    data = request.get_json()
+    print("DATA RECEIVED:", data)
 
     name = data.get("name")
     email = data.get("email")
@@ -23,9 +24,7 @@ def reserve():
     occasion = data.get("occasion")
     notes = data.get("notes")
 
-    # basic validation
-    if not all([name, email, phone, date, time, guests]):
-        return jsonify({"error": "Missing fields"}), 400
+    print(name, email, phone, date, time, guests)
 
     cur = mysql.connection.cursor()
 
