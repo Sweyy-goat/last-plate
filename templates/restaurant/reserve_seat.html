@@ -330,31 +330,74 @@ function flash(id){
   setTimeout(()=>el.classList.remove('error'), 2200);
 }
 
-function doSubmit(){
+async function doSubmit() {
   const name  = document.getElementById('inp-name').value.trim();
   const email = document.getElementById('inp-email').value.trim();
   const phone = document.getElementById('inp-phone').value.trim();
   const date  = document.getElementById('inp-date').value;
   const time  = document.getElementById('inp-time').value;
-  if(!name)  { flash('f-name');  return; }
-  if(!email) { flash('f-email'); return; }
-  if(!phone) { flash('f-phone'); return; }
-  if(!date)  { flash('f-date');  return; }
-  if(!time)  { flash('f-time');  return; }
-  const d = new Date(date+'T12:00:00');
-  const ds = d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const [h,m] = time.split(':').map(Number);
-  const ts = `${(h%12)||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
-  const occ = document.getElementById('inp-occ').value || 'None';
-  document.getElementById('sc-rows').innerHTML = `
-    <div class="sr"><span>Name</span><span>${name}</span></div>
-    <div class="sr"><span>Date</span><span>${ds}</span></div>
-    <div class="sr"><span>Time</span><span>${ts}</span></div>
-    <div class="sr"><span>Party</span><span>${g} ${g===1?'guest':'guests'}</span></div>
-    <div class="sr"><span>Occasion</span><span>${occ}</span></div>
-    <div class="sr"><span>Email</span><span>${email}</span></div>
-  `;
-  document.getElementById('overlay').classList.add('show');
+  const occ   = document.getElementById('inp-occ').value || 'None';
+  const notes = document.getElementById('inp-notes').value || '';
+
+  // validation
+  if (!name)  { flash('f-name'); return; }
+  if (!email) { flash('f-email'); return; }
+  if (!phone) { flash('f-phone'); return; }
+  if (!date)  { flash('f-date'); return; }
+  if (!time)  { flash('f-time'); return; }
+
+  try {
+    const res = await fetch("/api/reserve-seat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        date,
+        time,
+        guests: g,
+        occasion: occ,
+        notes
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert("Reservation failed. Try again.");
+      return;
+    }
+
+    // format UI AFTER success
+    const d = new Date(date + 'T12:00:00');
+    const ds = d.toLocaleDateString('en-IN', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const [h, m] = time.split(':').map(Number);
+    const ts = `${(h % 12) || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`;
+
+    document.getElementById('sc-rows').innerHTML = `
+      <div class="sr"><span>Name</span><span>${name}</span></div>
+      <div class="sr"><span>Date</span><span>${ds}</span></div>
+      <div class="sr"><span>Time</span><span>${ts}</span></div>
+      <div class="sr"><span>Party</span><span>${g} ${g===1?'guest':'guests'}</span></div>
+      <div class="sr"><span>Occasion</span><span>${occ}</span></div>
+      <div class="sr"><span>Email</span><span>${email}</span></div>
+    `;
+
+    document.getElementById('overlay').classList.add('show');
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error. Try again later.");
+  }
 }
 
 function doReset(){
