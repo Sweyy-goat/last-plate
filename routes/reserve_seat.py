@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from app import limiter
+from utils.db import mysql
+import MySQLdb.cursors
 
 reserve_seat_bp = Blueprint("reserve_seat", __name__)
 
@@ -11,4 +13,30 @@ def reserve_page():
 @limiter.limit("5 per minute")
 def reserve():
     data = request.json
+
+    name = data.get("name")
+    email = data.get("email")
+    phone = data.get("phone")
+    date = data.get("date")
+    time = data.get("time")
+    guests = data.get("guests")
+    occasion = data.get("occasion")
+    notes = data.get("notes")
+
+    # basic validation
+    if not all([name, email, phone, date, time, guests]):
+        return jsonify({"error": "Missing fields"}), 400
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        INSERT INTO reservations
+        (name, email, phone, reservation_date, reservation_time, guests, occasion, notes)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+    """, (
+        name, email, phone, date, time, guests, occasion, notes
+    ))
+
+    mysql.connection.commit()
+
     return jsonify({"success": True})
