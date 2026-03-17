@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from app import limiter
 
-reservation_bp = Blueprint("reservation", __name__)
+reservation_bp = Blueprint("reserve_seat", __name__)
 
 @reservation_bp.route("/reserve-seat")
 def reserve_page():
