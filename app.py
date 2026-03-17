@@ -29,8 +29,8 @@ with app.app_context():
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp)
 
-from routes.reservation import reservation_bp
-app.register_blueprint(reservation_bp)
+from routes.reserve-seat import reserve-seat_bp
+app.register_blueprint(reserve-seat_bp)
 
 from routes.restaurant import restaurant_bp
 app.register_blueprint(restaurant_bp)
