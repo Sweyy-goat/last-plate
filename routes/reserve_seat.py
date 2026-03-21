@@ -8,7 +8,7 @@ reserve_seat_bp = Blueprint("reserve_seat", __name__)
 # ================= PAGE =================
 @reserve_seat_bp.route("/reserve-seat", strict_slashes=False)
 def reserve_page():
-    return render_template("reserve-seat.html")
+    return render_template("restaurant/reserve_seat.html")
 
 
 # ================= API =================
