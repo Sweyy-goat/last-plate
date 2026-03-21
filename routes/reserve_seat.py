@@ -41,9 +41,10 @@ def reserve():
 
         cur.execute("""
             INSERT INTO reservations
-            (name, email, phone, reservation_date, reservation_time, guests, occasion, notes)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            (restaurant_id, name, email, phone, reservation_date, reservation_time, guests, occasion, notes)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
+            1,  # TEMP HARDCODE (replace later)
             name,
             email,
             phone,
