@@ -1,41 +1,63 @@
 from flask import Blueprint, render_template, request, jsonify
-from app import limiter
 from utils.db import mysql
 import MySQLdb.cursors
+from app import limiter
 
 reserve_seat_bp = Blueprint("reserve_seat", __name__)
 
+# ================= PAGE =================
 @reserve_seat_bp.route("/reserve-seat", strict_slashes=False)
 def reserve_page():
-    return render_template("restaurant/reserve_seat.html")
+    return render_template("reserve-seat.html")
 
+
+# ================= API =================
 @reserve_seat_bp.route("/api/reserve-seat", methods=["POST"])
 @limiter.limit("5 per minute")
 def reserve():
-    data = request.get_json()
-    print("DATA RECEIVED:", data)
+    try:
+        # 🔥 Use SAME pattern as your working order.py
+        data = request.json
 
-    name = data.get("name")
-    email = data.get("email")
-    phone = data.get("phone")
-    date = data.get("date")
-    time = data.get("time")
-    guests = data.get("guests")
-    occasion = data.get("occasion")
-    notes = data.get("notes")
+        if not data:
+            return jsonify({"error": "No data received"}), 400
 
-    print(name, email, phone, date, time, guests)
+        # Extract fields
+        name = data.get("name")
+        email = data.get("email")
+        phone = data.get("phone")
+        date = data.get("date")
+        time = data.get("time")
+        guests = data.get("guests")
+        occasion = data.get("occasion")
+        notes = data.get("notes")
 
-    cur = mysql.connection.cursor()
+        # Validation
+        if not all([name, email, phone, date, time, guests]):
+            return jsonify({"error": "Missing fields"}), 400
 
-    cur.execute("""
-        INSERT INTO reservations
-        (name, email, phone, reservation_date, reservation_time, guests, occasion, notes)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-    """, (
-        name, email, phone, date, time, guests, occasion, notes
-    ))
+        # DB insert
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    mysql.connection.commit()
+        cur.execute("""
+            INSERT INTO reservations
+            (name, email, phone, reservation_date, reservation_time, guests, occasion, notes)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (
+            name,
+            email,
+            phone,
+            date,
+            time,
+            int(guests),
+            occasion,
+            notes
+        ))
 
-    return jsonify({"success": True})
+        mysql.connection.commit()
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        print("RESERVATION ERROR:", e)  # shows in Railway logs
+        return jsonify({"error": "Server error"}), 500
