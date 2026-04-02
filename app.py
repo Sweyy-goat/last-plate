@@ -29,6 +29,9 @@ with app.app_context():
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp)
 
+from routes.cities import cities_bp
+app.register_blueprint(cities_bp)
+
 from routes.reserve_seat import reserve_seat_bp
 app.register_blueprint(reserve_seat_bp)
 
