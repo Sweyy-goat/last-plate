@@ -1,12 +1,11 @@
-# browse.p
 from flask import Blueprint, render_template, session, redirect, jsonify
 from utils.db import mysql
 import MySQLdb.cursors
 import math
-from datetime import datetime, timedelta
 
 browse_bp = Blueprint("browse", __name__)
 
+# ================= ENTRY =================
 @browse_bp.route("/browse-entry")
 def browse_entry():
     if "user_id" not in session:
@@ -15,6 +14,17 @@ def browse_entry():
         return redirect("/")
     return redirect("/browse")
 
+
+# ================= MAIN PAGE =================
+@browse_bp.route("/browse")
+def browse_page():
+    if "user_id" not in session or session.get("role") != "user":
+        return redirect("/login")
+    return render_template("user/browse.html")
+
+
+# ================= API: FOODS =================
+@browse_bp.route("/api/foods")
 def food_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -26,11 +36,9 @@ def food_list():
         r.address AS restaurant_address,
         r.short_address AS restaurant_short_address,
 
-        -- Minutes left (midnight safe)
         CASE
             WHEN f.pickup_start <= f.pickup_end THEN
                 TIMESTAMPDIFF(MINUTE, CURRENT_TIME(), f.pickup_end)
-
             ELSE
                 TIMESTAMPDIFF(
                     MINUTE,
@@ -46,13 +54,11 @@ def food_list():
       AND f.available_quantity > 0
 
       AND (
-        -- NORMAL
         (f.pickup_start <= f.pickup_end 
          AND CURRENT_TIME() BETWEEN f.pickup_start AND f.pickup_end)
 
         OR
 
-        -- OVERNIGHT
         (f.pickup_start > f.pickup_end 
          AND (CURRENT_TIME() >= f.pickup_start OR CURRENT_TIME() <= f.pickup_end))
       )
@@ -87,7 +93,9 @@ def food_list():
         })
 
     return jsonify({"foods": foods})
-@browse_bp.route("/walkin")
+
+
+# ================= WALK-IN LIST =================
 @browse_bp.route("/walkin")
 def walkin_list():
     if "user_id" not in session or session.get("role") != "user":
@@ -101,11 +109,14 @@ def walkin_list():
         JOIN restaurant_scenes s ON s.restaurant_id = r.id
         GROUP BY r.id
     """)
+
     restaurants = cur.fetchall()
     cur.close()
 
     return render_template("user/walkin_list.html", restaurants=restaurants)
 
+
+# ================= WALK-IN VIEW =================
 @browse_bp.route("/restaurant/<int:rid>/walkin")
 def walkin_view(rid):
     if "user_id" not in session or session.get("role") != "user":
@@ -113,7 +124,7 @@ def walkin_view(rid):
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # Get scene
+    # Scene
     cur.execute("""
         SELECT id, image_url 
         FROM restaurant_scenes 
@@ -126,7 +137,7 @@ def walkin_view(rid):
         cur.close()
         return "No Walk-In scene found for this restaurant."
 
-    # Get hotspots
+    # Hotspots
     cur.execute("""
         SELECT pitch, yaw, seat_number
         FROM restaurant_hotspots
@@ -135,6 +146,8 @@ def walkin_view(rid):
     hotspots = cur.fetchall()
     cur.close()
 
-    return render_template("user/walkin_view.html",
-                           scene=scene,
-                           hotspots=hotspots)
+    return render_template(
+        "user/walkin_view.html",
+        scene=scene,
+        hotspots=hotspots
+    )
