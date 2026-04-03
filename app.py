@@ -6,12 +6,6 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-with app.app_context():
-    cur = mysql.connection.cursor()
-    cur.execute("SET time_zone = '+05:30'")
-    mysql.connection.commit()
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
-app.config.from_pyfile("config.py")
 
 limiter = Limiter(
     get_remote_address,
@@ -20,6 +14,12 @@ limiter = Limiter(
 )
 
 mysql.init_app(app)
+with app.app_context():
+    cur = mysql.connection.cursor()
+    cur.execute("SET time_zone = '+05:30'")
+    mysql.connection.commit()
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+app.config.from_pyfile("config.py")
 app.secret_key = app.config["SECRET_KEY"]
 
 # Run DB initialization once safely
