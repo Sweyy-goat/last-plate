@@ -175,6 +175,16 @@ body.dark .navbar {
   overflow: hidden; max-width: 140px;
   text-overflow: ellipsis;
 }
+.loc-gps {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 0.5px solid var(--border);
+}
+.loc-gps.loading { opacity: 0.55; pointer-events: none; }
+.loc-dist {
+  font-size: 0.5625rem; font-weight: 600;
+  color: var(--ink3); margin-left: auto;
+  letter-spacing: 0.01em;
+}
 .city-pill .cp-dot {
   width: 5px; height: 5px; background: var(--blue); border-radius: 50%; flex-shrink: 0;
   animation: blink 3s step-end infinite;
@@ -1113,8 +1123,16 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       </button>
     </div>
     <div class="loc-row" id="locationRow">
-      <div class="loc-chip active" id="resetChip">All Kitchens</div>
-    </div>
+  <button class="loc-chip active" id="locChipAll"   onclick="setRadius(null,this)">All Kitchens</button>
+  <button class="loc-chip"        id="locChip2"     onclick="setRadius(2,this)">Within 2 km</button>
+  <button class="loc-chip"        id="locChip5"     onclick="setRadius(5,this)">Within 5 km</button>
+  <button class="loc-chip"        id="locChip10"    onclick="setRadius(10,this)">Within 10 km</button>
+  <button class="loc-chip"        id="locChip25"    onclick="setRadius(25,this)">Within 25 km</button>
+  <button class="loc-chip loc-gps" id="locGpsBtn"  onclick="requestGPS()">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="vertical-align:-1px"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+    Use My Location
+  </button>
+</div>
     <div class="pills-row" id="afRow"></div>
   </div>
   <div class="filter-panel" id="filterPanel">
