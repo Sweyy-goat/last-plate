@@ -37,6 +37,8 @@ def food_list():
         r.name AS restaurant_name,
         r.address AS restaurant_address,
         r.short_address AS restaurant_short_address,
+        r.latitude,
+        r.longitude,
         CASE
             WHEN f.pickup_end >= f.pickup_start THEN 
                 TIMESTAMPDIFF(MINUTE, CAST(%s AS TIME), f.pickup_end)
@@ -88,15 +90,18 @@ def food_list():
             "id": f["id"],
             "name": f["name"],
             "food_type": f["food_type"],
-            "price": platform_selling_price, # Actual Price
-            "mrp": display_mrp,              # Strike-through Price
+            "price": platform_selling_price,
+            "mrp": display_mrp,
             "available_quantity": f["available_quantity"],
             "restaurant_name": f["restaurant_name"],
             "restaurant_address": f["restaurant_address"],
             "restaurant_short_address": f.get("restaurant_short_address") or "",
-            "minutes_left": max(0, int(f["minutes_left"]))
-        })
+            "minutes_left": max(0, int(f["minutes_left"])),
 
+    # 🔥 ADD THIS
+            "latitude": f["latitude"],
+            "longitude": f["longitude"]
+})
     return jsonify({"foods": foods})
 @browse_bp.route("/walkin")
 @browse_bp.route("/walkin")
