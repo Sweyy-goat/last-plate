@@ -2035,6 +2035,56 @@ function updateBadge() {
   cnt.style.display = n ? 'inline-flex' : 'none';
   document.getElementById('filterTrigger').classList.toggle('open', n > 0 && !panelOpen);
 }
+let userLat, userLng;
+
+// 📍 Get user location
+navigator.geolocation.getCurrentPosition(
+  (pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
+    updateDistances();
+  },
+  () => {
+    document.querySelectorAll(".card-distance").forEach(el => {
+      el.innerText = "Nearby";
+    });
+  }
+);
+
+// 📏 Distance formula
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2)**2;
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+// 🔥 Update UI
+function updateDistances() {
+  document.querySelectorAll(".food-card").forEach(card => {
+    const lat = parseFloat(card.dataset.lat);
+    const lng = parseFloat(card.dataset.lng);
+
+    if (!lat || !lng) return;
+
+    const dist = getDistance(userLat, userLng, lat, lng);
+
+    const el = card.querySelector(".card-distance");
+    if (!el) return;
+
+    el.classList.remove("calculating");
+    el.innerText = dist.toFixed(1) + " km away";
+  });
+}
 function updatePills() {
   const row = document.getElementById('afRow'), pills = [];
   F.diet.forEach(d => pills.push({ label: d === 'veg' ? 'Veg' : d === 'egg' ? 'Egg' : 'Non-Veg', remove: () => { F.diet.delete(d); document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on'); applyFilters(); } }));
