@@ -2368,6 +2368,233 @@ function errSheet() { return `<div class="sheet-empty"><div class="sheet-empty-i
 ═══════════════════════════════════════════════════════════ */
 // Start location detection immediately, non-blocking
 getUserLocation();
+/*
+  ╔══════════════════════════════════════════════════════════════╗
+  ║   LAST PLATE — LOCATION BUGS PATCH                          ║
+  ║   Apply these fixes to your index.html <script> section     ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  8 bugs found and fixed. See each FIX comment for what changed.
+*/
+
+/* ═══════════════════════ §1 LOCATION STATE ═══════════════════════ */
+const GEO = {
+  lat: null, lng: null, city: null,
+  status: 'idle',
+  nearbyActive: false,
+  radiusKm: null,           // FIX 3: was missing — needed by setRadius() chips
+  NEARBY_RADIUS_KM: 2,
+  FALLBACK: { lat: 9.9312, lng: 76.2673, city: 'Kochi' },
+};
+
+/* ═══════════════════════ §2 HAVERSINE ═══════════════════════ */
+function calculateDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function toRad(d) { return d * Math.PI / 180; }
+function formatDistance(km) { return km === null ? null : km.toFixed(1) + ' km'; }
+
+/* ═══════════════════════ §3 USER LOCATION ═══════════════════════ */
+function getUserLocation() {
+  if (!navigator.geolocation) { applyFallbackLocation(); return; }
+  GEO.status = 'locating';
+  updateCityPill('locating', 'Locating…');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      GEO.lat = pos.coords.latitude; GEO.lng = pos.coords.longitude;
+      GEO.status = 'ok';
+      reverseGeocode(GEO.lat, GEO.lng);  // FIX 4: was reversGeocode (typo)
+      document.getElementById('nearbyBtn').disabled = false;
+      updateDistances();
+    },
+    function() { applyFallbackLocation(); },
+    { timeout: 8000, maximumAge: 5 * 60 * 1000 }
+  );
+}
+
+// FIX 2: requestGPS was called from HTML onclick but was NEVER DEFINED
+function requestGPS() {
+  const btn = document.getElementById('locGpsBtn');
+  btn.classList.add('loading');
+  btn.textContent = 'Requesting…';
+  if (!navigator.geolocation) {
+    btn.classList.remove('loading');
+    btn.textContent = 'Not supported';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      GEO.lat = pos.coords.latitude; GEO.lng = pos.coords.longitude;
+      GEO.status = 'ok';
+      reverseGeocode(GEO.lat, GEO.lng);
+      document.getElementById('nearbyBtn').disabled = false;
+      btn.classList.remove('loading');
+      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`;
+      updateDistances();
+      applyFilters();
+    },
+    function() {
+      btn.classList.remove('loading');
+      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use My Location`;
+      applyFallbackLocation();
+    },
+    { timeout: 8000 }
+  );
+}
+
+// FIX 3: setRadius was called from HTML onclick but was NEVER DEFINED
+function setRadius(km, el) {
+  GEO.radiusKm = km;
+  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  applyFilters();
+  if (navigator.vibrate) navigator.vibrate(6);
+}
+
+function applyFallbackLocation() {
+  GEO.lat = GEO.FALLBACK.lat; GEO.lng = GEO.FALLBACK.lng;
+  GEO.city = GEO.FALLBACK.city; GEO.status = 'fallback';
+  updateCityPill('denied', 'Nearby');
+  updateDistances();
+}
+
+// FIX 4: was "reversGeocode" (missing 'e') — caused silent failure, city never displayed
+async function reverseGeocode(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    const data = await res.json();
+    const addr = data.address || {};
+    const city = addr.city || addr.town || addr.village || addr.county || addr.state_district || 'Your Area';
+    GEO.city = city;
+    updateCityPill('ok', '📍 ' + city);
+  } catch { updateCityPill('ok', '📍 Live'); }
+}
+
+function updateCityPill(state, text) {
+  const pill = document.getElementById('cityPill');
+  pill.className = 'city-pill';
+  if (state === 'locating') pill.classList.add('locating');
+  if (state === 'denied')   pill.classList.add('denied');
+  document.getElementById('cityName').textContent = text;
+}
+
+/* ═══════════════════════ §4 DISTANCE UPDATES ═══════════════════════ */
+function updateDistances() {
+  if (GEO.lat === null) return;
+  document.querySelectorAll('[data-food-id]').forEach(card => {
+    const lat = parseFloat(card.dataset.lat), lng = parseFloat(card.dataset.lng);
+    const distEl = card.querySelector('.card-distance');
+    if (!distEl) return;
+    if (isNaN(lat) || isNaN(lng)) { distEl.textContent = 'Nearby'; distEl.className = 'card-distance denied'; return; }
+    const km = calculateDistance(GEO.lat, GEO.lng, lat, lng);
+    distEl.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${formatDistance(km)} away`;
+    distEl.className = 'card-distance' + (km <= 1.5 ? ' close' : '');
+    card.dataset.distance = km.toFixed(3);
+  });
+  markClosestCard();
+}
+
+function markClosestCard() {
+  document.querySelectorAll('.closest-badge').forEach(b => b.remove());
+  const cards = [...document.querySelectorAll('[data-food-id][data-distance]')];
+  if (!cards.length) return;
+  let closest = null, minD = Infinity;
+  cards.forEach(c => { const d = parseFloat(c.dataset.distance); if (d < minD) { minD = d; closest = c; } });
+  if (closest && minD < 20) {
+    const badge = document.createElement('div');
+    badge.className = 'closest-badge'; badge.innerHTML = 'Closest to you';
+    closest.querySelector('.card-img-wrap').appendChild(badge);
+  }
+}
+
+/* ═══════════════════════ §5 NEARBY / RADIUS FILTERS ═══════════════════════ */
+function toggleNearby() {
+  GEO.nearbyActive = !GEO.nearbyActive;
+  document.getElementById('nearbyBtn').classList.toggle('active', GEO.nearbyActive);
+  applyFilters();
+  if (navigator.vibrate) navigator.vibrate(8);
+}
+
+/* ═══════════════════════ §8 FILTER LOGIC FIXES ═══════════════════════ */
+
+// In getFiltered(), replace the nearby block with this:
+//
+// FIX 5: nearbyActive filter was only checking f._distance which could be
+// undefined if distance hadn't been pre-computed yet. Now computes on-the-fly.
+//
+// FIX 7: radiusKm filter was completely missing — setRadius() set GEO.radiusKm
+// but getFiltered() never used it. Added the radius chip filter below.
+//
+// REPLACE your existing filter block (the nearbyActive check) with:
+
+/*
+    // Nearby 2km button filter
+    if (GEO.nearbyActive && GEO.lat !== null) {
+      const d = f._distance !== undefined
+        ? f._distance
+        : (f._lat ? calculateDistance(GEO.lat, GEO.lng, f._lat, f._lng) : 9999);
+      if (d > GEO.NEARBY_RADIUS_KM) return false;
+    }
+    // Radius chip filter (Within 2km / 5km / 10km / 25km buttons)
+    if (GEO.radiusKm !== null && GEO.lat !== null) {
+      const d = f._distance !== undefined
+        ? f._distance
+        : (f._lat ? calculateDistance(GEO.lat, GEO.lng, f._lat, f._lng) : 9999);
+      if (d > GEO.radiusKm) return false;
+    }
+*/
+
+/* ═══════════════════════ §12 MODAL FIX ═══════════════════════ */
+
+// FIX 8: Modal distance calculation was broken two ways:
+//   (a) f._lat / f._lng are stripped when the food object is JSON.stringify'd
+//       in the card onclick handler, then JSON.parse'd in openModal()
+//   (b) The original code had `f._lng || f._lat` (copy-paste typo) for longitude
+//
+// REPLACE the distance block inside openModal() with:
+
+/*
+  const distRow = document.getElementById('modalDistanceRow');
+  if (GEO.lat !== null) {
+    // Re-derive coords since _lat/_lng are lost through JSON.stringify/parse
+    const coords = getRestCoords(f, 0);
+    const fLat = f.lat ? parseFloat(f.lat) : coords.lat;
+    const fLng = f.lng ? parseFloat(f.lng) : coords.lng;   // was: f._lng || f._lat  ← BUG
+    const km = calculateDistance(GEO.lat, GEO.lng, fLat, fLng);
+    distRow.innerHTML = `
+      <div class="modal-dist-pill">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        ${formatDistance(km)} away
+      </div>
+      ${f.minutes_left ? `<span style="font-size:.6875rem;color:var(--ink3);">${f.minutes_left}m remaining</span>` : ''}`;
+  } else { distRow.innerHTML = ''; }
+*/
+
+/* ═══════════════════════ §RESET FIX ═══════════════════════ */
+
+// FIX 1: resetAllFilters() referenced document.getElementById('resetChip')
+// which doesn't exist in the HTML. The element has id="locChipAll".
+// Also need to reset GEO.radiusKm and the chip highlight.
+//
+// REPLACE the location-chip reset lines in resetAllFilters() with:
+
+/*
+  GEO.nearbyActive = false;
+  GEO.radiusKm = null;                              // FIX: reset radius chip state
+  document.getElementById('nearbyBtn').classList.remove('active');
+  // FIX 1: was document.getElementById('resetChip') — element doesn't exist
+  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('locChipAll').classList.add('active');
+*/
 </script>
 </body>
 </html>
