@@ -28,7 +28,7 @@
   --green:      #30D158;
   --blue:       #0071E3;
   --nav-h:      52px;
-  --bnav-h:     76px;
+  --bnav-h:     70px;
   --radius-sm:  10px;
   --radius:     16px;
   --radius-lg:  20px;
@@ -75,7 +75,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  padding-bottom: calc(var(--bnav-h) + env(safe-area-inset-bottom));
+  /* Extra padding to clear the floating island nav */
+  padding-bottom: calc(var(--bnav-h) + 40px + env(safe-area-inset-bottom));
   transition: var(--theme-trans);
 }
 a { text-decoration: none; color: inherit; }
@@ -91,7 +92,7 @@ img { display: block; }
   transition: width 0.04s linear;
 }
 
-/* NAVBAR */
+/* ── NAVBAR ── */
 .navbar {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--nav-h); z-index: 1000;
@@ -100,8 +101,7 @@ img { display: block; }
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 0.5px solid var(--border);
   display: flex; align-items: center;
-  padding: 0 20px;
-  gap: 12px;
+  padding: 0 20px; gap: 12px;
   transition: var(--theme-trans);
 }
 body.dark .navbar { background: rgba(11,11,15,0.82); border-bottom-color: rgba(255,255,255,0.07); }
@@ -163,7 +163,7 @@ body.dark .dark-toggle .icon-sun  { transform: rotate(90deg) scale(0.6); opacity
 body.dark .dark-toggle .icon-moon { transform: rotate(0deg) scale(1); opacity: 1; }
 body.dark .dark-toggle:hover { background: rgba(255,255,255,0.08); color: #F5C518; }
 
-/* HERO */
+/* ── HERO ── */
 .hero {
   padding-top: var(--nav-h); min-height: 100svh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -247,7 +247,7 @@ body.dark .stat-card.feature { background: rgba(255,255,255,0.07); border: 0.5px
 .stat-card.feature .stat-card-n { color: #fff; font-size: 1.7rem; }
 .stat-card.feature .stat-card-l { color: rgba(255,255,255,0.45); }
 
-/* TICKER */
+/* ── TICKER ── */
 .ticker { overflow: hidden; white-space: nowrap; background: var(--ink); padding: 12px 0; position: relative; transition: background 0.4s; }
 body.dark .ticker { background: #0D0D11; }
 .ticker::before, .ticker::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 1; pointer-events: none; }
@@ -262,7 +262,42 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
 .titem strong { color: rgba(255,255,255,0.65); font-weight: 600; }
 .tsep { width: 3px; height: 3px; background: var(--accent); border-radius: 50%; opacity: 0.6; display: inline-block; }
 
-/* CONTROLS */
+/* ── 25KM PROXIMITY BANNER ── */
+.proximity-banner {
+  background: rgba(0,113,227,0.07);
+  border-bottom: 0.5px solid rgba(0,113,227,0.15);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: var(--theme-trans);
+  animation: bannerSlide 0.4s var(--ease-out) both;
+}
+@keyframes bannerSlide { from { max-height: 0; opacity: 0; padding: 0 20px; } to { max-height: 80px; opacity: 1; padding: 10px 20px; } }
+body.dark .proximity-banner { background: rgba(0,113,227,0.1); }
+.proximity-banner.hidden { display: none; }
+.pb-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.pb-icon {
+  width: 28px; height: 28px; flex-shrink: 0;
+  background: rgba(0,113,227,0.12); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pb-text { font-size: 0.75rem; font-weight: 500; color: var(--blue); line-height: 1.4; }
+.pb-text strong { font-weight: 700; }
+.pb-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.pb-show-all {
+  padding: 6px 14px; background: rgba(0,113,227,0.1); border: 0.5px solid rgba(0,113,227,0.25);
+  border-radius: 980px; font-size: 0.6875rem; font-weight: 600; color: var(--blue);
+  cursor: pointer; transition: all 0.2s var(--ease); white-space: nowrap;
+}
+.pb-show-all:hover { background: rgba(0,113,227,0.18); }
+.pb-dismiss {
+  width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.06);
+  border: none; display: flex; align-items: center; justify-content: center;
+  color: var(--ink3); cursor: pointer; font-size: 0.6875rem; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.pb-dismiss:hover { background: rgba(0,0,0,0.1); color: var(--ink); }
+
+/* ── CONTROLS ── */
 .controls-sec {
   background: rgba(255,255,255,0.82);
   backdrop-filter: saturate(180%) blur(20px);
@@ -272,7 +307,6 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
   transition: var(--theme-trans);
 }
 body.dark .controls-sec { background: rgba(11,11,15,0.88); }
-
 .ctrl-main-row {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; gap: 8px;
@@ -292,7 +326,6 @@ body.dark .search-box:focus-within { background: rgba(28,28,32,0.95); box-shadow
 .search-box input { border: none; background: transparent; font-size: 0.875rem; color: var(--ink); width: 100%; }
 .search-box input:focus { outline: none; }
 .search-box input::placeholder { color: var(--ink4); }
-
 .sort-wrap { position: relative; flex-shrink: 0; }
 .sort-sel {
   appearance: none; padding: 9px 28px 9px 12px;
@@ -304,7 +337,6 @@ body.dark .sort-sel { background: rgba(255,255,255,0.07); }
 .sort-sel:hover { background: rgba(118,118,128,0.16); }
 .sort-sel:focus { outline: none; }
 .sort-arr { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
-
 .ctrl-icon-btn {
   width: 36px; height: 36px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -326,43 +358,27 @@ body.dark .ctrl-icon-btn { background: rgba(255,255,255,0.07); }
 }
 body.dark .fcnt { border-color: rgba(11,11,15,0.9); }
 
-/* ═══════════════════════════════════════════
-   LOCATION MAP STRIP — Shows areas/zones, not restaurants
-═══════════════════════════════════════════ */
+/* ── LOCATION MAP STRIP ── */
 .loc-map-section {
   background: var(--bg2);
   border-bottom: 0.5px solid var(--border);
   transition: var(--theme-trans);
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 .loc-map-section::before {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,113,227,0.04) 0%, transparent 70%);
 }
 body.dark .loc-map-section::before {
   background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,113,227,0.07) 0%, transparent 70%);
 }
-
-.loc-map-inner {
-  max-width: 1200px; margin: 0 auto;
-  padding: 14px 16px 12px;
-}
-
-.loc-map-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px;
-}
+.loc-map-inner { max-width: 1200px; margin: 0 auto; padding: 14px 16px 12px; }
+.loc-map-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .loc-map-title {
   display: flex; align-items: center; gap: 8px;
-  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--ink3);
+  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3);
 }
-.loc-map-title-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--blue); animation: blink 3s step-end infinite;
-}
+.loc-map-title-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); animation: blink 3s step-end infinite; }
 .loc-map-gps {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 10px; background: rgba(0,113,227,0.07); border: 0.5px solid rgba(0,113,227,0.2);
@@ -371,139 +387,81 @@ body.dark .loc-map-section::before {
 }
 .loc-map-gps:hover { background: rgba(0,113,227,0.14); }
 .loc-map-gps.located { background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.3); color: var(--green); }
-
-/* Horizontal scrollable track */
-.loc-track-wrap {
-  position: relative;
-  overflow: hidden;
-}
-.loc-track-wrap::before,
-.loc-track-wrap::after {
+.loc-track-wrap { position: relative; overflow: hidden; }
+.loc-track-wrap::before, .loc-track-wrap::after {
   content: ''; position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none;
 }
 .loc-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg2), transparent); }
 .loc-track-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--bg2), transparent); }
-
 .loc-track {
   display: flex; align-items: stretch; gap: 0;
   overflow-x: auto; scrollbar-width: none;
-  padding: 4px 0 8px;
-  position: relative;
+  padding: 4px 0 8px; position: relative;
 }
 .loc-track::-webkit-scrollbar { display: none; }
-
-/* "All" pin */
 .loc-pin-all {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   cursor: pointer; flex-shrink: 0; padding: 0 14px;
-  transition: opacity 0.2s;
-  position: relative;
+  transition: opacity 0.2s; position: relative;
 }
 .loc-pin-all:not(:last-child)::after {
-  content: '';
-  position: absolute; right: 0; top: 20px;
+  content: ''; position: absolute; right: 0; top: 20px;
   width: 1px; height: 32px; background: var(--border);
 }
-
 .loc-pin-globe {
   width: 40px; height: 40px; border-radius: 50%;
   background: var(--ink); border: 2px solid transparent;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s var(--ease-spring);
-  position: relative; flex-shrink: 0;
+  transition: all 0.3s var(--ease-spring); position: relative; flex-shrink: 0;
 }
-.loc-pin-all.active .loc-pin-globe {
-  background: var(--accent); border-color: rgba(255,59,48,0.3);
-  box-shadow: 0 0 0 6px rgba(255,59,48,0.12);
-}
-.loc-pin-all:hover:not(.active) .loc-pin-globe {
-  transform: scale(1.08); background: var(--ink2);
-}
+.loc-pin-all.active .loc-pin-globe { background: var(--accent); border-color: rgba(255,59,48,0.3); box-shadow: 0 0 0 6px rgba(255,59,48,0.12); }
+.loc-pin-all:hover:not(.active) .loc-pin-globe { transform: scale(1.08); background: var(--ink2); }
 .loc-pin-globe svg { color: #fff; }
 .loc-pin-all-lbl {
   font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--ink3); white-space: nowrap; transition: color 0.2s;
 }
 .loc-pin-all.active .loc-pin-all-lbl { color: var(--accent); }
-
-/* ═══ AREA/LOCATION PIN — unique map marker per zone ═══ */
 .loc-area-pin {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   cursor: pointer; flex-shrink: 0; padding: 0 12px;
   position: relative; transition: opacity 0.25s;
 }
-
-/* Dashed connector line between pins */
 .loc-area-pin::after {
-  content: '';
-  position: absolute; right: -1px; top: 18px;
-  width: 2px; height: 28px;
-  border-right: 1.5px dashed var(--border);
-  z-index: 0;
+  content: ''; position: absolute; right: -1px; top: 18px;
+  width: 2px; height: 28px; border-right: 1.5px dashed var(--border); z-index: 0;
 }
 .loc-area-pin:last-child::after { display: none; }
 .loc-area-pin.active::after { border-right-color: rgba(255,59,48,0.2); }
-
-/* The animated map-pin marker */
 .loc-area-marker {
-  width: 40px; height: 50px;
-  position: relative; flex-shrink: 0;
+  width: 40px; height: 50px; position: relative; flex-shrink: 0;
   display: flex; align-items: flex-start; justify-content: center;
   transition: transform 0.4s var(--ease-spring);
 }
 .loc-area-pin:hover .loc-area-marker { transform: translateY(-5px); }
 .loc-area-pin.active .loc-area-marker { transform: translateY(-7px); }
-
-/* SVG teardrop pin */
 .loc-area-pin-svg {
-  width: 38px; height: 48px;
-  transition: filter 0.3s;
+  width: 38px; height: 48px; transition: filter 0.3s;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
 }
-.loc-area-pin.active .loc-area-pin-svg {
-  filter: drop-shadow(0 5px 14px rgba(255,59,48,0.45));
-}
-
-/* Icon or letter inside pin */
-.loc-area-pin-icon {
-  position: absolute;
-  top: 7px; left: 50%; transform: translateX(-50%);
-  font-size: 0.75rem; font-weight: 800; color: #fff;
-  pointer-events: none; line-height: 1;
-  width: 24px; text-align: center;
-  white-space: nowrap; overflow: hidden;
-}
-
-/* Pulse dot at base of active pin */
+.loc-area-pin.active .loc-area-pin-svg { filter: drop-shadow(0 5px 14px rgba(255,59,48,0.45)); }
 .loc-area-pin-dot {
   position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,59,48,0.6); opacity: 0;
-  transition: opacity 0.2s;
+  background: rgba(255,59,48,0.6); opacity: 0; transition: opacity 0.2s;
 }
-.loc-area-pin.active .loc-area-pin-dot {
-  opacity: 1;
-  animation: areaPinPulse 2s ease-in-out infinite;
-}
+.loc-area-pin.active .loc-area-pin-dot { opacity: 1; animation: areaPinPulse 2s ease-in-out infinite; }
 @keyframes areaPinPulse {
   0%,100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.5); transform: translateX(-50%) scale(1); }
   50% { box-shadow: 0 0 0 6px rgba(255,59,48,0); transform: translateX(-50%) scale(1.2); }
 }
-
-/* Label card below pin */
 .loc-area-card {
   background: var(--white); border: 0.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px; min-width: 72px; max-width: 100px;
-  text-align: center;
-  transition: all 0.3s var(--ease-out), var(--theme-trans);
-  box-shadow: var(--shadow-xs);
-  position: relative; z-index: 1;
+  border-radius: var(--radius-sm); padding: 6px 10px; min-width: 72px; max-width: 100px;
+  text-align: center; transition: all 0.3s var(--ease-out), var(--theme-trans);
+  box-shadow: var(--shadow-xs); position: relative; z-index: 1;
 }
-.loc-area-pin.active .loc-area-card {
-  border-color: rgba(255,59,48,0.3);
-  box-shadow: 0 4px 16px rgba(255,59,48,0.14);
-}
+.loc-area-pin.active .loc-area-card { border-color: rgba(255,59,48,0.3); box-shadow: 0 4px 16px rgba(255,59,48,0.14); }
 .loc-area-name {
   font-size: 0.625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
   display: block; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -515,23 +473,17 @@ body.dark .loc-map-section::before {
   display: flex; align-items: center; justify-content: center; gap: 3px;
 }
 .loc-area-meta-dot { width: 4px; height: 4px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
-.loc-area-dist {
-  font-size: 0.5rem; font-weight: 600; color: var(--blue);
-  margin-top: 2px; display: block;
-}
-
-/* Active badge */
+.loc-area-dist { font-size: 0.5rem; font-weight: 600; color: var(--blue); margin-top: 2px; display: block; }
 .loc-active-badge {
   display: none; align-items: center; gap: 5px;
   padding: 3px 10px; background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2);
   border-radius: 100px; font-size: 0.5625rem; font-weight: 600; color: var(--accent);
-  animation: ppop 0.25s var(--ease-spring) both;
-  margin-top: 6px;
+  animation: ppop 0.25s var(--ease-spring) both; margin-top: 6px;
 }
 .loc-active-badge.vis { display: inline-flex; }
 @keyframes ppop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
 
-/* Active filter pills */
+/* ── ACTIVE PILLS ── */
 .pills-row {
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   max-height: 0; overflow: hidden; opacity: 0;
@@ -545,12 +497,15 @@ body.dark .loc-map-section::before {
   border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--accent);
   animation: ppop 0.2s var(--ease-spring) both;
 }
+.pill.pill-blue {
+  background: rgba(0,113,227,0.08); border-color: rgba(0,113,227,0.2); color: var(--blue);
+}
 .pill-x { opacity: 0.5; cursor: pointer; transition: opacity 0.2s; font-size: 0.7rem; margin-left: 2px; }
 .pill-x:hover { opacity: 1; }
 .pill-clear { padding: 4px 10px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: inherit; transition: color 0.2s; }
 .pill-clear:hover { color: var(--accent); }
 
-/* FILTER PANEL */
+/* ── FILTER PANEL ── */
 .filter-panel {
   background: rgba(250,250,252,0.95); backdrop-filter: blur(20px);
   border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);
@@ -558,7 +513,7 @@ body.dark .loc-map-section::before {
   transition: max-height 0.5s var(--ease-out), opacity 0.3s, var(--theme-trans);
 }
 body.dark .filter-panel { background: rgba(14,14,18,0.97); }
-.filter-panel.open { max-height: 600px; opacity: 1; }
+.filter-panel.open { max-height: 700px; opacity: 1; }
 .fp-inner { padding: 20px 16px; max-width: 1200px; margin: 0 auto; }
 .fp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 18px 24px; }
 .fp-sec { display: flex; flex-direction: column; gap: 10px; }
@@ -571,6 +526,8 @@ body.dark .fp-chip { background: rgba(255,255,255,0.07); }
 .fp-chip.on { background: var(--ink); color: #fff; }
 .fp-chip[data-diet="veg"].on { background: var(--green); }
 .fp-chip[data-diet="egg"].on { background: var(--gold); }
+/* Distance chip active state */
+.fp-chip[data-dist].on { background: var(--blue); }
 .fp-radios { display: flex; flex-wrap: wrap; gap: 6px; }
 .fp-radio { padding: 7px 14px; border: none; background: rgba(118,118,128,0.1); border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 500; color: var(--ink2); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 body.dark .fp-radio { background: rgba(255,255,255,0.07); }
@@ -593,14 +550,14 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 .fp-hint { font-size: 0.6875rem; color: var(--ink3); }
 .fp-hint.lit { color: var(--accent); font-weight: 600; }
 
-/* SECTION HEADER */
+/* ── SECTION HEADER ── */
 .sec-hdr { background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; transition: var(--theme-trans); }
 .sec-hdr-left { display: flex; align-items: center; gap: 10px; }
 .sec-hdr-title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); transition: color 0.4s; }
 .live-pip { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: blink 2s step-end infinite; flex-shrink: 0; box-shadow: 0 0 6px rgba(255,59,48,0.5); }
 .sec-hdr-badge { font-size: 0.75rem; font-weight: 500; color: var(--ink3); letter-spacing: -0.01em; transition: color 0.4s; }
 
-/* FOOD TYPE BADGE */
+/* ── FOOD TYPE BADGE ── */
 .ft { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 6px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.02em; width: fit-content; flex-shrink: 0; margin-bottom: 10px; border-radius: 100px; }
 .fts { width: 10px; height: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .fts.veg { border: 1.5px solid var(--green); border-radius: 2px; }
@@ -614,92 +571,235 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 .ft.egg { color: var(--gold); background: rgba(255,159,10,0.1); }
 .ft.sm { font-size: 0.5625rem; padding: 2px 7px 2px 4px; }
 
-/* FOOD GRID */
+/* ═══════════════════════════════════════
+   APPLE-LEVEL FOOD GRID
+   – Variable column widths via subgrid feel
+   – Cards use aspect-ratio trick for imgs
+   – Smooth spring hover, not translateY jerk
+═══════════════════════════════════════ */
 .food-grid {
   max-width: 1200px; margin: 0 auto;
-  padding: 20px 16px 80px;
+  padding: 24px 16px 80px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  /* Align items to top so varying-height cards don't stretch */
+  align-items: start;
 }
-@media (max-width: 780px) { .food-grid { grid-template-columns: 1fr; padding: 12px 12px 80px; gap: 12px; } }
+@media (max-width: 720px) {
+  .food-grid {
+    grid-template-columns: 1fr;
+    padding: 14px 12px 80px;
+    gap: 10px;
+  }
+}
+@media (min-width: 1080px) {
+  .food-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── FOOD CARD — Apple refinement ── */
 .food-card {
-  background: var(--white); border-radius: var(--radius-lg);
-  border: 0.5px solid var(--border); box-shadow: var(--shadow-xs);
-  cursor: pointer; overflow: hidden; display: flex; flex-direction: column;
-  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease), var(--theme-trans);
-  animation: cardIn 0.5s var(--ease-out) both; position: relative;
+  background: var(--white);
+  border-radius: 20px;
+  border: 0.5px solid var(--border);
+  box-shadow: 0 1px 0px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer; overflow: hidden;
+  display: flex; flex-direction: column;
+  transition:
+    transform 0.5s var(--ease-spring),
+    box-shadow 0.4s var(--ease-out),
+    background 0.4s;
+  animation: cardIn 0.5s var(--ease-out) both;
+  position: relative;
+  will-change: transform;
 }
-@keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-.food-card:hover { transform: translateY(-6px) scale(1.005); box-shadow: var(--shadow-lg); }
-.food-card:active { transform: translateY(-2px) scale(0.998); }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.food-card:hover {
+  transform: translateY(-8px) scale(1.008);
+  box-shadow:
+    0 1px 1px rgba(0,0,0,0.03),
+    0 4px 12px rgba(0,0,0,0.06),
+    0 16px 40px rgba(0,0,0,0.10),
+    0 32px 60px rgba(0,0,0,0.06);
+}
+.food-card:active {
+  transform: translateY(-2px) scale(1.002);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+/* Image container — 16:9 aspect */
+.card-img-wrap {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--bg);
+  flex-shrink: 0;
+  border-radius: 20px 20px 0 0;
+}
+.card-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.9) contrast(1.02) brightness(1.0);
+  transition: transform 0.9s var(--ease-out), filter 0.6s;
+}
+.food-card:hover .card-img {
+  transform: scale(1.06);
+  filter: saturate(1.05) contrast(1.03) brightness(1.02);
+}
+.card-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0.15) 65%,
+    rgba(0,0,0,0.65) 100%);
+  pointer-events: none;
+}
+
+/* Top-right badge cluster */
+.card-badges {
+  position: absolute; top: 10px; right: 10px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 5px; z-index: 2;
+}
+.ibadge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px;
+  background: rgba(255,255,255,0.88); backdrop-filter: blur(12px) saturate(1.5);
+  border-radius: 100px;
+  font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; color: var(--ink);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+.ibadge.right { background: rgba(0,0,0,0.55); color: #fff; }
+.ibadge.urgent { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(255,59,48,0.4); }
+.ib-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+
+/* Discount stamp */
+.disc-stamp {
+  position: absolute; bottom: 10px; right: 10px; z-index: 2;
+  padding: 5px 10px; background: var(--accent); border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(255,59,48,0.45);
+}
+.disc-pct { font-size: 0.9375rem; line-height: 1; color: #fff; font-weight: 700; }
+.disc-off { font-size: 0.4375rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+
+/* Name overlay at bottom of image */
+.card-img-name {
+  position: absolute; bottom: 10px; left: 12px; right: 76px; z-index: 2;
+}
+.card-img-name .name-text {
+  font-size: 1.125rem; font-weight: 700; letter-spacing: -0.025em; color: #fff;
+  line-height: 1.2; text-shadow: 0 1px 10px rgba(0,0,0,0.4);
+}
+
+/* Closest badge */
 .closest-badge {
-  position: absolute; top: 12px; left: 12px; z-index: 10;
-  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
-  background: rgba(0,113,227,0.92); backdrop-filter: blur(12px);
-  border-radius: 100px; font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.04em;
-  text-transform: uppercase; color: #fff; box-shadow: 0 2px 10px rgba(0,113,227,0.4);
+  position: absolute; top: 10px; left: 10px; z-index: 10;
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px;
+  background: rgba(0,113,227,0.90); backdrop-filter: blur(12px);
+  border-radius: 100px; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: #fff;
+  box-shadow: 0 2px 10px rgba(0,113,227,0.4);
   animation: badgePop 0.4s var(--ease-spring) both;
 }
-@keyframes badgePop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
-.closest-badge::before { content: ''; width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: blink 2s step-end infinite; }
-.card-img-wrap { position: relative; height: 200px; overflow: hidden; background: var(--bg); flex-shrink: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-.card-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92) contrast(1.02); transition: transform 0.9s var(--ease-out), filter 0.4s; }
-.food-card:hover .card-img { transform: scale(1.07); filter: saturate(1.05) contrast(1.02); }
-.card-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
-.card-badges { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 2; }
-.ibadge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); border-radius: 100px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-.ibadge.right { background: rgba(0,0,0,0.65); color: #fff; }
-.ibadge.urgent { background: var(--accent); color: #fff; }
-.ib-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
-.disc-stamp { position: absolute; bottom: 12px; right: 12px; z-index: 2; padding: 6px 12px; background: var(--accent); border-radius: var(--radius-sm); text-align: center; box-shadow: 0 4px 12px rgba(255,59,48,0.4); }
-.disc-pct { font-size: 1rem; line-height: 1; color: #fff; font-weight: 700; }
-.disc-off { font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
-.card-img-name { position: absolute; bottom: 12px; left: 14px; right: 80px; z-index: 2; }
-.card-img-name .name-text { font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.2; text-shadow: 0 2px 12px rgba(0,0,0,0.35); }
-.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
-.card-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.card-kitchen { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.02em; color: var(--accent); }
-.card-qty { font-size: 0.6875rem; color: var(--ink3); font-weight: 500; }
+@keyframes badgePop { from { opacity: 0; transform: scale(0.7) translateY(-4px); } to { opacity: 1; transform: none; } }
+.closest-badge::before { content: ''; width: 4px; height: 4px; background: #fff; border-radius: 50%; animation: blink 2s step-end infinite; }
+
+/* Card body */
+.card-body { padding: 13px 14px 14px; display: flex; flex-direction: column; flex: 1; }
+.card-meta-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 5px; gap: 8px; }
+.card-kitchen { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em; color: var(--accent); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-qty { font-size: 0.625rem; color: var(--ink3); font-weight: 500; flex-shrink: 0; }
 .card-qty strong { color: var(--ink); transition: color 0.4s; }
-.card-loc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.card-addr { display: flex; align-items: center; gap: 3px; font-size: 0.6875rem; color: var(--ink3); font-weight: 400; }
-.card-distance { display: inline-flex; align-items: center; gap: 4px; font-size: 0.6875rem; font-weight: 600; color: var(--blue); padding: 2px 8px; background: rgba(0,113,227,0.07); border-radius: 100px; border: 0.5px solid rgba(0,113,227,0.15); transition: all 0.3s var(--ease); white-space: nowrap; }
+
+/* Location row */
+.card-loc-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.card-addr { display: flex; align-items: center; gap: 3px; font-size: 0.625rem; color: var(--ink3); font-weight: 400; }
+.card-distance {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 0.625rem; font-weight: 600;
+  color: var(--blue); padding: 2px 7px;
+  background: rgba(0,113,227,0.07); border-radius: 100px;
+  border: 0.5px solid rgba(0,113,227,0.15);
+  transition: all 0.3s var(--ease); white-space: nowrap;
+}
 .card-distance.calculating { color: var(--ink4); background: rgba(118,118,128,0.08); border-color: rgba(118,118,128,0.15); animation: shimDist 1.8s ease-in-out infinite; }
 @keyframes shimDist { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
 .card-distance.close { color: var(--green); background: rgba(48,209,88,0.07); border-color: rgba(48,209,88,0.2); }
 .card-distance.denied { color: var(--ink4); background: transparent; border-color: transparent; }
-.urgency-combo { display: inline-flex; align-items: center; gap: 5px; font-size: 0.6875rem; font-weight: 600; color: var(--accent); padding: 2px 8px; background: rgba(255,59,48,0.06); border-radius: 100px; white-space: nowrap; }
-.card-divider { height: 0.5px; background: var(--border); margin: 10px 0; }
-.card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
-.price-block { display: flex; flex-direction: column; }
-.price-old { font-size: 0.6875rem; color: var(--ink4); text-decoration: line-through; line-height: 1; margin-bottom: 2px; }
-.price-new { font-size: 1.875rem; line-height: 1; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); transition: color 0.25s; }
-.food-card:hover .price-new { color: var(--accent); }
-.price-currency { font-size: 1rem; vertical-align: super; font-weight: 400; }
-.reserve-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; background: var(--ink); color: #fff; border-radius: 980px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.25s var(--ease-apple); flex-shrink: 0; }
-.reserve-btn:hover, .food-card:hover .reserve-btn { background: var(--accent); box-shadow: 0 4px 14px rgba(255,59,48,0.35); }
-.reserve-btn:active { transform: scale(0.96); }
-.time-bar { margin-bottom: 12px; }
-.time-bar-track { height: 3px; background: var(--bg); border-radius: 100px; overflow: hidden; }
+
+.urgency-combo {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.625rem; font-weight: 600; color: var(--accent);
+  padding: 2px 8px; background: rgba(255,59,48,0.06); border-radius: 100px; white-space: nowrap;
+  margin-bottom: 6px;
+}
+
+/* Divider */
+.card-divider { height: 0.5px; background: var(--border); margin: 8px 0; }
+
+/* Time bar */
+.time-bar { margin-bottom: 10px; }
+.time-bar-track { height: 2.5px; background: var(--bg); border-radius: 100px; overflow: hidden; }
 .time-bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s var(--ease-out); }
-.time-bar-label { display: flex; justify-content: space-between; margin-top: 5px; }
-.time-label-text { font-size: 0.6875rem; color: var(--ink4); font-weight: 500; }
-.time-label-val { font-size: 0.6875rem; color: var(--ink3); font-weight: 600; }
-.skel-card { background: var(--white); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: var(--theme-trans); }
-.skel-img { height: 200px; background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; }
-.skel-body { padding: 16px 18px; }
+.time-bar-label { display: flex; justify-content: space-between; margin-top: 4px; }
+.time-label-text { font-size: 0.5625rem; color: var(--ink4); font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; }
+.time-label-val { font-size: 0.5625rem; color: var(--ink3); font-weight: 700; letter-spacing: -0.01em; }
+
+/* Footer */
+.card-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 2px; }
+.price-block { display: flex; flex-direction: column; }
+.price-old { font-size: 0.625rem; color: var(--ink4); text-decoration: line-through; line-height: 1; margin-bottom: 2px; letter-spacing: 0; }
+.price-new {
+  font-size: 1.75rem; line-height: 1; font-weight: 700; letter-spacing: -0.04em; color: var(--ink);
+  transition: color 0.3s var(--ease);
+}
+.food-card:hover .price-new { color: var(--accent); }
+.price-currency { font-size: 0.9375rem; vertical-align: super; font-weight: 500; letter-spacing: 0; }
+.reserve-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; background: var(--ink); color: #fff;
+  border-radius: 980px; font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: background 0.25s var(--ease-apple), transform 0.2s var(--ease-spring), box-shadow 0.25s;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+.reserve-btn:hover, .food-card:hover .reserve-btn {
+  background: var(--accent);
+  box-shadow: 0 4px 16px rgba(255,59,48,0.38);
+  transform: translateY(-1px);
+}
+.reserve-btn:active { transform: scale(0.96); }
+
+/* Bottom accent bar */
+.food-card .card-hover-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2.5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+  border-radius: 0 0 20px 20px;
+}
+.food-card:hover .card-hover-bar { transform: scaleX(1); }
+
+/* Skeleton cards */
+.skel-card { background: var(--white); border: 0.5px solid var(--border); border-radius: 20px; overflow: hidden; transition: var(--theme-trans); }
+.skel-img { aspect-ratio: 16/10; background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; }
+.skel-body { padding: 14px 16px; }
 .skel-line { background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; border-radius: 6px; }
 @keyframes shim { 0% { background-position: 100% center; } 100% { background-position: -100% center; } }
+
+/* Empty state */
 .empty-state { grid-column: 1 / -1; padding: 80px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .empty-big { font-size: 5rem; font-weight: 700; letter-spacing: -0.04em; color: rgba(0,0,0,0.06); }
 body.dark .empty-big { color: rgba(255,255,255,0.06); }
 .empty-ttl { font-size: 1.25rem; font-weight: 600; color: var(--ink3); letter-spacing: -0.02em; }
 .empty-sub { font-size: 0.875rem; color: var(--ink3); line-height: 1.7; }
-.food-card .card-hover-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease-out); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
-.food-card:hover .card-hover-bar { transform: scaleX(1); }
 
-/* FEATURES, SUPPORT, FOOTER */
+/* ── FEATURES ── */
 .feat-sec { background: var(--ink); transition: background 0.4s; }
 body.dark .feat-sec { background: #0D0D11; }
 .feat-eyebrow { text-align: center; padding: 22px; border-bottom: 0.5px solid rgba(255,255,255,0.08); font-size: 0.625rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 14px; }
@@ -714,6 +814,8 @@ body.dark .feat-sec { background: #0D0D11; }
 .feat-desc { font-size: 0.875rem; color: rgba(255,255,255,0.38); line-height: 1.75; }
 .feat-accent { width: 24px; height: 2px; background: var(--accent); margin-bottom: 18px; border-radius: 2px; }
 @media (max-width: 720px) { .feat-card { border-right: none; border-bottom: 0.5px solid rgba(255,255,255,0.07); } }
+
+/* ── SUPPORT + FOOTER ── */
 .support-sec { border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); background: var(--bg2); transition: var(--theme-trans); }
 .support-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; }
 @media (max-width: 860px) { .support-inner { grid-template-columns: 1fr; } }
@@ -744,7 +846,7 @@ footer { background: var(--bg2); border-top: 0.5px solid var(--border); display:
 .foot-link:hover { background: var(--ink); color: #fff; transform: translateY(-1px); }
 @media (max-width: 720px) { footer { grid-template-columns: 1fr; } .foot-center, .foot-right { border-left: none; border-top: 0.5px solid var(--border); } .foot-right { justify-content: center; } }
 
-/* MODAL */
+/* ── MODAL ── */
 .modal-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0); backdrop-filter: blur(0px); display: flex; align-items: center; justify-content: center; padding: 20px; pointer-events: none; transition: background 0.35s, backdrop-filter 0.35s; }
 .modal-overlay.open { background: rgba(0,0,0,0.55); backdrop-filter: blur(28px) saturate(1.5); pointer-events: all; }
 body.dark .modal-overlay.open { background: rgba(0,0,0,0.75); }
@@ -768,7 +870,7 @@ body.dark .modal-box { background: rgba(18,18,22,0.95); border-color: rgba(255,2
 .modal-cta { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 14px 20px; background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; transition: all 0.25s var(--ease-apple); border-radius: 980px; box-shadow: 0 4px 12px rgba(255,59,48,0.3); }
 .modal-cta:hover { background: #E0352A; transform: translateY(-2px); }
 
-/* DRAWER */
+/* ── DRAWER ── */
 .drawer-bg { position: fixed; inset: 0; z-index: 4000; pointer-events: none; }
 .drawer-bg.open { pointer-events: all; }
 .drawer-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.4s; backdrop-filter: blur(0px); }
@@ -808,9 +910,35 @@ body.dark .cb-chip { background: rgba(255,255,255,0.05); }
 .drawer-logout { width: 100%; margin-top: 20px; padding: 13px; background: rgba(255,59,48,0.07); border: 0.5px solid rgba(255,59,48,0.2); border-radius: var(--radius-sm); color: var(--accent); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit; }
 .drawer-logout:hover { background: rgba(255,59,48,0.12); }
 
-/* BOTTOM NAV */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bnav-h); background: rgba(255,255,255,0.88); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 0.5px solid var(--border); display: flex; align-items: stretch; z-index: 2000; padding-bottom: env(safe-area-inset-bottom, 0px); transition: transform 0.4s var(--ease-out), var(--theme-trans); }
-body.dark .bottom-nav { background: rgba(11,11,15,0.92); }
+/* ── BOTTOM NAV (Island Style) ── */
+.bottom-nav { 
+  position: fixed; 
+  bottom: clamp(16px, env(safe-area-inset-bottom, 20px), 32px); 
+  left: 50%; 
+  transform: translateX(-50%) translateY(0);
+  width: calc(100% - 32px);
+  max-width: 420px;
+  height: var(--bnav-h); 
+  background: rgba(255,255,255,0.88); 
+  backdrop-filter: saturate(180%) blur(20px); 
+  -webkit-backdrop-filter: saturate(180%) blur(20px); 
+  border: 0.5px solid var(--border); 
+  border-radius: 980px; 
+  display: flex; 
+  align-items: stretch; 
+  z-index: 2000; 
+  padding: 0 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.04);
+  transition: transform 0.4s var(--ease-out), var(--theme-trans); 
+}
+.bottom-nav.hide-nav {
+  transform: translateX(-50%) translateY(200%);
+}
+body.dark .bottom-nav { 
+  background: rgba(11,11,15,0.92); 
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.2);
+}
 .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--ink4); text-decoration: none; cursor: pointer; background: none; border: none; font-family: inherit; transition: all 0.2s var(--ease); position: relative; }
 .bn-item:hover { color: var(--ink2); }
 .bn-item.active { color: var(--accent); }
@@ -821,7 +949,7 @@ body.dark .bottom-nav { background: rgba(11,11,15,0.92); }
 .bn-badge { position: absolute; top: 8px; right: calc(50% - 16px); width: 7px; height: 7px; background: var(--accent); border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); animation: blink 2s step-end infinite; }
 body.dark .bn-badge { border-color: rgba(11,11,15,0.9); }
 
-/* SHEET */
+/* ── CHEF'S SHEET ── */
 .sheet-overlay { position: fixed; inset: 0; z-index: 3000; pointer-events: none; }
 .sheet-overlay.open { pointer-events: all; }
 .sheet-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.5s var(--ease-out), backdrop-filter 0.5s; backdrop-filter: blur(0px); }
@@ -949,7 +1077,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 .sheet-empty-ttl { font-size: 1.125rem; font-weight: 700; color: var(--ink3); }
 .sheet-empty-sub { font-size: 0.8125rem; color: var(--ink3); line-height: 1.6; }
 
-@media (max-width: 860px) { .nav-tag { display: none; } }
 @media (max-width: 640px) { .hero-inner { padding: 48px 20px 40px; } }
 </style>
 </head>
@@ -959,7 +1086,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 
 <div id="page-root">
 
-<!-- NAVBAR -->
 <nav class="navbar">
   <a class="nav-logo" href="/">
     <div class="logo-mark"></div>
@@ -994,7 +1120,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </nav>
 
-<!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-left">
@@ -1040,7 +1165,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </header>
 
-<!-- TICKER -->
 <div class="ticker">
   <div class="ticker-inner">
     <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span>
@@ -1058,7 +1182,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- CONTROLS -->
 <div class="controls-sec" id="controlsBlock">
   <div class="ctrl-main-row">
     <div class="search-box">
@@ -1088,6 +1211,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   <div class="filter-panel" id="filterPanel">
     <div class="fp-inner">
       <div class="fp-grid">
+
         <div class="fp-sec">
           <div class="fp-lbl">Diet Type</div>
           <div class="fp-chips">
@@ -1096,15 +1220,28 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
             <button class="fp-chip" data-diet="egg"    onclick="toggleDiet('egg',this)">Egg</button>
           </div>
         </div>
+
+        <div class="fp-sec">
+          <div class="fp-lbl">Nearby</div>
+          <div class="fp-chips" id="distRow">
+            <button class="fp-chip on" data-dist="all"  onclick="setDist('all',this)">Any</button>
+            <button class="fp-chip"    data-dist="1"    onclick="setDist('1',this)">Within 1 km</button>
+            <button class="fp-chip"    data-dist="5"    onclick="setDist('5',this)">Within 5 km</button>
+            <button class="fp-chip"    data-dist="10"   onclick="setDist('10',this)">Within 10 km</button>
+            <button class="fp-chip"    data-dist="25"   onclick="setDist('25',this)">Within 25 km</button>
+          </div>
+        </div>
+
         <div class="fp-sec">
           <div class="fp-lbl">Time Remaining</div>
           <div class="fp-radios" id="urgencyRow">
             <button class="fp-radio on" data-urgency="all"    onclick="setUrgency('all',this)">All</button>
-            <button class="fp-radio"    data-urgency="urgent" onclick="setUrgency('urgent',this)">≤15m</button>
-            <button class="fp-radio"    data-urgency="30"     onclick="setUrgency('30',this)">≤30m</button>
-            <button class="fp-radio"    data-urgency="60"     onclick="setUrgency('60',this)">≤60m</button>
+            <button class="fp-radio"    data-urgency="urgent" onclick="setUrgency('urgent',this)">≤15 min</button>
+            <button class="fp-radio"    data-urgency="30"     onclick="setUrgency('30',this)">≤30 min</button>
+            <button class="fp-radio"    data-urgency="60"     onclick="setUrgency('60',this)">≤60 min</button>
           </div>
         </div>
+
         <div class="fp-sec">
           <div class="fp-lbl">Min Discount</div>
           <div class="fp-range-wrap">
@@ -1112,6 +1249,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
             <input class="fp-range" type="range" min="0" max="70" step="5" value="0" id="discountRange" oninput="onDiscountInput(this.value)">
           </div>
         </div>
+
         <div class="fp-sec">
           <div class="fp-lbl">Price Range</div>
           <div class="fp-range-wrap">
@@ -1124,6 +1262,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
             </div>
           </div>
         </div>
+
         <div class="fp-sec">
           <div class="fp-lbl">Plates Available</div>
           <div class="fp-chips" id="qtyRow">
@@ -1133,10 +1272,12 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
             <button class="fp-chip"    data-qty="5"   onclick="setQty('5',this)">5+</button>
           </div>
         </div>
+
         <div class="fp-sec" id="cuisineSection" style="display:none">
           <div class="fp-lbl">Cuisine</div>
           <div class="fp-chips" id="cuisineRow"></div>
         </div>
+
       </div>
       <div class="fp-footer">
         <div style="display:flex;align-items:center;gap:16px">
@@ -1149,7 +1290,19 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ LOCATION AREA STRIP ═══ -->
+<div class="proximity-banner" id="proximityBanner" style="display:none">
+  <div class="pb-left">
+    <div class="pb-icon">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+    </div>
+    <div class="pb-text"><strong>Showing plates within 25 km</strong> of your location. Tap any area pin to zoom in, or show all.</div>
+  </div>
+  <div class="pb-actions">
+    <button class="pb-show-all" onclick="removeProximityFilter()">Show All</button>
+    <button class="pb-dismiss" onclick="dismissBanner()" title="Dismiss">✕</button>
+  </div>
+</div>
+
 <div class="loc-map-section" id="locMapSection" style="display:none">
   <div class="loc-map-inner">
     <div class="loc-map-header">
@@ -1172,7 +1325,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- SECTION HEADER -->
 <div class="sec-hdr">
   <div class="sec-hdr-left">
     <div class="live-pip"></div>
@@ -1181,14 +1333,12 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   <div class="sec-hdr-badge" id="plateCount">— plates</div>
 </div>
 
-<!-- FOOD GRID -->
 <div class="food-grid" id="foodGrid">
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:34%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:70%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:44%;height:10px;margin-top:32px"></div></div></div>
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:38%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:66%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:40%;height:10px;margin-top:32px"></div></div></div>
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:30%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:54%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:48%;height:10px;margin-top:32px"></div></div></div>
 </div>
 
-<!-- FEATURES -->
 <div class="feat-sec">
   <div class="feat-eyebrow">// <span>Why</span> Last Plate //</div>
   <div class="feat-grid">
@@ -1213,7 +1363,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- SUPPORT -->
 <section class="support-sec">
   <div class="support-inner">
     <div class="supp-left">
@@ -1252,10 +1401,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </footer>
 
-</div><!-- end page-root -->
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
+</div><div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <div class="modal-img-wrap">
       <img class="modal-img" id="modalImg" src="" alt="">
@@ -1279,7 +1425,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- DRAWER -->
 <div class="drawer-bg" id="drawerOverlay">
   <div class="drawer-scrim" id="drawerScrim"></div>
   <div class="drawer-panel">
@@ -1317,7 +1462,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bn-item active" id="bnBrowse" onclick="setNav('bnBrowse');window.scrollTo({top:0,behavior:'smooth'})">
     <div class="bn-ico">
@@ -1346,7 +1490,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </button>
 </nav>
 
-<!-- SHEET -->
 <div class="sheet-overlay" id="sheetOverlay">
   <div class="sheet-scrim" id="sheetScrim"></div>
   <div class="sheet" id="theSheet">
@@ -1393,14 +1536,30 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 </div>
 
 <script>
-/* ═══ §1 LOCATION STATE ═══ */
+/* ══════════════════════════════════════════════
+   §0  UTILITIES (DEBOUNCE)
+══════════════════════════════════════════════ */
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => { clearTimeout(timeout); func(...args); };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+/* ══════════════════════════════════════════════
+   §1  LOCATION STATE
+══════════════════════════════════════════════ */
 const GEO = {
   lat: null, lng: null, city: null, status: 'idle',
-  selectedAreaKey: null,   /* null = All */
+  selectedAreaKey: null,
   FALLBACK: { lat: 9.9312, lng: 76.2673, city: 'Kochi' },
 };
 
-/* ═══ §2 HAVERSINE ═══ */
+/* ══════════════════════════════════════════════
+   §2  HAVERSINE
+══════════════════════════════════════════════ */
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
   const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
@@ -1411,7 +1570,9 @@ function formatDistance(km) {
   return km < 1 ? Math.round(km*1000)+' m' : km.toFixed(1)+' km';
 }
 
-/* ═══ §3 FOOD COORDS ═══ */
+/* ══════════════════════════════════════════════
+   §3  FOOD COORDS
+══════════════════════════════════════════════ */
 function getFoodCoords(food) {
   const lat = parseFloat(food.restaurant_lat??food.restaurant_latitude??food.rest_lat??food.lat??food.latitude??NaN);
   const lng = parseFloat(food.restaurant_lng??food.restaurant_lon??food.restaurant_longitude??food.rest_lng??food.lng??food.lon??food.longitude??NaN);
@@ -1419,7 +1580,9 @@ function getFoodCoords(food) {
   return null;
 }
 
-/* ═══ §4 USER LOCATION ═══ */
+/* ══════════════════════════════════════════════
+   §4  USER LOCATION
+══════════════════════════════════════════════ */
 function getUserLocation() {
   if (!navigator.geolocation) { applyFallbackLocation(); return; }
   GEO.status = 'locating';
@@ -1429,6 +1592,7 @@ function getUserLocation() {
       GEO.lat=pos.coords.latitude; GEO.lng=pos.coords.longitude; GEO.status='ok';
       reverseGeocode(GEO.lat, GEO.lng);
       recomputeAndRefresh();
+      applyProximityFilter(); /* ★ auto 25km on first location */
     },
     () => applyFallbackLocation(),
     { timeout: 8000, maximumAge: 5*60*1000 }
@@ -1446,10 +1610,7 @@ function requestGPS() {
       if(btn1){ btn1.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`; btn1.classList.add('located'); }
       recomputeAndRefresh(); rebuildLocationPins(); applyFilters();
     },
-    () => {
-      if(btn1){ btn1.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`; }
-      applyFallbackLocation();
-    },
+    () => { if(btn1){ btn1.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`; } applyFallbackLocation(); },
     { timeout: 8000 }
   );
 }
@@ -1472,44 +1633,46 @@ async function reverseGeocode(lat, lng) {
 }
 
 function updateCityPill(state, text) {
-  const pill = document.getElementById('cityPill'), name = document.getElementById('cityName');
-  pill.className = 'city-pill';
-  if (state==='locating') pill.classList.add('locating');
-  if (state==='denied')   pill.classList.add('denied');
-  name.textContent = text;
+  const pill=document.getElementById('cityPill'), name=document.getElementById('cityName');
+  pill.className='city-pill';
+  if(state==='locating') pill.classList.add('locating');
+  if(state==='denied')   pill.classList.add('denied');
+  name.textContent=text;
 }
 
-/* ═══ §5 DISTANCE HELPERS ═══ */
+/* ══════════════════════════════════════════════
+   §5  DISTANCE HELPERS
+══════════════════════════════════════════════ */
 function cacheDistances() {
-  if (GEO.lat===null||GEO.lng===null) return;
-  allFoods.forEach(food => {
-    const coords = getFoodCoords(food);
-    if (coords) {
-      food._lat=coords.lat; food._lng=coords.lng;
-      food._distance = haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng);
-    } else { food._lat=null; food._lng=null; food._distance=null; }
+  if(GEO.lat===null||GEO.lng===null) return;
+  allFoods.forEach(food=>{
+    const coords=getFoodCoords(food);
+    if(coords){ food._lat=coords.lat; food._lng=coords.lng; food._distance=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng); }
+    else { food._lat=null; food._lng=null; food._distance=null; }
   });
 }
+
 function updateDistanceBadgesOnCards() {
-  document.querySelectorAll('[data-food-id]').forEach(card => {
-    const distEl = card.querySelector('.card-distance'); if (!distEl) return;
+  document.querySelectorAll('[data-food-id]').forEach(card=>{
+    const distEl=card.querySelector('.card-distance'); if(!distEl) return;
     const fLat=parseFloat(card.dataset.lat), fLng=parseFloat(card.dataset.lng);
-    if (isNaN(fLat)||isNaN(fLng)||(fLat===0&&fLng===0)) { distEl.innerHTML='Nearby'; distEl.className='card-distance denied'; return; }
-    if (GEO.lat===null) { distEl.innerHTML='Calculating…'; distEl.className='card-distance calculating'; return; }
-    const km=haversineKm(GEO.lat,GEO.lng,fLat,fLng), label=formatDistance(km), isClose=km<=1.5;
-    distEl.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away`;
-    distEl.className='card-distance'+(isClose?' close':'');
+    if(isNaN(fLat)||isNaN(fLng)||(fLat===0&&fLng===0)){distEl.innerHTML='Nearby';distEl.className='card-distance denied';return;}
+    if(GEO.lat===null){distEl.innerHTML='Calculating…';distEl.className='card-distance calculating';return;}
+    
+    const km=haversineKm(GEO.lat,GEO.lng,fLat,fLng);
+    distEl.outerHTML = buildDistanceBadge(km);
     card.dataset.distance=km.toFixed(3);
   });
   markClosestCard();
 }
+
 function markClosestCard() {
   document.querySelectorAll('.closest-badge').forEach(b=>b.remove());
   const cards=[...document.querySelectorAll('[data-food-id][data-distance]')];
-  if (!cards.length) return;
+  if(!cards.length) return;
   let closestCard=null, closestDist=Infinity;
   cards.forEach(card=>{ const d=parseFloat(card.dataset.distance); if(!isNaN(d)&&d<closestDist){closestDist=d;closestCard=card;} });
-  if (closestCard&&closestDist<50) {
+  if(closestCard&&closestDist<50){
     const badge=document.createElement('div');
     badge.className='closest-badge'; badge.innerHTML='Closest to you';
     closestCard.querySelector('.card-img-wrap').appendChild(badge);
@@ -1517,10 +1680,43 @@ function markClosestCard() {
 }
 function recomputeAndRefresh() {
   cacheDistances();
-  if (document.querySelectorAll('[data-food-id]').length) updateDistanceBadgesOnCards();
+  if(document.querySelectorAll('[data-food-id]').length) updateDistanceBadgesOnCards();
 }
 
-/* ═══ §6 UTILS ═══ */
+/* ══════════════════════════════════════════════
+   §6  PROXIMITY BANNER (25km first-visit filter)
+══════════════════════════════════════════════ */
+let proximityActive = false;
+let bannerDismissed = false;
+
+function applyProximityFilter() {
+  if(GEO.lat===null) return;
+  proximityActive = true;
+  setDist('25', document.querySelector('#distRow [data-dist="25"]'), true);
+  const banner = document.getElementById('proximityBanner');
+  banner.style.display = '';
+  applyFilters();
+}
+
+function removeProximityFilter() {
+  proximityActive = false;
+  setDist('all', document.querySelector('#distRow [data-dist="all"]'), true);
+  dismissBanner();
+  applyFilters();
+  updateBadge();
+}
+
+function dismissBanner() {
+  bannerDismissed = true;
+  const banner = document.getElementById('proximityBanner');
+  banner.style.transition = 'opacity 0.3s, max-height 0.4s';
+  banner.style.opacity = '0';
+  setTimeout(()=>{ banner.style.display='none'; banner.style.opacity=''; }, 350);
+}
+
+/* ══════════════════════════════════════════════
+   §7  UTILS
+══════════════════════════════════════════════ */
 function openWalkin() { window.location.href='/walkin'; }
 
 (function(){ try { if(localStorage.getItem('lp-dark')==='1') document.body.classList.add('dark'); } catch {} })();
@@ -1611,245 +1807,158 @@ function getTimeWidth(mins){if(mins>=120)return'100';return Math.max(8,Math.roun
 function calcDisc(mrp,price){if(!mrp||mrp<=price)return 0;return Math.round(((mrp-price)/mrp)*100);}
 function normDiet(raw){if(!raw)return null;const t=raw.toString().toLowerCase().trim();if(t==='veg')return'veg';if(t==='egg')return'egg';if(t.includes('non')||t==='nonveg')return'nonveg';return null;}
 
-/* ═══ §7 AREA COLOR PALETTES — visually distinct per zone ═══ */
+/* ══════════════════════════════════════════════
+   §8  AREA COLOR PALETTES
+══════════════════════════════════════════════ */
 const AREA_PALETTES = [
-  /* body color,   shadow color,    accent ring */
-  { body:'#0071E3', shadow:'rgba(0,113,227,0.45)',   ring:'rgba(0,113,227,0.18)' },  /* blue */
-  { body:'#30D158', shadow:'rgba(48,209,88,0.45)',   ring:'rgba(48,209,88,0.18)'  },  /* green */
-  { body:'#FF9F0A', shadow:'rgba(255,159,10,0.45)',  ring:'rgba(255,159,10,0.18)' },  /* amber */
-  { body:'#AF52DE', shadow:'rgba(175,82,222,0.45)',  ring:'rgba(175,82,222,0.18)' },  /* purple */
-  { body:'#FF6B35', shadow:'rgba(255,107,53,0.45)',  ring:'rgba(255,107,53,0.18)' },  /* orange */
-  { body:'#00C7BE', shadow:'rgba(0,199,190,0.45)',   ring:'rgba(0,199,190,0.18)'  },  /* teal */
-  { body:'#5856D6', shadow:'rgba(88,86,214,0.45)',   ring:'rgba(88,86,214,0.18)'  },  /* indigo */
-  { body:'#FF2D55', shadow:'rgba(255,45,85,0.45)',   ring:'rgba(255,45,85,0.18)'  },  /* pink-red */
+  { body:'#0071E3', shadow:'rgba(0,113,227,0.45)',   ring:'rgba(0,113,227,0.18)' },
+  { body:'#30D158', shadow:'rgba(48,209,88,0.45)',   ring:'rgba(48,209,88,0.18)'  },
+  { body:'#FF9F0A', shadow:'rgba(255,159,10,0.45)',  ring:'rgba(255,159,10,0.18)' },
+  { body:'#AF52DE', shadow:'rgba(175,82,222,0.45)',  ring:'rgba(175,82,222,0.18)' },
+  { body:'#FF6B35', shadow:'rgba(255,107,53,0.45)',  ring:'rgba(255,107,53,0.18)' },
+  { body:'#00C7BE', shadow:'rgba(0,199,190,0.45)',   ring:'rgba(0,199,190,0.18)'  },
+  { body:'#5856D6', shadow:'rgba(88,86,214,0.45)',   ring:'rgba(88,86,214,0.18)'  },
+  { body:'#FF2D55', shadow:'rgba(255,45,85,0.45)',   ring:'rgba(255,45,85,0.18)'  },
 ];
-function getAreaPalette(index) { return AREA_PALETTES[index % AREA_PALETTES.length]; }
+function getAreaPalette(i){ return AREA_PALETTES[i%AREA_PALETTES.length]; }
 
-/* Build SVG teardrop pin with unique shape variation per index */
 function buildAreaPinSVG(palette, active, index) {
-  const c = active ? '#FF3B30' : palette.body;
-  /* Slightly different pin shapes for uniqueness: rounded vs sharp tip, different inner icon */
-  const shapes = [
-    /* circle-marker */
-    `<path d="M19 8.5C19 14.5 12 21 12 21S5 14.5 5 8.5a7 7 0 0 1 14 0z" fill="${c}"/>
-     <circle cx="12" cy="8.5" r="3" fill="rgba(255,255,255,0.85)"/>`,
-    /* diamond-tip */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <rect x="9.5" y="6.5" width="5" height="5" rx="1" fill="rgba(255,255,255,0.85)" transform="rotate(45 12 9)"/>`,
-    /* hexagonal feel */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <path d="M14.5 7.5 L12 6 L9.5 7.5 L9.5 10.5 L12 12 L14.5 10.5 Z" fill="rgba(255,255,255,0.85)"/>`,
-    /* star center */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <text x="12" y="12" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="7" font-weight="bold">✦</text>`,
-    /* dot pattern */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <circle cx="10" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/>
-     <circle cx="14" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/>
-     <circle cx="12" cy="11" r="1.5" fill="rgba(255,255,255,0.8)"/>`,
-    /* ring */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <circle cx="12" cy="9" r="4" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
-     <circle cx="12" cy="9" r="1.5" fill="rgba(255,255,255,0.85)"/>`,
-    /* cross/plus */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <line x1="12" y1="6" x2="12" y2="12" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
-     <line x1="9" y1="9" x2="15" y2="9" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>`,
-    /* triangle */
-    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
-     <polygon points="12,6 15,12 9,12" fill="rgba(255,255,255,0.85)"/>`,
+  const c=active?'#FF3B30':palette.body;
+  const shapes=[
+    `<path d="M19 8.5C19 14.5 12 21 12 21S5 14.5 5 8.5a7 7 0 0 1 14 0z" fill="${c}"/><circle cx="12" cy="8.5" r="3" fill="rgba(255,255,255,0.85)"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><rect x="9.5" y="6.5" width="5" height="5" rx="1" fill="rgba(255,255,255,0.85)" transform="rotate(45 12 9)"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><path d="M14.5 7.5 L12 6 L9.5 7.5 L9.5 10.5 L12 12 L14.5 10.5 Z" fill="rgba(255,255,255,0.85)"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><text x="12" y="12" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="7" font-weight="bold">✦</text>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><circle cx="10" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/><circle cx="14" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/><circle cx="12" cy="11" r="1.5" fill="rgba(255,255,255,0.8)"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><circle cx="12" cy="9" r="4" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/><circle cx="12" cy="9" r="1.5" fill="rgba(255,255,255,0.85)"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><line x1="12" y1="6" x2="12" y2="12" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="9" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>`,
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><polygon points="12,6 15,12 9,12" fill="rgba(255,255,255,0.85)"/>`,
   ];
-  const shape = shapes[index % shapes.length];
-  return `<svg class="loc-area-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${shape}</svg>`;
+  return `<svg class="loc-area-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${shapes[index%shapes.length]}</svg>`;
 }
 
-/* Derive a short area label from an address string or coords */
 function deriveAreaLabel(address, lat, lng) {
-  if (address) {
-    /* Try to extract a meaningful area name from the address */
-    const parts = address.split(/[,\/]/);
-    for (const p of parts) {
-      const t = p.trim();
-      if (t.length >= 3 && t.length <= 20 && !/^\d/.test(t)) return t;
-    }
+  if(address){
+    const parts=address.split(/[,\/]/);
+    for(const p of parts){ const t=p.trim(); if(t.length>=3&&t.length<=20&&!/^\d/.test(t)) return t; }
   }
-  /* Fallback: grid-based label using lat/lng rounded to 2 decimals */
-  if (lat && lng) return `${parseFloat(lat).toFixed(1)}°N`;
+  if(lat&&lng) return `${parseFloat(lat).toFixed(1)}°N`;
   return 'Area';
 }
 
-/* Group foods into geographic clusters (≤3km radius per cluster) */
 function clusterFoodsByArea(foods) {
-  const CLUSTER_RADIUS_KM = 3;
-  const clusters = []; /* [{ label, centLat, centLng, foods[] }] */
-
-  foods.forEach(food => {
-    const coords = getFoodCoords(food);
-    if (!coords) {
-      /* Foods with no coords go into a catch-all "Other" bucket */
-      let other = clusters.find(c => c.label === 'Other');
-      if (!other) { other = { label:'Other', centLat:null, centLng:null, foods:[] }; clusters.push(other); }
-      other.foods.push(food);
-      return;
-    }
-
-    /* Try to add to existing cluster within radius */
-    let assigned = false;
-    for (const cluster of clusters) {
-      if (cluster.centLat === null) continue;
-      const dist = haversineKm(cluster.centLat, cluster.centLng, coords.lat, coords.lng);
-      if (dist <= CLUSTER_RADIUS_KM) {
-        cluster.foods.push(food);
-        /* Update centroid (running average) */
-        const n = cluster.foods.length;
-        cluster.centLat = ((cluster.centLat * (n-1)) + coords.lat) / n;
-        cluster.centLng = ((cluster.centLng * (n-1)) + coords.lng) / n;
-        assigned = true;
-        break;
+  const CLUSTER_RADIUS_KM=3, clusters=[];
+  foods.forEach(food=>{
+    const coords=getFoodCoords(food);
+    if(!coords){ let other=clusters.find(c=>c.label==='Other'); if(!other){other={label:'Other',centLat:null,centLng:null,foods:[]};clusters.push(other);} other.foods.push(food); return; }
+    let assigned=false;
+    for(const cluster of clusters){
+      if(cluster.centLat===null) continue;
+      if(haversineKm(cluster.centLat,cluster.centLng,coords.lat,coords.lng)<=CLUSTER_RADIUS_KM){
+        cluster.foods.push(food); const n=cluster.foods.length;
+        cluster.centLat=((cluster.centLat*(n-1))+coords.lat)/n;
+        cluster.centLng=((cluster.centLng*(n-1))+coords.lng)/n;
+        assigned=true; break;
       }
     }
-    if (!assigned) {
-      /* Derive label from first food's address */
-      const label = deriveAreaLabel(food.restaurant_short_address || food.restaurant_address || '', coords.lat, coords.lng);
-      clusters.push({ label, centLat: coords.lat, centLng: coords.lng, foods: [food] });
+    if(!assigned){
+      const label=deriveAreaLabel(food.restaurant_short_address||food.restaurant_address||'',coords.lat,coords.lng);
+      clusters.push({label,centLat:coords.lat,centLng:coords.lng,foods:[food]});
     }
   });
-
-  /* Merge duplicate labels by appending count suffix */
-  const seen = {};
-  clusters.forEach(c => {
-    if (c.label === 'Other') return;
-    seen[c.label] = (seen[c.label]||0) + 1;
-  });
-  const labelCount = {};
-  clusters.forEach(c => {
-    if (c.label === 'Other') return;
-    if (seen[c.label] > 1) {
-      labelCount[c.label] = (labelCount[c.label]||0) + 1;
-      c.label = c.label + ' ' + labelCount[c.label];
-    }
-  });
-
+  const seen={};
+  clusters.forEach(c=>{ if(c.label!=='Other') seen[c.label]=(seen[c.label]||0)+1; });
+  const labelCount={};
+  clusters.forEach(c=>{ if(c.label==='Other') return; if(seen[c.label]>1){labelCount[c.label]=(labelCount[c.label]||0)+1;c.label=c.label+' '+labelCount[c.label];} });
   return clusters;
 }
 
-/* ═══ §8 AREA STATE ═══ */
-let allFoods = [];
-let areaClusterKey = null; /* null = All */
-let builtClusters = [];   /* last built clusters */
+/* ══════════════════════════════════════════════
+   §9  AREA STATE
+══════════════════════════════════════════════ */
+let allFoods=[];
+let areaClusterKey=null;
+let builtClusters=[];
 
-/* ═══ §9 LOCATION PIN BUILDER ═══ */
+/* ══════════════════════════════════════════════
+   §10  LOCATION PIN BUILDER
+══════════════════════════════════════════════ */
 function rebuildLocationPins() {
-  /* Re-cluster from scratch */
-  builtClusters = clusterFoodsByArea(allFoods);
-
-  const track = document.getElementById('locTrack');
-  const section = document.getElementById('locMapSection');
-
-  if (!builtClusters.length) { section.style.display='none'; return; }
-  section.style.display = '';
-  track.innerHTML = '';
-
-  /* Sort clusters: known-coord clusters by distance to user, "Other" last */
-  const userLat = GEO.lat || GEO.FALLBACK.lat;
-  const userLng = GEO.lng || GEO.FALLBACK.lng;
-  builtClusters.sort((a, b) => {
-    if (a.label === 'Other') return 1;
-    if (b.label === 'Other') return -1;
-    const dA = a.centLat !== null ? haversineKm(userLat, userLng, a.centLat, a.centLng) : 9999;
-    const dB = b.centLat !== null ? haversineKm(userLat, userLng, b.centLat, b.centLng) : 9999;
-    return dA - dB;
+  builtClusters=clusterFoodsByArea(allFoods);
+  const track=document.getElementById('locTrack'), section=document.getElementById('locMapSection');
+  if(!builtClusters.length){section.style.display='none';return;}
+  section.style.display='';
+  track.innerHTML='';
+  const userLat=GEO.lat||GEO.FALLBACK.lat, userLng=GEO.lng||GEO.FALLBACK.lng;
+  builtClusters.sort((a,b)=>{
+    if(a.label==='Other') return 1; if(b.label==='Other') return -1;
+    const dA=a.centLat!==null?haversineKm(userLat,userLng,a.centLat,a.centLng):9999;
+    const dB=b.centLat!==null?haversineKm(userLat,userLng,b.centLat,b.centLng):9999;
+    return dA-dB;
   });
 
-  /* ── "All" pin ── */
-  const allPin = document.createElement('div');
-  allPin.className = 'loc-pin-all' + (areaClusterKey === null ? ' active' : '');
-  allPin.id = 'locPinAll';
-  allPin.innerHTML = `
-    <div class="loc-pin-globe">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-      </svg>
-    </div>
-    <div class="loc-pin-all-lbl">All</div>`;
-  allPin.onclick = () => selectAreaPin(null);
+  /* "All" pin */
+  const allPin=document.createElement('div');
+  allPin.className='loc-pin-all'+(areaClusterKey===null?' active':''); allPin.id='locPinAll';
+  allPin.innerHTML=`<div class="loc-pin-globe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="loc-pin-all-lbl">All</div>`;
+  allPin.onclick=()=>selectAreaPin(null);
   track.appendChild(allPin);
 
-  /* ── Area pins ── */
-  builtClusters.forEach((cluster, i) => {
-    const palette = getAreaPalette(i);
-    const isActive = areaClusterKey === cluster.label;
-    const distKm = cluster.centLat !== null ? haversineKm(userLat, userLng, cluster.centLat, cluster.centLng) : null;
-    const distLabel = distKm !== null ? formatDistance(distKm) : null;
-
-    const pin = document.createElement('div');
-    pin.className = 'loc-area-pin' + (isActive ? ' active' : '');
-    pin.dataset.areaKey = cluster.label;
-
-    pin.innerHTML = `
-      <div class="loc-area-marker">
-        ${buildAreaPinSVG(palette, isActive, i)}
-        <div class="loc-area-pin-dot"></div>
-      </div>
-      <div class="loc-area-card">
-        <span class="loc-area-name">${cluster.label}</span>
-        <div class="loc-area-meta"><div class="loc-area-meta-dot"></div>${cluster.foods.length} plate${cluster.foods.length!==1?'s':''}</div>
-        ${distLabel ? `<span class="loc-area-dist">${distLabel}</span>` : ''}
-      </div>`;
-    pin.onclick = () => selectAreaPin(cluster.label);
+  /* Area pins */
+  builtClusters.forEach((cluster,i)=>{
+    const palette=getAreaPalette(i);
+    const isActive=areaClusterKey===cluster.label;
+    const distKm=cluster.centLat!==null?haversineKm(userLat,userLng,cluster.centLat,cluster.centLng):null;
+    const distLabel=distKm!==null?formatDistance(distKm):null;
+    const pin=document.createElement('div');
+    pin.className='loc-area-pin'+(isActive?' active':'');
+    pin.dataset.areaKey=cluster.label;
+    pin.innerHTML=`<div class="loc-area-marker">${buildAreaPinSVG(palette,isActive,i)}<div class="loc-area-pin-dot"></div></div><div class="loc-area-card"><span class="loc-area-name">${cluster.label}</span><div class="loc-area-meta"><div class="loc-area-meta-dot"></div>${cluster.foods.length} plate${cluster.foods.length!==1?'s':''}</div>${distLabel?`<span class="loc-area-dist">${distLabel}</span>`:''}</div>`;
+    /* ★ Clicking area pin removes the 25km proximity filter ★ */
+    pin.onclick=()=>{
+      if(proximityActive){ removeProximityFilter(); }
+      selectAreaPin(cluster.label);
+    };
     track.appendChild(pin);
   });
 }
 
 function selectAreaPin(key) {
-  /* Toggle: clicking active area deselects (goes back to All) */
-  if (areaClusterKey === key && key !== null) {
-    key = null;
-  }
-  areaClusterKey = key;
-
-  /* Update visual active states */
-  const allPinEl = document.getElementById('locPinAll');
-  if (allPinEl) allPinEl.classList.toggle('active', key === null);
-
-  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach((pin, i) => {
-    const isThis = pin.dataset.areaKey === key;
-    pin.classList.toggle('active', isThis);
-
-    /* Re-color the SVG path fill */
-    const svgPath = pin.querySelector('.loc-area-pin-svg path');
-    if (svgPath) {
-      const palette = getAreaPalette(
-        [...document.querySelectorAll('.loc-area-pin[data-area-key]')].indexOf(pin)
-      );
-      svgPath.setAttribute('fill', isThis ? '#FF3B30' : palette.body);
-    }
+  if(areaClusterKey===key&&key!==null) key=null;
+  areaClusterKey=key;
+  const allPinEl=document.getElementById('locPinAll');
+  if(allPinEl) allPinEl.classList.toggle('active',key===null);
+  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach((pin,i)=>{
+    const isThis=pin.dataset.areaKey===key;
+    pin.classList.toggle('active',isThis);
+    const svgPath=pin.querySelector('.loc-area-pin-svg path');
+    if(svgPath){ const palette=getAreaPalette([...document.querySelectorAll('.loc-area-pin[data-area-key]')].indexOf(pin)); svgPath.setAttribute('fill',isThis?'#FF3B30':palette.body); }
   });
-
-  /* Update active badge */
-  const badge = document.getElementById('locActiveBadge');
-  const badgeText = document.getElementById('locActiveBadgeText');
-  if (key === null) {
-    badge.classList.remove('vis');
-    badgeText.textContent = 'All areas';
-  } else {
-    const cluster = builtClusters.find(c => c.label === key);
+  const badge=document.getElementById('locActiveBadge'), badgeText=document.getElementById('locActiveBadgeText');
+  if(key===null){ badge.classList.remove('vis'); badgeText.textContent='All areas'; }
+  else {
+    const cluster=builtClusters.find(c=>c.label===key);
     badge.classList.add('vis');
-    if (cluster && cluster.centLat !== null && GEO.lat !== null) {
-      const km = haversineKm(GEO.lat, GEO.lng, cluster.centLat, cluster.centLng);
-      badgeText.textContent = `${key} · ${formatDistance(km)}`;
-    } else {
-      badgeText.textContent = key;
-    }
+    if(cluster&&cluster.centLat!==null&&GEO.lat!==null){
+      const km=haversineKm(GEO.lat,GEO.lng,cluster.centLat,cluster.centLng);
+      badgeText.textContent=`${key} · ${formatDistance(km)}`;
+    } else badgeText.textContent=key;
   }
-
-  if (navigator.vibrate) navigator.vibrate(8);
+  if(navigator.vibrate) navigator.vibrate(8);
   applyFilters();
 }
 
-/* ═══ §10 BROWSE FILTER STATE ═══ */
-const F = {diet:new Set(), urgency:'all', discount:0, priceMin:0, priceMax:1000, qty:'all', cuisines:new Set(), sort:'default'};
+/* ══════════════════════════════════════════════
+   §11  BROWSE FILTER STATE
+══════════════════════════════════════════════ */
+const F={diet:new Set(), urgency:'all', discount:0, priceMin:0, priceMax:1000, qty:'all', cuisines:new Set(), sort:'default', maxDist:'all'};
+
+function setDist(val, el, silent) {
+  F.maxDist=val;
+  document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
+  if(el) el.classList.add('on');
+  if(!silent) livePreview();
+}
 
 function sortFoods(arr) {
   const s=F.sort; if(s==='default') return arr;
@@ -1865,33 +1974,30 @@ function sortFoods(arr) {
 }
 
 function getFiltered() {
-  const q = document.getElementById('foodSearch').value.toLowerCase();
-
-  /* Determine which food IDs belong to the selected area */
-  let areaFoodIds = null;
-  if (areaClusterKey !== null) {
-    const cluster = builtClusters.find(c => c.label === areaClusterKey);
-    if (cluster) {
-      areaFoodIds = new Set(cluster.foods.map(f => String(f.id)));
-    }
+  const q=document.getElementById('foodSearch').value.toLowerCase();
+  let areaFoodIds=null;
+  if(areaClusterKey!==null){
+    const cluster=builtClusters.find(c=>c.label===areaClusterKey);
+    if(cluster) areaFoodIds=new Set(cluster.foods.map(f=>String(f.id)));
   }
-
-  return allFoods.filter(f => {
-    /* Area cluster filter — restricts to foods in that geographic cluster */
-    if (areaFoodIds !== null && !areaFoodIds.has(String(f.id))) return false;
-
+  return allFoods.filter(f=>{
+    if(areaFoodIds!==null&&!areaFoodIds.has(String(f.id))) return false;
     if(q&&!(f.name||'').toLowerCase().includes(q)&&!(f.restaurant_name||'').toLowerCase().includes(q)) return false;
     if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
     const mins=f.minutes_left||9999;
-    if(F.urgency==='urgent'&&mins>15)return false;
-    if(F.urgency==='30'&&mins>30)return false;
-    if(F.urgency==='60'&&mins>60)return false;
-    if(F.discount>0&&calcDisc(f.mrp,f.price)<F.discount)return false;
+    if(F.urgency==='urgent'&&mins>15) return false;
+    if(F.urgency==='30'&&mins>30) return false;
+    if(F.urgency==='60'&&mins>60) return false;
+    if(F.discount>0&&calcDisc(f.mrp,f.price)<F.discount) return false;
     const p=f.price||0;
-    if(p<F.priceMin||p>F.priceMax)return false;
+    if(p<F.priceMin||p>F.priceMax) return false;
     const qty=f.available_quantity||0;
-    if(F.qty!=='all'&&qty<parseInt(F.qty,10))return false;
+    if(F.qty!=='all'&&qty<parseInt(F.qty,10)) return false;
     if(F.cuisines.size>0){const fc=(f.cuisine||'').toLowerCase();let match=false;F.cuisines.forEach(c=>{if(fc.includes(c))match=true;});if(!match)return false;}
+    if(F.maxDist!=='all'&&GEO.lat!==null){
+      const maxKm=parseFloat(F.maxDist);
+      const km=f._distance; if(km===null||km===undefined||km>maxKm) return false;
+    }
     return true;
   });
 }
@@ -1902,10 +2008,13 @@ function applyFilters() {
   render(filtered); updateHint(filtered.length); updatePills();
 }
 
-document.getElementById('foodSearch').addEventListener('input',applyFilters);
+/* ★ Debounced Search Input */
+document.getElementById('foodSearch').addEventListener('input', debounce(applyFilters, 300));
 document.getElementById('sortSelect').addEventListener('change',function(){F.sort=this.value;applyFilters();});
 
-/* ═══ §11 RENDER ═══ */
+/* ══════════════════════════════════════════════
+   §12  RENDER — Apple-level cards
+══════════════════════════════════════════════ */
 function render(foods) {
   const grid=document.getElementById('foodGrid');
   document.getElementById('plateCount').textContent=`${foods.length} plate${foods.length!==1?'s':''}`;
@@ -1915,13 +2024,16 @@ function render(foods) {
     return;
   }
   grid.innerHTML=foods.map((f,i)=>{
-    const disc=calcDisc(f.mrp,f.price),urgent=(f.minutes_left||999)<=15,mins=f.minutes_left||0;
-    const timeColor=getTimeColor(mins),timeW=getTimeWidth(mins);
-    const coords=getFoodCoords(f),cardLat=coords?coords.lat:0,cardLng=coords?coords.lng:0;
+    const disc=calcDisc(f.mrp,f.price), urgent=(f.minutes_left||999)<=15, mins=f.minutes_left||0;
+    const timeColor=getTimeColor(mins), timeW=getTimeWidth(mins);
+    const coords=getFoodCoords(f), cardLat=coords?coords.lat:0, cardLng=coords?coords.lng:0;
     const km=f._distance!==undefined&&f._distance!==null?f._distance:(coords&&GEO.lat!==null?haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng):null);
     const distHtml=buildDistanceBadge(km);
-    const urgencyCombo=(km!==null&&(f.available_quantity||0)<=3)?`<span class="urgency-combo">${formatDistance(km)} · ${f.available_quantity} left</span>`:'';
-    return `<article class="food-card" style="animation-delay:${i*0.04}s" data-food-id="${f.id}" data-lat="${cardLat}" data-lng="${cardLng}" ${km!==null?`data-distance="${km.toFixed(3)}"`:''}  onclick="openModalById('${f.id}')">
+    
+    const driveMins = km !== null ? Math.max(1, Math.round((km * 3.5) + 2)) : null;
+    const urgencyCombo=(km!==null&&(f.available_quantity||0)<=3)?`<span class="urgency-combo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>${driveMins} min drive · only ${f.available_quantity} left</span>`:'';
+    
+    return `<article class="food-card" style="animation-delay:${i*0.035}s" data-food-id="${f.id}" data-lat="${cardLat}" data-lng="${cardLng}" ${km!==null?`data-distance="${km.toFixed(3)}"`:''}  onclick="openModalById('${f.id}')">
       <div class="card-hover-bar"></div>
       <div class="card-img-wrap">
         <img class="card-img" src="${getImg(f.name)}" alt="${f.name}" loading="lazy">
@@ -1946,7 +2058,7 @@ function render(foods) {
         ${getFTBadge(f.food_type)}
         <div class="time-bar">
           <div class="time-bar-track"><div class="time-bar-fill" style="width:${timeW}%;background:${timeColor}"></div></div>
-          <div class="time-bar-label"><span class="time-label-text">Time left</span><span class="time-label-val" style="color:${timeColor}">${mins}m</span></div>
+          <div class="time-bar-label"><span class="time-label-text">Time left</span><span class="time-label-val" style="color:${timeColor}">${mins} min</span></div>
         </div>
         <div class="card-divider"></div>
         <div class="card-footer">
@@ -1955,7 +2067,7 @@ function render(foods) {
             <span class="price-new"><span class="price-currency">₹</span>${Math.ceil(f.price)}</span>
           </div>
           <button class="reserve-btn" onclick="event.stopPropagation();location.href='/checkout/${f.id}'">
-            Reserve <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Reserve <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
       </div>
@@ -1967,11 +2079,19 @@ function render(foods) {
 function buildDistanceBadge(km) {
   if(GEO.status==='idle'||GEO.status==='locating') return`<span class="card-distance calculating">Calculating…</span>`;
   if(km===null||km===undefined||isNaN(km)) return`<span class="card-distance denied">Nearby</span>`;
-  const label=formatDistance(km),isClose=km<=1.5;
-  return`<span class="card-distance${isClose?' close':''}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away</span>`;
+  
+  const label=formatDistance(km), isClose=km<=1.5;
+  const driveMins = Math.max(1, Math.round((km * 3.5) + 2));
+  
+  return`<span class="card-distance${isClose?' close':''}">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+    ${driveMins} min (${label})
+  </span>`;
 }
 
-/* ═══ §12 FILTER PANEL ═══ */
+/* ══════════════════════════════════════════════
+   §13  FILTER PANEL
+══════════════════════════════════════════════ */
 let panelOpen=false;
 document.getElementById('filterTrigger').addEventListener('click',()=>{
   panelOpen=!panelOpen;
@@ -2000,13 +2120,16 @@ function updateHint(c){const el=document.getElementById('fpHint');el.textContent
 function commitFilters(){applyFilters();panelOpen=false;document.getElementById('filterPanel').classList.remove('open');document.getElementById('filterTrigger').classList.remove('open');updateBadge();if(navigator.vibrate)navigator.vibrate(10);}
 
 function resetAllFilters() {
-  F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';
-  areaClusterKey = null;
+  F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';F.maxDist='all';
+  proximityActive=false;
+  areaClusterKey=null;
   document.getElementById('sortSelect').value='default';
   document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));
   document.querySelector('#urgencyRow [data-urgency="all"]').classList.add('on');
   document.querySelectorAll('#qtyRow .fp-chip').forEach(b=>b.classList.remove('on'));
   document.querySelector('#qtyRow [data-qty="all"]').classList.add('on');
+  document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
+  document.querySelector('#distRow [data-dist="all"]').classList.add('on');
   document.querySelectorAll('.fp-chip[data-diet],.fp-chip[data-cuisine]').forEach(b=>b.classList.remove('on'));
   document.getElementById('discountRange').value=0;
   document.getElementById('discountLabel').textContent='Any';
@@ -2016,24 +2139,25 @@ function resetAllFilters() {
   document.getElementById('priceMinLabel').textContent=0;
   document.getElementById('priceMaxLabel').textContent=mx+'+';
   updateFill(0,mx);
-  /* Reset location pins to "All" */
-  const allPinEl = document.getElementById('locPinAll');
-  if (allPinEl) allPinEl.classList.add('active');
-  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach(p => p.classList.remove('active'));
-  const badge = document.getElementById('locActiveBadge');
-  if (badge) badge.classList.remove('vis');
+  /* Reset area pins */
+  const allPinEl=document.getElementById('locPinAll');
+  if(allPinEl) allPinEl.classList.add('active');
+  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach(p=>p.classList.remove('active'));
+  const badge=document.getElementById('locActiveBadge'); if(badge) badge.classList.remove('vis');
+  dismissBanner();
   applyFilters(); updateBadge();
 }
 
 function countActive() {
   let n=0;
-  if(F.diet.size)n+=F.diet.size;
-  if(F.urgency!=='all')n++;
-  if(F.discount>0)n++;
-  if(F.priceMin>0||F.priceMax<1000)n++;
-  if(F.qty!=='all')n++;
-  if(F.cuisines.size)n+=F.cuisines.size;
-  if(areaClusterKey!==null)n++;
+  if(F.diet.size) n+=F.diet.size;
+  if(F.urgency!=='all') n++;
+  if(F.discount>0) n++;
+  if(F.priceMin>0||F.priceMax<1000) n++;
+  if(F.qty!=='all') n++;
+  if(F.cuisines.size) n+=F.cuisines.size;
+  if(areaClusterKey!==null) n++;
+  if(F.maxDist!=='all') n++;
   return n;
 }
 function updateBadge(){
@@ -2042,27 +2166,29 @@ function updateBadge(){
 }
 function updatePills() {
   const row=document.getElementById('afRow'),pills=[];
-  F.diet.forEach(d=>pills.push({label:d==='veg'?'Veg':d==='egg'?'Egg':'Non-Veg',remove:()=>{F.diet.delete(d);document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on');applyFilters();}}));
-  if(F.urgency!=='all'){const m={urgent:'Urgent','30':'≤30m','60':'≤60m'};pills.push({label:m[F.urgency],remove:()=>{F.urgency='all';setUrgency('all',document.querySelector('[data-urgency="all"]'));applyFilters();}});}
-  if(F.discount>0)pills.push({label:`${F.discount}%+ off`,remove:()=>{F.discount=0;document.getElementById('discountRange').value=0;document.getElementById('discountLabel').textContent='Any';applyFilters();}});
-  if(F.priceMin>0||F.priceMax<1000)pills.push({label:`₹${F.priceMin}–${F.priceMax<1000?F.priceMax:'1000+'}`,remove:()=>{F.priceMin=0;F.priceMax=1000;document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);applyFilters();}});
-  if(F.qty!=='all')pills.push({label:`${F.qty}+ plates`,remove:()=>{F.qty='all';applyFilters();}});
-  F.cuisines.forEach(c=>pills.push({label:c,remove:()=>{F.cuisines.delete(c);document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on');applyFilters();}}));
-  if(areaClusterKey!==null)pills.push({label:`📍 ${areaClusterKey}`,remove:()=>{ selectAreaPin(areaClusterKey); /* will toggle off */ }});
+  F.diet.forEach(d=>pills.push({label:d==='veg'?'Veg':d==='egg'?'Egg':'Non-Veg',blue:false,remove:()=>{F.diet.delete(d);document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on');applyFilters();}}));
+  if(F.urgency!=='all'){const m={urgent:'≤15 min','30':'≤30 min','60':'≤60 min'};pills.push({label:m[F.urgency],blue:false,remove:()=>{F.urgency='all';setUrgency('all',document.querySelector('[data-urgency="all"]'));applyFilters();}});}
+  if(F.discount>0) pills.push({label:`${F.discount}%+ off`,blue:false,remove:()=>{F.discount=0;document.getElementById('discountRange').value=0;document.getElementById('discountLabel').textContent='Any';applyFilters();}});
+  if(F.priceMin>0||F.priceMax<1000) pills.push({label:`₹${F.priceMin}–${F.priceMax<1000?F.priceMax:'1000+'}`,blue:false,remove:()=>{F.priceMin=0;F.priceMax=1000;document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);applyFilters();}});
+  if(F.qty!=='all') pills.push({label:`${F.qty}+ plates`,blue:false,remove:()=>{F.qty='all';applyFilters();}});
+  F.cuisines.forEach(c=>pills.push({label:c,blue:false,remove:()=>{F.cuisines.delete(c);document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on');applyFilters();}}));
+  if(areaClusterKey!==null) pills.push({label:`📍 ${areaClusterKey}`,blue:false,remove:()=>{selectAreaPin(areaClusterKey);}});
+  if(F.maxDist!=='all') pills.push({label:`Within ${F.maxDist} km`,blue:true,remove:()=>{F.maxDist='all';document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));document.querySelector('#distRow [data-dist="all"]').classList.add('on');proximityActive=false;dismissBanner();applyFilters();}});
   if(!pills.length){row.classList.remove('vis');row.innerHTML='';updateBadge();return;}
   row.classList.add('vis');
-  row.innerHTML=pills.map(p=>`<span class="pill">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('')+`<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
+  row.innerHTML=pills.map(p=>`<span class="pill${p.blue?' pill-blue':''}">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('')+`<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
   updateBadge();
 }
 
-/* ═══ §13 DATA FETCH ═══ */
+/* ══════════════════════════════════════════════
+   §14  DATA FETCH
+══════════════════════════════════════════════ */
 fetch('/api/foods')
   .then(r=>{if(!r.ok)throw 0;return r.json();})
   .then(data=>{
     allFoods=data.foods||[];
     const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
     document.getElementById('hs-rest').textContent=rests.size||'—';
-
     const cuisines=[...new Set(allFoods.map(f=>(f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
     if(cuisines.length>1){
       const sec=document.getElementById('cuisineSection'),row=document.getElementById('cuisineRow');
@@ -2075,7 +2201,6 @@ fetch('/api/foods')
         row.appendChild(btn);
       });
     }
-
     const prices=allFoods.map(f=>f.price||0);
     const maxP=Math.ceil(Math.max(...prices)/50)*50||1000;
     document.getElementById('priceMax').max=maxP;
@@ -2084,18 +2209,19 @@ fetch('/api/foods')
     F.priceMax=maxP;
     document.getElementById('priceMaxLabel').textContent=maxP+'+';
     updateFill(0,maxP);
-
     cacheDistances();
     rebuildLocationPins();
     applyFilters();
   })
   .catch(()=>{
-    allFoods=[]; render([]);
+    allFoods=[];render([]);
     document.getElementById('hs-count').textContent='0';
     document.getElementById('hs-rest').textContent='0';
   });
 
-/* ═══ §14 MODAL ═══ */
+/* ══════════════════════════════════════════════
+   §15  MODAL
+══════════════════════════════════════════════ */
 function openModalById(id){
   const f=allFoods.find(item=>String(item.id)===String(id));
   if(!f) return; openModal(f);
@@ -2112,7 +2238,8 @@ function openModal(f){
     const coords=getFoodCoords(f);
     if(coords){
       const km=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);
-      distRow.innerHTML=`<div class="modal-dist-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${formatDistance(km)} away</div>${f.minutes_left?`<span style="font-size:.6875rem;color:var(--ink3);">${f.minutes_left}m remaining</span>`:''}`;
+      const driveMins = Math.max(1, Math.round((km * 3.5) + 2));
+      distRow.innerHTML=`<div class="modal-dist-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>${driveMins} min drive</div>${f.minutes_left?`<span style="font-size:.6875rem;color:var(--ink3);">${f.minutes_left}m remaining</span>`:''}`;
     } else distRow.innerHTML='';
   } else distRow.innerHTML='';
   document.getElementById('modalFoodType').innerHTML=getFTBadge(f.food_type);
@@ -2126,7 +2253,9 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
 
-/* ═══ §15 DRAWER ═══ */
+/* ══════════════════════════════════════════════
+   §16  DRAWER
+══════════════════════════════════════════════ */
 function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.body.classList.add('page-pushed');loadProfile();}
 function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.body.classList.remove('page-pushed');}
 document.getElementById('openProfile').onclick=openDrawer;
@@ -2144,25 +2273,34 @@ async function loadProfile(){
   }catch{document.getElementById('profileName').textContent='Guest';}
 }
 
-/* BOTTOM NAV */
+/* ══════════════════════════════════════════════
+   §17  BOTTOM NAV
+══════════════════════════════════════════════ */
 function setNav(id){document.querySelectorAll('.bn-item').forEach(e=>e.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');}
 setNav('bnBrowse');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();closeSheet();}});
 
-/* ═══ §16 CHEF'S SHEET ═══ */
+/* ══════════════════════════════════════════════
+   §18  CHEF'S SHEET
+══════════════════════════════════════════════ */
 const sheetOverlay=document.getElementById('sheetOverlay'),theSheet=document.getElementById('theSheet'),bottomNav=document.getElementById('bottomNav');
 let secretLoaded=false,secretRests=[],dishCache={};
 
 function openSheet(){
   sheetOverlay.classList.add('open');
-  bottomNav.style.transform='translateY(100%)';
+  bottomNav.classList.add('hide-nav'); 
   document.body.style.overflow='hidden';
   setNav('bnSecret');
   if(navigator.vibrate) navigator.vibrate(12);
   if(!secretLoaded) loadSecretRests();
   setTimeout(initTabSlider,60);
 }
-function closeSheet(){sheetOverlay.classList.remove('open');bottomNav.style.transform='';document.body.style.overflow='';setNav('bnBrowse');}
+function closeSheet(){
+  sheetOverlay.classList.remove('open');
+  bottomNav.classList.remove('hide-nav'); 
+  document.body.style.overflow='';
+  setNav('bnBrowse');
+}
 document.getElementById('sheetClose').addEventListener('click',closeSheet);
 document.getElementById('sheetScrim').addEventListener('click',closeSheet);
 
@@ -2201,7 +2339,8 @@ function runSearch(q){
   </a>`).join('');
 }
 function clearSearch(){sInput.value='';runSearch('');}
-sInput.addEventListener('input',()=>runSearch(sInput.value));
+/* ★ Debounced Secret Menu Search */
+sInput.addEventListener('input', debounce(() => runSearch(sInput.value), 300));
 sClear.addEventListener('click',()=>{clearSearch();sInput.focus();});
 
 async function loadSecretRests(){
@@ -2302,7 +2441,9 @@ function skelN(n){return Array.from({length:n},()=>`<div class="skel-dish"><div 
 function emptySheet(msg){return`<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`;}
 function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`;}
 
-/* ═══ §17 BOOT ═══ */
+/* ══════════════════════════════════════════════
+   §19  BOOT
+══════════════════════════════════════════════ */
 getUserLocation();
 </script>
 </body>
