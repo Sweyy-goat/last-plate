@@ -275,7 +275,6 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
 }
 body.dark .controls-sec { background: rgba(11,11,15,0.88); }
 
-/* COMPACT MAIN ROW */
 .ctrl-main-row {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; gap: 8px;
@@ -296,7 +295,6 @@ body.dark .search-box:focus-within { background: rgba(28,28,32,0.95); box-shadow
 .search-box input:focus { outline: none; }
 .search-box input::placeholder { color: var(--ink4); }
 
-/* COMPACT SORT */
 .sort-wrap { position: relative; flex-shrink: 0; }
 .sort-sel {
   appearance: none; padding: 9px 28px 9px 12px;
@@ -309,7 +307,6 @@ body.dark .sort-sel { background: rgba(255,255,255,0.07); }
 .sort-sel:focus { outline: none; }
 .sort-arr { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
 
-/* COMPACT ICON BUTTONS */
 .ctrl-icon-btn {
   width: 36px; height: 36px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -331,51 +328,208 @@ body.dark .ctrl-icon-btn { background: rgba(255,255,255,0.07); }
 }
 body.dark .fcnt { border-color: rgba(11,11,15,0.9); }
 
-/* LOCATION STRIP — improved */
-.loc-strip {
+/* ═══════════════════════════════════════════
+   RESTAURANT LOCATION SELECTOR — UNIQUE MAP STRIP
+   Sits BETWEEN controls and food grid, full width
+═══════════════════════════════════════════ */
+.loc-map-section {
+  background: var(--bg2);
+  border-bottom: 0.5px solid var(--border);
+  transition: var(--theme-trans);
+  position: relative;
+  overflow: hidden;
+}
+.loc-map-section::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,113,227,0.04) 0%, transparent 70%);
+}
+body.dark .loc-map-section::before {
+  background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,113,227,0.07) 0%, transparent 70%);
+}
+
+.loc-map-inner {
   max-width: 1200px; margin: 0 auto;
-  padding: 0 16px 10px;
-  display: flex; align-items: center; gap: 6px;
-  overflow-x: auto; scrollbar-width: none;
+  padding: 14px 16px 12px;
 }
-.loc-strip::-webkit-scrollbar { display: none; }
 
-/* Radius selector pills */
-.radius-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.radius-pill {
-  padding: 5px 12px; background: rgba(118,118,128,0.1); border: none;
-  border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3);
-  cursor: pointer; white-space: nowrap; transition: all 0.2s var(--ease); flex-shrink: 0;
+.loc-map-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
 }
-body.dark .radius-pill { background: rgba(255,255,255,0.07); }
-.radius-pill:hover { background: rgba(118,118,128,0.18); color: var(--ink); }
-.radius-pill.active { background: var(--blue); color: #fff; }
-.radius-pill.active-gps { background: var(--accent); color: #fff; }
-
-/* Divider between radius and restaurant filters */
-.loc-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
-
-/* Restaurant location chips */
-.rest-loc-chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; background: rgba(118,118,128,0.1); border: none;
-  border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3);
-  cursor: pointer; white-space: nowrap; transition: all 0.2s var(--ease); flex-shrink: 0;
+.loc-map-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink3);
 }
-body.dark .rest-loc-chip { background: rgba(255,255,255,0.07); }
-.rest-loc-chip:hover { background: rgba(118,118,128,0.18); color: var(--ink); transform: translateY(-1px); }
-.rest-loc-chip.active { background: rgba(0,113,227,0.1); color: var(--blue); border: 0.5px solid rgba(0,113,227,0.25); }
-.rest-loc-chip .rlc-count { font-size: 0.5625rem; opacity: 0.6; font-weight: 400; }
-
-/* GPS button */
-.gps-btn {
+.loc-map-title-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--blue); animation: blink 3s step-end infinite;
+}
+.loc-map-gps {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 11px; background: rgba(0,113,227,0.07); border: 0.5px solid rgba(0,113,227,0.2);
-  border-radius: 100px; font-size: 0.6875rem; font-weight: 600; color: var(--blue);
-  cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.2s var(--ease);
+  padding: 4px 10px; background: rgba(0,113,227,0.07); border: 0.5px solid rgba(0,113,227,0.2);
+  border-radius: 100px; font-size: 0.625rem; font-weight: 600; color: var(--blue);
+  cursor: pointer; transition: all 0.2s var(--ease); white-space: nowrap;
 }
-.gps-btn:hover { background: rgba(0,113,227,0.14); }
-.gps-btn.located { background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.3); color: var(--green); }
+.loc-map-gps:hover { background: rgba(0,113,227,0.14); }
+.loc-map-gps.located { background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.3); color: var(--green); }
+
+/* Horizontal scrollable track with pins */
+.loc-track-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.loc-track-wrap::before,
+.loc-track-wrap::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none;
+}
+.loc-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg2), transparent); }
+.loc-track-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--bg2), transparent); }
+body.dark .loc-track-wrap::before { background: linear-gradient(90deg, var(--bg2), transparent); }
+body.dark .loc-track-wrap::after  { background: linear-gradient(-90deg, var(--bg2), transparent); }
+
+.loc-track {
+  display: flex; align-items: stretch; gap: 0;
+  overflow-x: auto; scrollbar-width: none;
+  padding: 4px 0 8px;
+  position: relative;
+}
+.loc-track::-webkit-scrollbar { display: none; }
+
+/* The "All" pin — always first */
+.loc-pin-all {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; flex-shrink: 0; padding: 0 14px;
+  transition: opacity 0.2s;
+  position: relative;
+}
+.loc-pin-all:not(:last-child)::after {
+  content: '';
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 32px; background: var(--border);
+}
+
+.loc-pin-globe {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--ink); border: 2px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s var(--ease-spring);
+  position: relative; flex-shrink: 0;
+}
+.loc-pin-all.active .loc-pin-globe {
+  background: var(--accent); border-color: rgba(255,59,48,0.3);
+  box-shadow: 0 0 0 6px rgba(255,59,48,0.12);
+}
+.loc-pin-all:hover:not(.active) .loc-pin-globe {
+  transform: scale(1.08); background: var(--ink2);
+}
+.loc-pin-globe svg { color: #fff; }
+.loc-pin-all-lbl {
+  font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink3); white-space: nowrap; transition: color 0.2s;
+}
+.loc-pin-all.active .loc-pin-all-lbl { color: var(--accent); }
+
+/* Individual restaurant pin */
+.loc-pin {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; flex-shrink: 0; padding: 0 10px;
+  position: relative; transition: opacity 0.25s;
+}
+.loc-pin:hover { opacity: 0.9; }
+
+/* Connector line between pins */
+.loc-connector {
+  position: absolute; top: 20px; right: -10px; width: 20px; height: 1px;
+  background: var(--border); z-index: 0;
+}
+.loc-pin.active .loc-connector { background: rgba(255,59,48,0.25); }
+
+/* The pin marker */
+.loc-pin-marker {
+  width: 40px; height: 40px;
+  position: relative; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.35s var(--ease-spring);
+}
+.loc-pin:hover .loc-pin-marker { transform: translateY(-4px); }
+.loc-pin.active .loc-pin-marker { transform: translateY(-5px); }
+
+/* SVG pin shape */
+.loc-pin-svg {
+  width: 36px; height: 44px;
+  transition: all 0.3s var(--ease-spring);
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.18));
+}
+.loc-pin.active .loc-pin-svg {
+  filter: drop-shadow(0 4px 12px rgba(255,59,48,0.4));
+}
+
+/* Initials inside pin */
+.loc-pin-initials {
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  font-size: 0.625rem; font-weight: 800; color: #fff; letter-spacing: -0.02em;
+  text-align: center; line-height: 1; pointer-events: none;
+  width: 24px; white-space: nowrap; overflow: hidden;
+  text-overflow: clip;
+}
+
+/* Pulse ring for active pin */
+.loc-pin-pulse {
+  position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); opacity: 0;
+  transition: opacity 0.2s;
+}
+.loc-pin.active .loc-pin-pulse {
+  opacity: 1;
+  animation: pinPulse 1.8s ease-in-out infinite;
+}
+@keyframes pinPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
+}
+
+/* Restaurant label card under pin */
+.loc-pin-card {
+  background: var(--white); border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 6px 10px; min-width: 80px; max-width: 110px;
+  text-align: center;
+  transition: all 0.3s var(--ease-out), var(--theme-trans);
+  box-shadow: var(--shadow-xs);
+  position: relative; z-index: 1;
+}
+.loc-pin.active .loc-pin-card {
+  border-color: rgba(255,59,48,0.25); background: var(--white);
+  box-shadow: 0 4px 16px rgba(255,59,48,0.12);
+}
+.loc-pin-name {
+  font-size: 0.625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
+  display: block; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.2s;
+}
+.loc-pin.active .loc-pin-name { color: var(--accent); }
+.loc-pin-count {
+  font-size: 0.5rem; font-weight: 500; color: var(--ink3);
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+}
+.loc-pin-count-dot { width: 4px; height: 4px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+.loc-pin-dist {
+  font-size: 0.5rem; font-weight: 600; color: var(--blue);
+  margin-top: 1px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Active radius badge that pops up */
+.loc-active-badge {
+  display: none; align-items: center; gap: 5px;
+  padding: 3px 10px; background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2);
+  border-radius: 100px; font-size: 0.5625rem; font-weight: 600; color: var(--accent);
+  animation: ppop 0.25s var(--ease-spring) both;
+  margin-top: 6px;
+}
+.loc-active-badge.vis { display: inline-flex; }
+@keyframes ppop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
 
 /* Active filter pills */
 .pills-row {
@@ -391,7 +545,6 @@ body.dark .rest-loc-chip { background: rgba(255,255,255,0.07); }
   border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--accent);
   animation: ppop 0.2s var(--ease-spring) both;
 }
-@keyframes ppop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
 .pill-x { opacity: 0.5; cursor: pointer; transition: opacity 0.2s; font-size: 0.7rem; margin-left: 2px; }
 .pill-x:hover { opacity: 1; }
 .pill-clear { padding: 4px 10px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: inherit; transition: color 0.2s; }
@@ -907,8 +1060,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 
 <!-- CONTROLS — COMPACT -->
 <div class="controls-sec" id="controlsBlock">
-
-  <!-- Single compact row: search + sort + filter toggle -->
   <div class="ctrl-main-row">
     <div class="search-box">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -929,27 +1080,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
     <button class="ctrl-icon-btn" id="filterTrigger" title="Filters">
       <svg class="fi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
       <span class="fcnt" id="filterCnt">0</span>
-    </button>
-  </div>
-
-  <!-- Location strip: radius pills | restaurant area chips | GPS -->
-  <div class="loc-strip" id="locationStrip">
-    <!-- Radius group -->
-    <div class="radius-group">
-      <button class="radius-pill" id="rpAll"  onclick="setRadius(null,this)">All</button>
-      <button class="radius-pill" id="rp2"    onclick="setRadius(2,this)">2 km</button>
-      <button class="radius-pill" id="rp5"    onclick="setRadius(5,this)">5 km</button>
-      <button class="radius-pill" id="rp10"   onclick="setRadius(10,this)">10 km</button>
-      <button class="radius-pill active" id="rp25"  onclick="setRadius(25,this)">25 km</button>
-    </div>
-    <!-- Divider (appears when restaurant chips are present) -->
-    <div class="loc-divider" id="locDivider" style="display:none"></div>
-    <!-- Restaurant area chips injected here -->
-    <div id="restAreaChips" style="display:contents"></div>
-    <!-- GPS -->
-    <button class="gps-btn" id="locGpsBtn" onclick="requestGPS()">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
-      Use GPS
     </button>
   </div>
 
@@ -1016,6 +1146,33 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
           <span class="fp-hint" id="fpHint">— plates</span>
         </div>
         <button class="fp-apply" onclick="commitFilters()">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     RESTAURANT LOCATION MAP STRIP — Unique section
+═══════════════════════════════════════════ -->
+<div class="loc-map-section" id="locMapSection" style="display:none">
+  <div class="loc-map-inner">
+    <div class="loc-map-header">
+      <div class="loc-map-title">
+        <div class="loc-map-title-dot"></div>
+        Kitchens Near You
+        <span id="locActiveBadge" class="loc-active-badge">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="locActiveBadgeText">All kitchens</span>
+        </span>
+      </div>
+      <button class="loc-map-gps" id="locMapGpsBtn" onclick="requestGPS()">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        Use GPS
+      </button>
+    </div>
+    <div class="loc-track-wrap">
+      <div class="loc-track" id="locTrack">
+        <!-- "All" pin injected first, then restaurant pins -->
       </div>
     </div>
   </div>
@@ -1245,8 +1402,8 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 /* ═══ §1 LOCATION STATE ═══ */
 const GEO = {
   lat: null, lng: null, city: null, status: 'idle',
-  nearbyActive: false, radiusKm: 25,           /* DEFAULT: 25 km */
-  NEARBY_RADIUS_KM: 2,
+  radiusKm: 25,
+  selectedRestaurantName: null,
   FALLBACK: { lat: 9.9312, lng: 76.2673, city: 'Kochi' },
 };
 
@@ -1286,28 +1443,22 @@ function getUserLocation() {
 }
 
 function requestGPS() {
-  const btn = document.getElementById('locGpsBtn');
-  btn.textContent = 'Finding…';
-  if (!navigator.geolocation) { btn.textContent = 'Use GPS'; return; }
+  const btn1 = document.getElementById('locMapGpsBtn');
+  if(btn1) btn1.textContent = 'Finding…';
+  if (!navigator.geolocation) { if(btn1) btn1.textContent = 'Use GPS'; return; }
   navigator.geolocation.getCurrentPosition(
     pos => {
       GEO.lat=pos.coords.latitude; GEO.lng=pos.coords.longitude; GEO.status='ok';
       reverseGeocode(GEO.lat, GEO.lng);
-      btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`;
-      btn.classList.add('located');
-      recomputeAndRefresh(); applyFilters();
+      if(btn1){ btn1.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`; btn1.classList.add('located'); }
+      recomputeAndRefresh(); rebuildLocationPins(); applyFilters();
     },
-    () => { btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`; applyFallbackLocation(); },
+    () => {
+      if(btn1){ btn1.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`; }
+      applyFallbackLocation();
+    },
     { timeout: 8000 }
   );
-}
-
-function setRadius(km, el) {
-  GEO.radiusKm = km;
-  document.querySelectorAll('.radius-pill').forEach(c => c.classList.remove('active'));
-  if (el) el.classList.add('active');
-  applyFilters();
-  if (navigator.vibrate) navigator.vibrate(6);
 }
 
 function applyFallbackLocation() {
@@ -1336,13 +1487,6 @@ function updateCityPill(state, text) {
 }
 
 /* ═══ §5 DISTANCE HELPERS ═══ */
-function distanceForFood(food) {
-  if (GEO.lat===null||GEO.lng===null) return null;
-  if (food._distance!==undefined&&food._distance!==null) return food._distance;
-  const coords = getFoodCoords(food);
-  if (!coords) return null;
-  return haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng);
-}
 function cacheDistances() {
   if (GEO.lat===null||GEO.lng===null) return;
   allFoods.forEach(food => {
@@ -1474,8 +1618,158 @@ function getTimeWidth(mins){if(mins>=120)return'100';return Math.max(8,Math.roun
 function calcDisc(mrp,price){if(!mrp||mrp<=price)return 0;return Math.round(((mrp-price)/mrp)*100);}
 function normDiet(raw){if(!raw)return null;const t=raw.toString().toLowerCase().trim();if(t==='veg')return'veg';if(t==='egg')return'egg';if(t.includes('non')||t==='nonveg')return'nonveg';return null;}
 
-/* ═══ §8 BROWSE DATA + FILTER STATE ═══ */
-let allFoods=[], currentLoc='all';
+/* ═══ §7 PIN COLORS — unique per restaurant ═══ */
+const PIN_COLORS = [
+  {body:'#FF3B30',shadow:'rgba(255,59,48,0.45)'},
+  {body:'#0071E3',shadow:'rgba(0,113,227,0.45)'},
+  {body:'#FF9F0A',shadow:'rgba(255,159,10,0.45)'},
+  {body:'#30D158',shadow:'rgba(48,209,88,0.45)'},
+  {body:'#AF52DE',shadow:'rgba(175,82,222,0.45)'},
+  {body:'#FF6B35',shadow:'rgba(255,107,53,0.45)'},
+  {body:'#00C7BE',shadow:'rgba(0,199,190,0.45)'},
+  {body:'#5856D6',shadow:'rgba(88,86,214,0.45)'},
+];
+function getPinColor(index) { return PIN_COLORS[index % PIN_COLORS.length]; }
+
+/* Build an SVG map-pin shape */
+function buildPinSVG(color, active) {
+  const c = active ? '#FF3B30' : color.body;
+  return `<svg class="loc-pin-svg" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 0C8.059 0 0 8.059 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8.059 27.941 0 18 0z" fill="${c}"/>
+    <circle cx="18" cy="18" r="8" fill="rgba(255,255,255,0.25)"/>
+    <circle cx="18" cy="18" r="4" fill="white" opacity="0.9"/>
+  </svg>`;
+}
+
+/* Get initials from restaurant name */
+function getInitials(name) {
+  return (name||'?').split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+}
+
+/* ═══ §8 RESTAURANT LOCATION PINS ═══ */
+let allFoods=[], currentRestaurantFilter='all';
+const restaurantMeta = {}; /* name -> { count, coords, km } */
+
+function buildRestaurantMeta() {
+  Object.keys(restaurantMeta).forEach(k=>delete restaurantMeta[k]);
+  allFoods.forEach(f => {
+    const name = f.restaurant_name || 'Unknown';
+    if (!restaurantMeta[name]) restaurantMeta[name] = { count: 0, coords: null, km: null };
+    restaurantMeta[name].count++;
+    if (!restaurantMeta[name].coords) {
+      const c = getFoodCoords(f);
+      if (c) restaurantMeta[name].coords = c;
+    }
+  });
+  /* compute distances */
+  Object.values(restaurantMeta).forEach(r => {
+    if (r.coords && GEO.lat !== null) {
+      r.km = haversineKm(GEO.lat, GEO.lng, r.coords.lat, r.coords.lng);
+    }
+  });
+}
+
+function rebuildLocationPins() {
+  buildRestaurantMeta();
+  const track = document.getElementById('locTrack');
+  const section = document.getElementById('locMapSection');
+  const names = Object.keys(restaurantMeta);
+
+  if (!names.length) { section.style.display='none'; return; }
+  section.style.display='';
+  track.innerHTML='';
+
+  /* "All" pin */
+  const allPin = document.createElement('div');
+  allPin.className = 'loc-pin-all' + (currentRestaurantFilter==='all'?' active':'');
+  allPin.id = 'locPinAll';
+  allPin.innerHTML = `
+    <div class="loc-pin-globe">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    </div>
+    <div class="loc-pin-all-lbl">All</div>`;
+  allPin.onclick = () => selectRestaurantPin('all', null, null);
+  track.appendChild(allPin);
+
+  /* Sort by distance if available */
+  const sorted = names.slice().sort((a,b) => {
+    const dA = restaurantMeta[a].km ?? 9999;
+    const dB = restaurantMeta[b].km ?? 9999;
+    return dA - dB;
+  });
+
+  sorted.forEach((name, i) => {
+    const meta = restaurantMeta[name];
+    const color = getPinColor(i);
+    const initials = getInitials(name);
+    const isActive = currentRestaurantFilter === name;
+    const distLabel = meta.km !== null ? formatDistance(meta.km) : null;
+
+    const pin = document.createElement('div');
+    pin.className = 'loc-pin' + (isActive ? ' active' : '');
+    pin.dataset.restName = name;
+    pin.innerHTML = `
+      ${i < sorted.length - 1 ? '<div class="loc-connector"></div>' : ''}
+      <div class="loc-pin-marker">
+        ${buildPinSVG(color, isActive)}
+        <div class="loc-pin-initials">${initials}</div>
+        <div class="loc-pin-pulse"></div>
+      </div>
+      <div class="loc-pin-card">
+        <span class="loc-pin-name">${name}</span>
+        <div class="loc-pin-count"><div class="loc-pin-count-dot"></div>${meta.count} plate${meta.count!==1?'s':''}</div>
+        ${distLabel ? `<span class="loc-pin-dist">${distLabel} away</span>` : ''}
+      </div>`;
+    pin.onclick = () => selectRestaurantPin(name, meta, color);
+    track.appendChild(pin);
+  });
+}
+
+function selectRestaurantPin(name, meta, color) {
+  currentRestaurantFilter = name;
+  GEO.selectedRestaurantName = name === 'all' ? null : name;
+
+  /* Update active states on all pins */
+  document.querySelectorAll('.loc-pin-all').forEach(p => p.classList.toggle('active', name==='all'));
+  document.querySelectorAll('.loc-pin[data-rest-name]').forEach(p => {
+    const isThis = p.dataset.restName === name;
+    p.classList.toggle('active', isThis);
+    /* Swap the pin SVG color to accent red when active */
+    const svg = p.querySelector('.loc-pin-svg');
+    if (svg) {
+      const pinColor = getPinColor([...document.querySelectorAll('.loc-pin[data-rest-name]')].indexOf(p));
+      const c = isThis ? '#FF3B30' : pinColor.body;
+      const path = svg.querySelector('path');
+      if (path) path.setAttribute('fill', c);
+    }
+  });
+
+  /* Update active badge */
+  const badge = document.getElementById('locActiveBadge');
+  const badgeText = document.getElementById('locActiveBadgeText');
+  if (name === 'all') {
+    badge.classList.remove('vis');
+    badgeText.textContent = 'All kitchens';
+    /* Reset radius to 25km default */
+    GEO.radiusKm = 25;
+  } else {
+    badge.classList.add('vis');
+    /* Auto-set radius: distance to restaurant + 1km buffer, minimum 1km */
+    if (meta && meta.km !== null) {
+      const autoRadius = Math.max(1, Math.ceil(meta.km + 1));
+      GEO.radiusKm = autoRadius;
+      badgeText.textContent = `${name} · ${formatDistance(meta.km)}`;
+    } else {
+      GEO.radiusKm = 25;
+      badgeText.textContent = name;
+    }
+  }
+
+  if (navigator.vibrate) navigator.vibrate(8);
+  applyFilters();
+}
+
+/* ═══ §9 BROWSE DATA + FILTER STATE ═══ */
 const F={diet:new Set(),urgency:'all',discount:0,priceMin:0,priceMax:1000,qty:'all',cuisines:new Set(),sort:'default'};
 
 function sortFoods(arr) {
@@ -1494,8 +1788,10 @@ function sortFoods(arr) {
 function getFiltered() {
   const q=document.getElementById('foodSearch').value.toLowerCase();
   return allFoods.filter(f=>{
-    const locKey=f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
-    if(currentLoc!=='all'&&locKey!==currentLoc) return false;
+    /* Restaurant pin filter */
+    if (GEO.selectedRestaurantName !== null) {
+      if ((f.restaurant_name||'') !== GEO.selectedRestaurantName) return false;
+    }
     if(q&&!(f.name||'').toLowerCase().includes(q)&&!(f.restaurant_name||'').toLowerCase().includes(q)) return false;
     if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
     const mins=f.minutes_left||9999;
@@ -1508,9 +1804,10 @@ function getFiltered() {
     const qty=f.available_quantity||0;
     if(F.qty!=='all'&&qty<parseInt(F.qty,10))return false;
     if(F.cuisines.size>0){const fc=(f.cuisine||'').toLowerCase();let match=false;F.cuisines.forEach(c=>{if(fc.includes(c))match=true;});if(!match)return false;}
-    if(GEO.nearbyActive&&GEO.lat!==null){const d=f._distance??9999;if(d>GEO.NEARBY_RADIUS_KM)return false;}
-    /* RADIUS FILTER — default 25 km */
-    if(GEO.radiusKm!==null&&GEO.lat!==null){const d=f._distance??9999;if(d>GEO.radiusKm)return false;}
+    /* Radius filter — only applies when no specific restaurant is selected */
+    if (GEO.selectedRestaurantName === null && GEO.radiusKm !== null && GEO.lat !== null) {
+      const d=f._distance??9999; if(d>GEO.radiusKm) return false;
+    }
     return true;
   });
 }
@@ -1524,7 +1821,7 @@ function applyFilters() {
 document.getElementById('foodSearch').addEventListener('input',applyFilters);
 document.getElementById('sortSelect').addEventListener('change',function(){F.sort=this.value;applyFilters();});
 
-/* ═══ §9 RENDER ═══ */
+/* ═══ §10 RENDER ═══ */
 function render(foods) {
   const grid=document.getElementById('foodGrid');
   document.getElementById('plateCount').textContent=`${foods.length} plate${foods.length!==1?'s':''}`;
@@ -1590,7 +1887,7 @@ function buildDistanceBadge(km) {
   return`<span class="card-distance${isClose?' close':''}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away</span>`;
 }
 
-/* ═══ §10 FILTER PANEL ═══ */
+/* ═══ §11 FILTER PANEL ═══ */
 let panelOpen=false;
 document.getElementById('filterTrigger').addEventListener('click',()=>{
   panelOpen=!panelOpen;
@@ -1620,7 +1917,7 @@ function commitFilters(){applyFilters();panelOpen=false;document.getElementById(
 
 function resetAllFilters() {
   F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';
-  GEO.nearbyActive=false; GEO.radiusKm=25;  /* RESET to 25 km default */
+  GEO.radiusKm=25; GEO.selectedRestaurantName=null; currentRestaurantFilter='all';
   document.getElementById('sortSelect').value='default';
   document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));
   document.querySelector('#urgencyRow [data-urgency="all"]').classList.add('on');
@@ -1635,12 +1932,10 @@ function resetAllFilters() {
   document.getElementById('priceMinLabel').textContent=0;
   document.getElementById('priceMaxLabel').textContent=mx+'+';
   updateFill(0,mx);
-  /* Reset radius pills to 25km default */
-  document.querySelectorAll('.radius-pill').forEach(c=>c.classList.remove('active'));
-  document.getElementById('rp25').classList.add('active');
-  /* Reset restaurant area chips */
-  document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));
-  currentLoc='all';
+  /* reset location pins */
+  document.querySelectorAll('.loc-pin-all').forEach(p=>p.classList.add('active'));
+  document.querySelectorAll('.loc-pin[data-rest-name]').forEach(p=>p.classList.remove('active'));
+  const badge=document.getElementById('locActiveBadge'); if(badge) badge.classList.remove('vis');
   applyFilters(); updateBadge();
 }
 
@@ -1652,8 +1947,7 @@ function countActive() {
   if(F.priceMin>0||F.priceMax<1000)n++;
   if(F.qty!=='all')n++;
   if(F.cuisines.size)n+=F.cuisines.size;
-  if(GEO.nearbyActive)n++;
-  if(GEO.radiusKm!==null&&GEO.radiusKm!==25)n++;  /* only count if not default */
+  if(GEO.selectedRestaurantName!==null)n++;
   return n;
 }
 function updateBadge(){
@@ -1668,50 +1962,20 @@ function updatePills() {
   if(F.priceMin>0||F.priceMax<1000)pills.push({label:`₹${F.priceMin}–${F.priceMax<1000?F.priceMax:'1000+'}`,remove:()=>{F.priceMin=0;F.priceMax=1000;document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);applyFilters();}});
   if(F.qty!=='all')pills.push({label:`${F.qty}+ plates`,remove:()=>{F.qty='all';applyFilters();}});
   F.cuisines.forEach(c=>pills.push({label:c,remove:()=>{F.cuisines.delete(c);document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on');applyFilters();}}));
-  if(GEO.nearbyActive)pills.push({label:'📍 Within 2 km',remove:()=>{GEO.nearbyActive=false;applyFilters();}});
-  if(GEO.radiusKm!==null&&GEO.radiusKm!==25)pills.push({label:`📍 Within ${GEO.radiusKm} km`,remove:()=>{GEO.radiusKm=25;document.querySelectorAll('.radius-pill').forEach(c=>c.classList.remove('active'));document.getElementById('rp25').classList.add('active');applyFilters();}});
-  if(currentLoc!=='all')pills.push({label:`📍 ${currentLoc}`,remove:()=>{currentLoc='all';document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));applyFilters();}});
+  if(GEO.selectedRestaurantName!==null)pills.push({label:`📍 ${GEO.selectedRestaurantName}`,remove:()=>{selectRestaurantPin('all',null,null);}});
   if(!pills.length){row.classList.remove('vis');row.innerHTML='';updateBadge();return;}
   row.classList.add('vis');
   row.innerHTML=pills.map(p=>`<span class="pill">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('')+`<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
   updateBadge();
 }
 
-/* ═══ §11 DATA FETCH ═══ */
+/* ═══ §12 DATA FETCH ═══ */
 fetch('/api/foods')
   .then(r=>{if(!r.ok)throw 0;return r.json();})
   .then(data=>{
     allFoods=data.foods||[];
-    if(allFoods.length){
-      console.log('[LastPlate] First food keys:',Object.keys(allFoods[0]));
-      const coords=getFoodCoords(allFoods[0]);
-      console.log('[LastPlate] Resolved coords for first item:',coords);
-    }
-    const locKey=f=>f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
-    const locs=[...new Set(allFoods.map(locKey).filter(Boolean))];
     const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
     document.getElementById('hs-rest').textContent=rests.size||'—';
-
-    /* Build restaurant area chips in the location strip */
-    const chipsContainer=document.getElementById('restAreaChips');
-    const divider=document.getElementById('locDivider');
-    if(locs.length>1){
-      divider.style.display='';
-      locs.forEach(loc=>{
-        const cnt=allFoods.filter(f=>locKey(f)===loc).length;
-        const btn=document.createElement('button');
-        btn.className='rest-loc-chip';
-        btn.innerHTML=`${loc} <span class="rlc-count">${cnt}</span>`;
-        btn.onclick=()=>{
-          currentLoc=currentLoc===loc?'all':loc;
-          document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));
-          if(currentLoc!=='all') btn.classList.add('active');
-          applyFilters();
-          if(navigator.vibrate) navigator.vibrate(6);
-        };
-        chipsContainer.appendChild(btn);
-      });
-    }
 
     const cuisines=[...new Set(allFoods.map(f=>(f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
     if(cuisines.length>1){
@@ -1735,8 +1999,8 @@ fetch('/api/foods')
     document.getElementById('priceMaxLabel').textContent=maxP+'+';
     updateFill(0,maxP);
 
-    /* Cache and render — 25km default already set in GEO */
     cacheDistances();
+    rebuildLocationPins();
     applyFilters();
   })
   .catch(()=>{
@@ -1745,7 +2009,7 @@ fetch('/api/foods')
     document.getElementById('hs-rest').textContent='0';
   });
 
-/* ═══ §12 MODAL ═══ */
+/* ═══ §13 MODAL ═══ */
 function openModalById(id){
   const f=allFoods.find(item=>String(item.id)===String(id));
   if(!f) return; openModal(f);
@@ -1776,7 +2040,7 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
 
-/* ═══ §13 DRAWER ═══ */
+/* ═══ §14 DRAWER ═══ */
 function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.body.classList.add('page-pushed');loadProfile();}
 function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.body.classList.remove('page-pushed');}
 document.getElementById('openProfile').onclick=openDrawer;
@@ -1799,7 +2063,7 @@ function setNav(id){document.querySelectorAll('.bn-item').forEach(e=>e.classList
 setNav('bnBrowse');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();closeSheet();}});
 
-/* ═══ §14 CHEF'S SHEET ═══ */
+/* ═══ §15 CHEF'S SHEET ═══ */
 const sheetOverlay=document.getElementById('sheetOverlay'),theSheet=document.getElementById('theSheet'),bottomNav=document.getElementById('bottomNav');
 let secretLoaded=false,secretRests=[],dishCache={};
 
@@ -1952,7 +2216,7 @@ function skelN(n){return Array.from({length:n},()=>`<div class="skel-dish"><div 
 function emptySheet(msg){return`<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`;}
 function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`;}
 
-/* ═══ §15 BOOT ═══ */
+/* ═══ §16 BOOT ═══ */
 getUserLocation();
 </script>
 </body>
