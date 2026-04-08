@@ -8,9 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ═══════════════════════════════════════════
-   APPLE DESIGN SYSTEM — LAST PLATE (+ LOCATION)
-═══════════════════════════════════════════ */
 :root {
   --white:      #FFFFFF;
   --bg:         #F5F5F7;
@@ -86,7 +83,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 input, select { font-family: inherit; }
 img { display: block; }
 
-/* SCROLL PROGRESS */
 .sline {
   position: fixed; top: 0; left: 0; z-index: 10000;
   height: 2px; width: 0%;
@@ -95,9 +91,7 @@ img { display: block; }
   transition: width 0.04s linear;
 }
 
-/* ═══════════════════════════════════════════
-   NAVBAR
-═══════════════════════════════════════════ */
+/* NAVBAR */
 .navbar {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--nav-h); z-index: 1000;
@@ -110,149 +104,77 @@ img { display: block; }
   gap: 12px;
   transition: var(--theme-trans);
 }
-body.dark .navbar {
-  background: rgba(11,11,15,0.82);
-  border-bottom-color: rgba(255,255,255,0.07);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 9px;
-  cursor: pointer; flex-shrink: 0;
-}
+body.dark .navbar { background: rgba(11,11,15,0.82); border-bottom-color: rgba(255,255,255,0.07); }
+.nav-logo { display: flex; align-items: center; gap: 9px; cursor: pointer; flex-shrink: 0; }
 .logo-mark {
-  width: 28px; height: 28px;
-  background: var(--accent);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
+  width: 28px; height: 28px; background: var(--accent); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; position: relative;
   box-shadow: 0 2px 8px rgba(255,59,48,0.35);
 }
 .logo-mark::after {
-  content: '';
-  width: 8px; height: 8px;
-  background: rgba(255,255,255,0.9);
-  border-radius: 50%;
+  content: ''; width: 8px; height: 8px; background: rgba(255,255,255,0.9); border-radius: 50%;
   animation: pulse-dot 2.4s ease-in-out infinite;
 }
-@keyframes pulse-dot {
-  0%,100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.25); opacity: 0.6; }
-}
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: 0.6; } }
 .logo-text { font-size: 1rem; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s; }
 .logo-text em { font-style: normal; color: var(--accent); }
-
 .nav-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; }
-
 .live-indicator {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px;
-  background: rgba(255,59,48,0.08);
-  border: 0.5px solid rgba(255,59,48,0.18);
-  border-radius: 100px;
-  backdrop-filter: blur(8px);
-  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+  background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.18);
+  border-radius: 100px; backdrop-filter: blur(8px); flex-shrink: 0;
 }
-.live-dot {
-  width: 5px; height: 5px; background: var(--accent);
-  border-radius: 50%; flex-shrink: 0;
-  animation: blink 2s step-end infinite;
-  box-shadow: 0 0 6px rgba(255,59,48,0.5);
-}
+.live-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; flex-shrink: 0; animation: blink 2s step-end infinite; box-shadow: 0 0 6px rgba(255,59,48,0.5); }
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 .live-text { font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
-
 .city-pill {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 11px;
-  background: rgba(0,113,227,0.07);
-  border: 0.5px solid rgba(0,113,227,0.18);
-  border-radius: 100px;
-  font-size: 0.625rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--blue);
-  cursor: default;
-  transition: all 0.35s var(--ease-apple);
-  white-space: nowrap;
-  overflow: hidden; max-width: 140px;
-  text-overflow: ellipsis;
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px;
+  background: rgba(0,113,227,0.07); border: 0.5px solid rgba(0,113,227,0.18);
+  border-radius: 100px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--blue); cursor: default;
+  transition: all 0.35s var(--ease-apple); white-space: nowrap; overflow: hidden;
+  max-width: 140px; text-overflow: ellipsis;
 }
-.city-select {
-  appearance: none; -webkit-appearance: none;
-  background: transparent; border: none; color: inherit;
-  font-family: inherit; font-size: inherit; font-weight: inherit;
-  text-transform: inherit; letter-spacing: inherit;
-  cursor: pointer; outline: none; padding-right: 4px;
-  max-width: 120px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
-}
-.city-select option { color: var(--ink); background: var(--bg); text-transform: none; letter-spacing: normal; }
-.city-arr { flex-shrink: 0; pointer-events: none; opacity: 0.8; }
-.loc-gps {
-  display: inline-flex; align-items: center; gap: 5px;
-  border: 0.5px solid var(--border);
-}
-.loc-gps.loading { opacity: 0.55; pointer-events: none; }
-.city-pill .cp-dot {
-  width: 5px; height: 5px; background: var(--blue); border-radius: 50%; flex-shrink: 0;
-  animation: blink 3s step-end infinite;
-}
+.city-pill .cp-dot { width: 5px; height: 5px; background: var(--blue); border-radius: 50%; flex-shrink: 0; animation: blink 3s step-end infinite; }
 .city-pill.locating { opacity: 0.55; }
 .city-pill.denied { background: rgba(174,174,178,0.1); border-color: rgba(174,174,178,0.2); color: var(--ink3); }
 .city-pill.denied .cp-dot { background: var(--ink3); animation: none; }
-@media (max-width: 600px) { 
-  .live-indicator { display: none; }
-  .logo-text { display: none; }
-}
-
+@media (max-width: 600px) { .city-pill { display: none; } }
 .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .nav-btn {
-  width: 34px; height: 34px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--ink3);
-  background: var(--surface2);
-  border: 0.5px solid var(--border);
+  width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--ink3); background: var(--surface2); border: 0.5px solid var(--border);
   transition: all 0.2s var(--ease);
 }
 .nav-btn:hover { background: rgba(0,0,0,0.06); color: var(--ink); transform: scale(1.05); }
 .nav-btn:active { transform: scale(0.95); }
 body.dark .nav-btn:hover { background: rgba(255,255,255,0.08); }
-
 .dark-toggle {
-  width: 34px; height: 34px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--surface2);
-  border: 0.5px solid var(--border);
-  cursor: pointer;
-  transition: all 0.25s var(--ease-apple);
-  position: relative; overflow: hidden;
-  color: var(--ink3);
+  width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--surface2); border: 0.5px solid var(--border); cursor: pointer;
+  transition: all 0.25s var(--ease-apple); position: relative; overflow: hidden; color: var(--ink3);
 }
-.dark-toggle:hover { transform: scale(1.08); background: rgba(0,113,227,0.08); border-color: rgba(0,113,227,0.2); color: var(--blue); box-shadow: 0 0 12px rgba(0,113,227,0.15); }
+.dark-toggle:hover { transform: scale(1.08); background: rgba(0,113,227,0.08); border-color: rgba(0,113,227,0.2); color: var(--blue); }
 .dark-toggle:active { transform: scale(0.94); }
 .dark-toggle svg { position: absolute; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease; }
 .dark-toggle .icon-sun  { transform: rotate(0deg) scale(1); opacity: 1; }
 .dark-toggle .icon-moon { transform: rotate(-90deg) scale(0.6); opacity: 0; }
 body.dark .dark-toggle .icon-sun  { transform: rotate(90deg) scale(0.6); opacity: 0; }
 body.dark .dark-toggle .icon-moon { transform: rotate(0deg) scale(1); opacity: 1; }
-body.dark .dark-toggle:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #F5C518; box-shadow: 0 0 14px rgba(245,197,24,0.12); }
+body.dark .dark-toggle:hover { background: rgba(255,255,255,0.08); color: #F5C518; }
 
-/* ═══════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════ */
+/* HERO */
 .hero {
-  padding-top: var(--nav-h);
-  min-height: 100svh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-  background: var(--bg2);
-  transition: var(--theme-trans);
+  padding-top: var(--nav-h); min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; overflow: hidden; background: var(--bg2); transition: var(--theme-trans);
 }
 .hero::before {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
     radial-gradient(ellipse 60% 50% at 20% 30%, rgba(255,59,48,0.07) 0%, transparent 60%),
     radial-gradient(ellipse 50% 60% at 80% 70%, rgba(0,113,227,0.05) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 60% 20%, rgba(255,159,10,0.04) 0%, transparent 50%);
-  transition: opacity 0.4s;
 }
 body.dark .hero::before {
   background:
@@ -261,104 +183,59 @@ body.dark .hero::before {
     radial-gradient(ellipse 40% 40% at 60% 20%, rgba(255,159,10,0.05) 0%, transparent 50%);
 }
 .hero::after {
-  content: '';
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 120px;
-  background: linear-gradient(to bottom, transparent, var(--bg));
-  pointer-events: none;
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none;
 }
 .hero-inner {
   position: relative; z-index: 1;
   padding: clamp(60px, 10vh, 100px) clamp(20px, 5vw, 80px);
   width: 100%; max-width: 1160px;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 60px;
-  align-items: center;
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center;
 }
-@media (max-width: 860px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 44px; text-align: center; }
-  .hero-left { order: 1; }
-  .hero-right { order: 2; }
-}
+@media (max-width: 860px) { .hero-inner { grid-template-columns: 1fr; gap: 44px; text-align: center; } }
 .hero-kicker { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
 .hero-kicker-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 12px;
-  background: rgba(255,59,48,0.08);
-  border-radius: 100px;
-  border: 0.5px solid rgba(255,59,48,0.2);
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+  background: rgba(255,59,48,0.08); border-radius: 100px; border: 0.5px solid rgba(255,59,48,0.2);
 }
 .hero-kicker-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
 .hero-kicker-text { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.02em; color: var(--accent); }
-.hero-h1 {
-  font-size: clamp(3.4rem, 7.5vw, 6rem);
-  line-height: 1.0;
-  letter-spacing: -0.04em;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 20px;
-  transition: color 0.4s;
-}
+.hero-h1 { font-size: clamp(3.4rem, 7.5vw, 6rem); line-height: 1.0; letter-spacing: -0.04em; font-weight: 700; color: var(--ink); margin-bottom: 20px; transition: color 0.4s; }
 .hero-h1 .hero-line { display: block; }
 .hero-h1 .hero-accent { color: var(--accent); }
 .hero-h1 .hero-light { color: var(--ink3); font-weight: 300; transition: color 0.4s; }
-.hero-sub {
-  font-size: clamp(0.9rem, 1.4vw, 1.0625rem);
-  font-weight: 400;
-  color: var(--ink3);
-  max-width: 440px;
-  line-height: 1.7;
-  margin-bottom: 36px;
-  transition: color 0.4s;
-}
+.hero-sub { font-size: clamp(0.9rem, 1.4vw, 1.0625rem); font-weight: 400; color: var(--ink3); max-width: 440px; line-height: 1.7; margin-bottom: 36px; transition: color 0.4s; }
 @media (max-width: 860px) { .hero-sub { margin: 0 auto 36px; } }
 .hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 @media (max-width: 860px) { .hero-ctas { justify-content: center; } }
 .cta-main {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em;
-  border-radius: 980px; border: none;
-  box-shadow: 0 4px 16px rgba(255,59,48,0.3), 0 1px 4px rgba(255,59,48,0.2);
-  transition: all 0.25s var(--ease-apple); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+  background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: -0.01em; border-radius: 980px; border: none;
+  box-shadow: 0 4px 16px rgba(255,59,48,0.3); transition: all 0.25s var(--ease-apple); cursor: pointer;
 }
-.cta-main:hover { background: #E0352A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,59,48,0.4), 0 2px 8px rgba(255,59,48,0.2); }
+.cta-main:hover { background: #E0352A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,59,48,0.4); }
 .cta-main:active { transform: translateY(0) scale(0.96); }
 .cta-sec {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 14px 24px;
-  background: rgba(0,0,0,0.04);
-  border: 0.5px solid var(--border);
-  color: var(--ink);
-  font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em;
-  border-radius: 980px;
-  transition: all 0.25s var(--ease-apple);
-  backdrop-filter: blur(8px);
+  display: inline-flex; align-items: center; gap: 6px; padding: 14px 24px;
+  background: rgba(0,0,0,0.04); border: 0.5px solid var(--border); color: var(--ink);
+  font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; border-radius: 980px;
+  transition: all 0.25s var(--ease-apple); backdrop-filter: blur(8px);
 }
 .cta-sec:hover { background: rgba(0,0,0,0.07); transform: translateY(-2px); }
-.cta-sec:active { transform: scale(0.96); }
 body.dark .cta-sec { background: rgba(255,255,255,0.06); }
 body.dark .cta-sec:hover { background: rgba(255,255,255,0.1); }
 .hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .stat-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 22px 20px;
-  border: 0.5px solid var(--border);
-  box-shadow: var(--shadow-xs);
-  position: relative; overflow: hidden;
-  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease), var(--theme-trans);
-  cursor: default;
+  background: var(--white); border-radius: var(--radius); padding: 22px 20px;
+  border: 0.5px solid var(--border); box-shadow: var(--shadow-xs); position: relative; overflow: hidden;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease), var(--theme-trans); cursor: default;
 }
 .stat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow); }
 .stat-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, var(--accent), var(--gold));
-  transform: scaleX(0); transform-origin: left;
-  transition: transform 0.4s var(--ease-out);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease-out);
   border-radius: 2px 2px 0 0;
 }
 .stat-card:hover::before { transform: scaleX(1); }
@@ -370,9 +247,7 @@ body.dark .stat-card.feature { background: rgba(255,255,255,0.07); border: 0.5px
 .stat-card.feature .stat-card-n { color: #fff; font-size: 1.7rem; }
 .stat-card.feature .stat-card-l { color: rgba(255,255,255,0.45); }
 
-/* ═══════════════════════════════════════════
-   TICKER
-═══════════════════════════════════════════ */
+/* TICKER */
 .ticker { overflow: hidden; white-space: nowrap; background: var(--ink); padding: 12px 0; position: relative; transition: background 0.4s; }
 body.dark .ticker { background: #0D0D11; }
 .ticker::before, .ticker::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 1; pointer-events: none; }
@@ -388,7 +263,7 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
 .tsep { width: 3px; height: 3px; background: var(--accent); border-radius: 50%; opacity: 0.6; display: inline-block; }
 
 /* ═══════════════════════════════════════════
-   CONTROLS
+   CONTROLS — COMPACT SINGLE-ROW DESIGN
 ═══════════════════════════════════════════ */
 .controls-sec {
   background: rgba(255,255,255,0.82);
@@ -399,83 +274,130 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
   transition: var(--theme-trans);
 }
 body.dark .controls-sec { background: rgba(11,11,15,0.88); }
-.controls-inner { max-width: 1200px; margin: 0 auto; padding: 14px 20px 12px; }
-.search-row { display: flex; gap: 10px; margin-bottom: 10px; }
+
+/* COMPACT MAIN ROW */
+.ctrl-main-row {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+}
 .search-box {
-  flex: 1; display: flex; align-items: center; gap: 6px;
-  background: rgba(118,118,128,0.12);
-  border: none; border-radius: var(--radius-sm);
-  padding: 8px 16px;
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: rgba(118,118,128,0.11); border: none; border-radius: var(--radius-sm);
+  padding: 9px 13px; min-width: 0;
   transition: all 0.2s var(--ease);
 }
 body.dark .search-box { background: rgba(255,255,255,0.07); }
-.search-box:focus-within { background: rgba(255,255,255,0.95); box-shadow: 0 0 0 3.5px rgba(0,113,227,0.25), var(--shadow-xs); }
-body.dark .search-box:focus-within { background: rgba(28,28,32,0.95); box-shadow: 0 0 0 3px rgba(0,113,227,0.3), var(--shadow-xs); }
-.search-btn { display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--ink4); cursor: pointer; transition: color 0.2s; padding: 0; margin: 0; }
-.search-btn:hover { color: var(--blue); }
-.search-box:focus-within .search-btn { color: var(--blue); }
-.search-box input { border: none; background: transparent; font-size: 0.9375rem; color: var(--ink); width: 100%; font-weight: 400; outline: none; }
+.search-box:focus-within { background: rgba(255,255,255,0.95); box-shadow: 0 0 0 3px rgba(0,113,227,0.22), var(--shadow-xs); }
+body.dark .search-box:focus-within { background: rgba(28,28,32,0.95); box-shadow: 0 0 0 3px rgba(0,113,227,0.3); }
+.search-box svg { color: var(--ink4); flex-shrink: 0; transition: color 0.2s; }
+.search-box:focus-within svg { color: var(--blue); }
+.search-box input { border: none; background: transparent; font-size: 0.875rem; color: var(--ink); width: 100%; }
+.search-box input:focus { outline: none; }
 .search-box input::placeholder { color: var(--ink4); }
-.search-clear { background: rgba(118,118,128,0.12); border: none; border-radius: 6px; color: var(--ink3); cursor: pointer; font-size: 0.6875rem; padding: 4px 8px; transition: all 0.2s; display: none; }
-.search-clear:hover { background: rgba(118,118,128,0.2); color: var(--ink); }
 
-.filter-row-ctrl { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
-.sort-wrap { position: relative; }
+/* COMPACT SORT */
+.sort-wrap { position: relative; flex-shrink: 0; }
 .sort-sel {
-  appearance: none; padding: 10px 34px 10px 14px;
-  background: rgba(118,118,128,0.1); border: none; border-radius: var(--radius-sm);
-  font-size: 0.8125rem; font-weight: 500; color: var(--ink); cursor: pointer; height: 100%;
-  transition: background 0.2s, color 0.4s;
+  appearance: none; padding: 9px 28px 9px 12px;
+  background: rgba(118,118,128,0.11); border: none; border-radius: var(--radius-sm);
+  font-size: 0.8125rem; font-weight: 500; color: var(--ink); cursor: pointer;
+  transition: background 0.2s, color 0.4s; white-space: nowrap;
 }
 body.dark .sort-sel { background: rgba(255,255,255,0.07); }
-.sort-sel:hover { background: rgba(118,118,128,0.15); }
-.sort-sel:focus { outline: none; background: rgba(255,255,255,0.95); box-shadow: 0 0 0 3px rgba(0,113,227,0.2); }
-body.dark .sort-sel:focus { background: rgba(28,28,32,0.95); }
-.sort-arr { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
-@media (max-width: 600px) { .sort-sel { padding: 7px 22px 7px 8px; font-size: 0.75rem; } .sort-arr { right: 5px; } }
+.sort-sel:hover { background: rgba(118,118,128,0.16); }
+.sort-sel:focus { outline: none; }
+.sort-arr { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
 
-.filter-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 10px 16px; background: rgba(118,118,128,0.1); border: none;
-  border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 500; color: var(--ink);
-  transition: all 0.2s var(--ease); flex-shrink: 0;
+/* COMPACT ICON BUTTONS */
+.ctrl-icon-btn {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(118,118,128,0.11); border: none; border-radius: var(--radius-sm);
+  color: var(--ink3); position: relative;
+  transition: all 0.2s var(--ease);
 }
-body.dark .filter-btn { background: rgba(255,255,255,0.07); }
-.filter-btn:hover { background: rgba(118,118,128,0.16); transform: translateY(-1px); }
-.filter-btn:active { transform: scale(0.96); }
-.filter-btn.open { background: var(--ink); color: #fff; }
-.fi { transition: transform 0.3s var(--ease); }
-.filter-btn.open .fi { transform: rotate(180deg); }
-.fcnt { display: none; padding: 0 6px; background: var(--accent); color: #fff; font-size: 0.5625rem; border-radius: 100px; align-items: center; justify-content: center; min-width: 18px; height: 18px; }
+body.dark .ctrl-icon-btn { background: rgba(255,255,255,0.07); }
+.ctrl-icon-btn:hover { background: rgba(118,118,128,0.18); color: var(--ink); }
+.ctrl-icon-btn.open { background: var(--ink); color: #fff; }
+.ctrl-icon-btn .fi { transition: transform 0.3s var(--ease); }
+.ctrl-icon-btn.open .fi { transform: rotate(180deg); }
+.fcnt {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  background: var(--accent); color: #fff; font-size: 0.5rem;
+  border-radius: 100px; display: none; align-items: center; justify-content: center;
+  border: 2px solid rgba(255,255,255,0.9);
+}
+body.dark .fcnt { border-color: rgba(11,11,15,0.9); }
 
-.nearby-btn {
+/* LOCATION STRIP — improved */
+.loc-strip {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 16px 10px;
+  display: flex; align-items: center; gap: 6px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.loc-strip::-webkit-scrollbar { display: none; }
+
+/* Radius selector pills */
+.radius-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.radius-pill {
+  padding: 5px 12px; background: rgba(118,118,128,0.1); border: none;
+  border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3);
+  cursor: pointer; white-space: nowrap; transition: all 0.2s var(--ease); flex-shrink: 0;
+}
+body.dark .radius-pill { background: rgba(255,255,255,0.07); }
+.radius-pill:hover { background: rgba(118,118,128,0.18); color: var(--ink); }
+.radius-pill.active { background: var(--blue); color: #fff; }
+.radius-pill.active-gps { background: var(--accent); color: #fff; }
+
+/* Divider between radius and restaurant filters */
+.loc-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
+
+/* Restaurant location chips */
+.rest-loc-chip {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 14px;
-  background: rgba(0,113,227,0.08);
-  border: 0.5px solid rgba(0,113,227,0.2);
-  border-radius: var(--radius-sm);
-  font-size: 0.8125rem; font-weight: 500; color: var(--blue);
-  transition: all 0.2s var(--ease); flex-shrink: 0; white-space: nowrap;
+  padding: 5px 12px; background: rgba(118,118,128,0.1); border: none;
+  border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3);
+  cursor: pointer; white-space: nowrap; transition: all 0.2s var(--ease); flex-shrink: 0;
 }
-.nearby-btn:hover { background: rgba(0,113,227,0.14); transform: translateY(-1px); }
-.nearby-btn:active { transform: scale(0.96); }
-.nearby-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-.nearby-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+body.dark .rest-loc-chip { background: rgba(255,255,255,0.07); }
+.rest-loc-chip:hover { background: rgba(118,118,128,0.18); color: var(--ink); transform: translateY(-1px); }
+.rest-loc-chip.active { background: rgba(0,113,227,0.1); color: var(--blue); border: 0.5px solid rgba(0,113,227,0.25); }
+.rest-loc-chip .rlc-count { font-size: 0.5625rem; opacity: 0.6; font-weight: 400; }
 
-.loc-row { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-top: 10px; padding-bottom: 2px; }
-.loc-row::-webkit-scrollbar { display: none; }
-.loc-chip { flex-shrink: 0; padding: 6px 14px; background: rgba(118,118,128,0.1); border: none; border-radius: 100px; font-size: 0.75rem; font-weight: 500; color: var(--ink3); cursor: pointer; white-space: nowrap; transition: all 0.2s var(--ease); }
-body.dark .loc-chip { background: rgba(255,255,255,0.07); }
-.loc-chip:hover { background: rgba(118,118,128,0.18); color: var(--ink); transform: translateY(-1px); }
-.loc-chip.active { background: var(--ink); color: #fff; }
-.pills-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s, opacity 0.3s, margin 0.3s; }
-.pills-row.vis { max-height: 80px; opacity: 1; margin-top: 10px; }
-.pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 12px; background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2); border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--accent); animation: ppop 0.2s var(--ease-spring) both; }
+/* GPS button */
+.gps-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; background: rgba(0,113,227,0.07); border: 0.5px solid rgba(0,113,227,0.2);
+  border-radius: 100px; font-size: 0.6875rem; font-weight: 600; color: var(--blue);
+  cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.2s var(--ease);
+}
+.gps-btn:hover { background: rgba(0,113,227,0.14); }
+.gps-btn.located { background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.3); color: var(--green); }
+
+/* Active filter pills */
+.pills-row {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.4s, opacity 0.3s, margin 0.3s;
+  padding: 0 16px;
+}
+.pills-row.vis { max-height: 80px; opacity: 1; margin-bottom: 10px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 12px;
+  background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2);
+  border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--accent);
+  animation: ppop 0.2s var(--ease-spring) both;
+}
 @keyframes ppop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
 .pill-x { opacity: 0.5; cursor: pointer; transition: opacity 0.2s; font-size: 0.7rem; margin-left: 2px; }
 .pill-x:hover { opacity: 1; }
 .pill-clear { padding: 4px 10px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: inherit; transition: color 0.2s; }
 .pill-clear:hover { color: var(--accent); }
+
+/* FILTER PANEL */
 .filter-panel {
   background: rgba(250,250,252,0.95); backdrop-filter: blur(20px);
   border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);
@@ -484,8 +406,8 @@ body.dark .loc-chip { background: rgba(255,255,255,0.07); }
 }
 body.dark .filter-panel { background: rgba(14,14,18,0.97); }
 .filter-panel.open { max-height: 600px; opacity: 1; }
-.fp-inner { padding: 24px 20px; max-width: 1200px; margin: 0 auto; }
-.fp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 22px 28px; }
+.fp-inner { padding: 20px 16px; max-width: 1200px; margin: 0 auto; }
+.fp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 18px 24px; }
 .fp-sec { display: flex; flex-direction: column; gap: 10px; }
 .fp-lbl { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.02em; color: var(--ink3); text-transform: uppercase; transition: color 0.4s; }
 .fp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -510,27 +432,22 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 .dual-range input[type=range]::-webkit-slider-thumb { pointer-events: all; }
 .dual-track { position: absolute; height: 2px; background: rgba(118,118,128,0.2); width: 100%; top: 50%; transform: translateY(-50%); border-radius: 2px; }
 .dual-fill { position: absolute; height: 2px; background: var(--accent); top: 50%; transform: translateY(-50%); border-radius: 2px; }
-.fp-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--border); }
+.fp-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 0.5px solid var(--border); }
 .fp-apply { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: var(--accent); color: #fff; font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.01em; border: none; border-radius: 980px; cursor: pointer; box-shadow: 0 4px 12px rgba(255,59,48,0.25); transition: all 0.2s var(--ease-apple); }
 .fp-apply:hover { background: #E0352A; transform: translateY(-2px); }
-.fp-apply:active { transform: scale(0.96); }
 .fp-reset { font-size: 0.8125rem; font-weight: 500; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: inherit; transition: color 0.2s; }
 .fp-reset:hover { color: var(--accent); }
 .fp-hint { font-size: 0.6875rem; color: var(--ink3); }
 .fp-hint.lit { color: var(--accent); font-weight: 600; }
 
-/* ═══════════════════════════════════════════
-   SECTION HEADER
-═══════════════════════════════════════════ */
-.sec-hdr { background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; transition: var(--theme-trans); }
+/* SECTION HEADER */
+.sec-hdr { background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; transition: var(--theme-trans); }
 .sec-hdr-left { display: flex; align-items: center; gap: 10px; }
 .sec-hdr-title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); transition: color 0.4s; }
 .live-pip { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: blink 2s step-end infinite; flex-shrink: 0; box-shadow: 0 0 6px rgba(255,59,48,0.5); }
 .sec-hdr-badge { font-size: 0.75rem; font-weight: 500; color: var(--ink3); letter-spacing: -0.01em; transition: color 0.4s; }
 
-/* ═══════════════════════════════════════════
-   FOOD TYPE BADGE
-═══════════════════════════════════════════ */
+/* FOOD TYPE BADGE */
 .ft { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 6px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.02em; width: fit-content; flex-shrink: 0; margin-bottom: 10px; border-radius: 100px; }
 .fts { width: 10px; height: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .fts.veg { border: 1.5px solid var(--green); border-radius: 2px; }
@@ -544,156 +461,81 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 .ft.egg { color: var(--gold); background: rgba(255,159,10,0.1); }
 .ft.sm { font-size: 0.5625rem; padding: 2px 7px 2px 4px; }
 
-/* ═══════════════════════════════════════════
-   FOOD GRID & CARDS
-═══════════════════════════════════════════ */
+/* FOOD GRID */
 .food-grid {
   max-width: 1200px; margin: 0 auto;
-  padding: 28px 20px 80px;
+  padding: 20px 16px 80px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
-@media (max-width: 780px) { .food-grid { grid-template-columns: 1fr; padding: 16px 16px 80px; } }
+@media (max-width: 780px) { .food-grid { grid-template-columns: 1fr; padding: 12px 12px 80px; gap: 12px; } }
 .food-card {
   background: var(--white); border-radius: var(--radius-lg);
   border: 0.5px solid var(--border); box-shadow: var(--shadow-xs);
   cursor: pointer; overflow: hidden; display: flex; flex-direction: column;
   transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease), var(--theme-trans);
-  animation: cardIn 0.5s var(--ease-out) both;
-  position: relative;
+  animation: cardIn 0.5s var(--ease-out) both; position: relative;
 }
 @keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 .food-card:hover { transform: translateY(-6px) scale(1.005); box-shadow: var(--shadow-lg); }
 .food-card:active { transform: translateY(-2px) scale(0.998); }
-
 .closest-badge {
   position: absolute; top: 12px; left: 12px; z-index: 10;
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 10px;
-  background: rgba(0,113,227,0.92);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-radius: 100px;
-  font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(0,113,227,0.4);
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  background: rgba(0,113,227,0.92); backdrop-filter: blur(12px);
+  border-radius: 100px; font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: #fff; box-shadow: 0 2px 10px rgba(0,113,227,0.4);
   animation: badgePop 0.4s var(--ease-spring) both;
 }
 @keyframes badgePop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
-.closest-badge::before {
-  content: '';
-  width: 5px; height: 5px; background: #fff; border-radius: 50%;
-  animation: blink 2s step-end infinite;
-}
-
-.card-img-wrap {
-  position: relative; height: 220px; overflow: hidden;
-  background: var(--bg); flex-shrink: 0;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-.card-img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  filter: saturate(0.92) contrast(1.02);
-  transition: transform 0.9s var(--ease-out), filter 0.4s;
-}
+.closest-badge::before { content: ''; width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: blink 2s step-end infinite; }
+.card-img-wrap { position: relative; height: 200px; overflow: hidden; background: var(--bg); flex-shrink: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.card-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92) contrast(1.02); transition: transform 0.9s var(--ease-out), filter 0.4s; }
 .food-card:hover .card-img { transform: scale(1.07); filter: saturate(1.05) contrast(1.02); }
 .card-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
-.card-badges {
-  position: absolute; top: 12px; right: 12px;
-  display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 2;
-}
-.ibadge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 10px;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-radius: 100px;
-  font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; color: var(--ink);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
+.card-badges { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 2; }
+.ibadge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); border-radius: 100px; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
 .ibadge.right { background: rgba(0,0,0,0.65); color: #fff; }
 .ibadge.urgent { background: var(--accent); color: #fff; }
 .ib-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
-.disc-stamp {
-  position: absolute; bottom: 12px; right: 12px; z-index: 2;
-  padding: 6px 12px; background: var(--accent);
-  border-radius: var(--radius-sm); text-align: center;
-  box-shadow: 0 4px 12px rgba(255,59,48,0.4);
-}
+.disc-stamp { position: absolute; bottom: 12px; right: 12px; z-index: 2; padding: 6px 12px; background: var(--accent); border-radius: var(--radius-sm); text-align: center; box-shadow: 0 4px 12px rgba(255,59,48,0.4); }
 .disc-pct { font-size: 1rem; line-height: 1; color: #fff; font-weight: 700; }
 .disc-off { font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
 .card-img-name { position: absolute; bottom: 12px; left: 14px; right: 80px; z-index: 2; }
 .card-img-name .name-text { font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1.2; text-shadow: 0 2px 12px rgba(0,0,0,0.35); }
-.card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
 .card-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .card-kitchen { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.02em; color: var(--accent); }
 .card-qty { font-size: 0.6875rem; color: var(--ink3); font-weight: 500; }
 .card-qty strong { color: var(--ink); transition: color 0.4s; }
-
-.card-loc-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-.card-addr {
-  display: flex; align-items: center; gap: 3px;
-  font-size: 0.6875rem; color: var(--ink3); font-weight: 400;
-}
-.card-distance {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 0.6875rem; font-weight: 600;
-  color: var(--blue);
-  padding: 2px 8px;
-  background: rgba(0,113,227,0.07);
-  border-radius: 100px;
-  border: 0.5px solid rgba(0,113,227,0.15);
-  transition: all 0.3s var(--ease);
-  white-space: nowrap;
-}
-.card-distance.calculating {
-  color: var(--ink4); background: rgba(118,118,128,0.08);
-  border-color: rgba(118,118,128,0.15);
-  animation: shimDist 1.8s ease-in-out infinite;
-}
+.card-loc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.card-addr { display: flex; align-items: center; gap: 3px; font-size: 0.6875rem; color: var(--ink3); font-weight: 400; }
+.card-distance { display: inline-flex; align-items: center; gap: 4px; font-size: 0.6875rem; font-weight: 600; color: var(--blue); padding: 2px 8px; background: rgba(0,113,227,0.07); border-radius: 100px; border: 0.5px solid rgba(0,113,227,0.15); transition: all 0.3s var(--ease); white-space: nowrap; }
+.card-distance.calculating { color: var(--ink4); background: rgba(118,118,128,0.08); border-color: rgba(118,118,128,0.15); animation: shimDist 1.8s ease-in-out infinite; }
 @keyframes shimDist { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
 .card-distance.close { color: var(--green); background: rgba(48,209,88,0.07); border-color: rgba(48,209,88,0.2); }
 .card-distance.denied { color: var(--ink4); background: transparent; border-color: transparent; }
-
-.urgency-combo {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 0.6875rem; font-weight: 600;
-  color: var(--accent);
-  padding: 2px 8px;
-  background: rgba(255,59,48,0.06);
-  border-radius: 100px;
-  white-space: nowrap;
-}
-
-.card-divider { height: 0.5px; background: var(--border); margin: 12px 0; }
+.urgency-combo { display: inline-flex; align-items: center; gap: 5px; font-size: 0.6875rem; font-weight: 600; color: var(--accent); padding: 2px 8px; background: rgba(255,59,48,0.06); border-radius: 100px; white-space: nowrap; }
+.card-divider { height: 0.5px; background: var(--border); margin: 10px 0; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
 .price-block { display: flex; flex-direction: column; }
 .price-old { font-size: 0.6875rem; color: var(--ink4); text-decoration: line-through; line-height: 1; margin-bottom: 2px; }
 .price-new { font-size: 1.875rem; line-height: 1; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); transition: color 0.25s; }
 .food-card:hover .price-new { color: var(--accent); }
 .price-currency { font-size: 1rem; vertical-align: super; font-weight: 400; }
-.reserve-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 18px; background: var(--ink); color: #fff;
-  border-radius: 980px; font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; border: none;
-  transition: all 0.25s var(--ease-apple); flex-shrink: 0;
-}
+.reserve-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; background: var(--ink); color: #fff; border-radius: 980px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.25s var(--ease-apple); flex-shrink: 0; }
 .reserve-btn:hover, .food-card:hover .reserve-btn { background: var(--accent); box-shadow: 0 4px 14px rgba(255,59,48,0.35); }
 .reserve-btn:active { transform: scale(0.96); }
-.time-bar { margin-bottom: 14px; }
+.time-bar { margin-bottom: 12px; }
 .time-bar-track { height: 3px; background: var(--bg); border-radius: 100px; overflow: hidden; }
 .time-bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s var(--ease-out); }
 .time-bar-label { display: flex; justify-content: space-between; margin-top: 5px; }
 .time-label-text { font-size: 0.6875rem; color: var(--ink4); font-weight: 500; }
 .time-label-val { font-size: 0.6875rem; color: var(--ink3); font-weight: 600; }
 .skel-card { background: var(--white); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: var(--theme-trans); }
-.skel-img { height: 220px; background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; }
-.skel-body { padding: 18px 20px; }
+.skel-img { height: 200px; background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; }
+.skel-body { padding: 16px 18px; }
 .skel-line { background: linear-gradient(90deg, var(--bg) 25%, rgba(0,0,0,0.04) 50%, var(--bg) 75%); background-size: 400% 100%; animation: shim 1.8s ease-in-out infinite; border-radius: 6px; }
 @keyframes shim { 0% { background-position: 100% center; } 100% { background-position: -100% center; } }
 .empty-state { grid-column: 1 / -1; padding: 80px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -701,18 +543,10 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 body.dark .empty-big { color: rgba(255,255,255,0.06); }
 .empty-ttl { font-size: 1.25rem; font-weight: 600; color: var(--ink3); letter-spacing: -0.02em; }
 .empty-sub { font-size: 0.875rem; color: var(--ink3); line-height: 1.7; }
-.food-card .card-hover-bar {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--gold));
-  transform: scaleX(0); transform-origin: left;
-  transition: transform 0.4s var(--ease-out);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
+.food-card .card-hover-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease-out); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
 .food-card:hover .card-hover-bar { transform: scaleX(1); }
 
-/* ═══════════════════════════════════════════
-   FEATURES, SUPPORT, FOOTER
-═══════════════════════════════════════════ */
+/* FEATURES, SUPPORT, FOOTER */
 .feat-sec { background: var(--ink); transition: background 0.4s; }
 body.dark .feat-sec { background: #0D0D11; }
 .feat-eyebrow { text-align: center; padding: 22px; border-bottom: 0.5px solid rgba(255,255,255,0.08); font-size: 0.625rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 14px; }
@@ -757,16 +591,8 @@ footer { background: var(--bg2); border-top: 0.5px solid var(--border); display:
 .foot-link:hover { background: var(--ink); color: #fff; transform: translateY(-1px); }
 @media (max-width: 720px) { footer { grid-template-columns: 1fr; } .foot-center, .foot-right { border-left: none; border-top: 0.5px solid var(--border); } .foot-right { justify-content: center; } }
 
-/* ═══════════════════════════════════════════
-   MODAL
-═══════════════════════════════════════════ */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 5000;
-  background: rgba(0,0,0,0); backdrop-filter: blur(0px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px; pointer-events: none;
-  transition: background 0.35s, backdrop-filter 0.35s;
-}
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0); backdrop-filter: blur(0px); display: flex; align-items: center; justify-content: center; padding: 20px; pointer-events: none; transition: background 0.35s, backdrop-filter 0.35s; }
 .modal-overlay.open { background: rgba(0,0,0,0.55); backdrop-filter: blur(28px) saturate(1.5); pointer-events: all; }
 body.dark .modal-overlay.open { background: rgba(0,0,0,0.75); }
 .modal-box { width: 100%; max-width: 460px; background: rgba(255,255,255,0.92); backdrop-filter: blur(40px) saturate(1.8); border-radius: var(--radius-xl); overflow: hidden; border: 0.5px solid rgba(255,255,255,0.8); transform: translateY(40px) scale(0.94); opacity: 0; transition: transform 0.45s var(--ease-out), opacity 0.35s, var(--theme-trans); box-shadow: var(--shadow-xl); }
@@ -788,11 +614,8 @@ body.dark .modal-box { background: rgba(18,18,22,0.95); border-color: rgba(255,2
 .modal-price { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); line-height: 1; transition: color 0.4s; }
 .modal-cta { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 14px 20px; background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; transition: all 0.25s var(--ease-apple); border-radius: 980px; box-shadow: 0 4px 12px rgba(255,59,48,0.3); }
 .modal-cta:hover { background: #E0352A; transform: translateY(-2px); }
-.modal-cta:active { transform: scale(0.96); }
 
-/* ═══════════════════════════════════════════
-   DRAWER
-═══════════════════════════════════════════ */
+/* DRAWER */
 .drawer-bg { position: fixed; inset: 0; z-index: 4000; pointer-events: none; }
 .drawer-bg.open { pointer-events: all; }
 .drawer-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.4s; backdrop-filter: blur(0px); }
@@ -832,20 +655,8 @@ body.dark .cb-chip { background: rgba(255,255,255,0.05); }
 .drawer-logout { width: 100%; margin-top: 20px; padding: 13px; background: rgba(255,59,48,0.07); border: 0.5px solid rgba(255,59,48,0.2); border-radius: var(--radius-sm); color: var(--accent); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: inherit; }
 .drawer-logout:hover { background: rgba(255,59,48,0.12); }
 
-/* ═══════════════════════════════════════════
-   BOTTOM NAV
-═══════════════════════════════════════════ */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: var(--bnav-h);
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 0.5px solid var(--border);
-  display: flex; align-items: stretch; z-index: 2000;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  transition: transform 0.4s var(--ease-out), var(--theme-trans);
-}
+/* BOTTOM NAV */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bnav-h); background: rgba(255,255,255,0.88); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 0.5px solid var(--border); display: flex; align-items: stretch; z-index: 2000; padding-bottom: env(safe-area-inset-bottom, 0px); transition: transform 0.4s var(--ease-out), var(--theme-trans); }
 body.dark .bottom-nav { background: rgba(11,11,15,0.92); }
 .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--ink4); text-decoration: none; cursor: pointer; background: none; border: none; font-family: inherit; transition: all 0.2s var(--ease); position: relative; }
 .bn-item:hover { color: var(--ink2); }
@@ -857,22 +668,20 @@ body.dark .bottom-nav { background: rgba(11,11,15,0.92); }
 .bn-badge { position: absolute; top: 8px; right: calc(50% - 16px); width: 7px; height: 7px; background: var(--accent); border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); animation: blink 2s step-end infinite; }
 body.dark .bn-badge { border-color: rgba(11,11,15,0.9); }
 
-/* ═══════════════════════════════════════════
-   CHEF'S SECRET SHEET
-═══════════════════════════════════════════ */
+/* SHEET */
 .sheet-overlay { position: fixed; inset: 0; z-index: 3000; pointer-events: none; }
 .sheet-overlay.open { pointer-events: all; }
 .sheet-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.5s var(--ease-out), backdrop-filter 0.5s; backdrop-filter: blur(0px); }
 .sheet-overlay.open .sheet-scrim { background: rgba(0,0,0,0.55); backdrop-filter: blur(24px) saturate(1.4); }
 body.dark .sheet-overlay.open .sheet-scrim { background: rgba(0,0,0,0.75); }
-.sheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100dvh; max-height: 100dvh; background: rgba(248,248,252,0.97); backdrop-filter: blur(48px) saturate(2); -webkit-backdrop-filter: blur(48px) saturate(2); display: flex; flex-direction: column; overflow: hidden; padding-bottom: env(safe-area-inset-bottom, 0px); transform: translateY(100%); transition: transform 0.58s cubic-bezier(0.32, 0.72, 0, 1); border-top: 0.5px solid rgba(255,255,255,0.6); border-radius: 24px 24px 0 0; box-shadow: 0 -1px 0 rgba(255,255,255,0.5), 0 -8px 40px rgba(0,0,0,0.12), 0 -24px 80px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.7); }
+.sheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100dvh; max-height: 100dvh; background: rgba(248,248,252,0.97); backdrop-filter: blur(48px) saturate(2); -webkit-backdrop-filter: blur(48px) saturate(2); display: flex; flex-direction: column; overflow: hidden; padding-bottom: env(safe-area-inset-bottom, 0px); transform: translateY(100%); transition: transform 0.58s cubic-bezier(0.32, 0.72, 0, 1); border-top: 0.5px solid rgba(255,255,255,0.6); border-radius: 24px 24px 0 0; box-shadow: 0 -1px 0 rgba(255,255,255,0.5), 0 -8px 40px rgba(0,0,0,0.12); }
 body.dark .sheet { background: rgba(13,13,18,0.96); border-top-color: rgba(255,255,255,0.08); }
 .sheet-overlay.open .sheet { transform: translateY(0); transition: transform 0.62s cubic-bezier(0.32, 0.72, 0, 1); }
 .sheet-drag { flex-shrink: 0; padding: 14px 0 10px; cursor: grab; display: flex; align-items: center; justify-content: center; }
 .sheet-drag:active { cursor: grabbing; }
-.sheet-handle { width: 36px; height: 4.5px; background: rgba(0,0,0,0.14); border-radius: 100px; transition: width 0.3s var(--ease-spring), background 0.2s, transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.sheet-handle { width: 36px; height: 4.5px; background: rgba(0,0,0,0.14); border-radius: 100px; transition: width 0.3s var(--ease-spring), background 0.2s, transform 0.2s; }
 body.dark .sheet-handle { background: rgba(255,255,255,0.18); }
-.sheet-drag:hover .sheet-handle { width: 52px; background: rgba(0,0,0,0.22); }
+.sheet-drag:hover .sheet-handle { width: 52px; }
 .sheet-drag:active .sheet-handle { width: 60px; background: var(--accent); transform: scaleY(1.3); }
 .sheet-hdr { flex-shrink: 0; padding: 4px 22px 0; }
 .sheet-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; background: rgba(255,59,48,0.09); border: 0.5px solid rgba(255,59,48,0.22); border-radius: 100px; font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
@@ -883,7 +692,7 @@ body.dark .sheet-handle { background: rgba(255,255,255,0.18); }
 .sheet-close { width: 34px; height: 34px; background: rgba(118,118,128,0.12); border: 0.5px solid var(--border); border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--ink3); margin-top: 2px; transition: all 0.22s var(--ease-apple); flex-shrink: 0; font-size: 0.75rem; font-weight: 600; }
 .sheet-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 .sheet-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-.stat-glass-card { background: var(--ink); border-radius: 16px; padding: 14px 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; position: relative; overflow: hidden; border: 0.5px solid rgba(255,255,255,0.08); transition: transform 0.22s var(--ease-spring), box-shadow 0.22s var(--ease); cursor: default; box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 0.5px 0 rgba(255,255,255,0.12); }
+.stat-glass-card { background: var(--ink); border-radius: 16px; padding: 14px 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; position: relative; overflow: hidden; border: 0.5px solid rgba(255,255,255,0.08); transition: transform 0.22s var(--ease-spring); cursor: default; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
 body.dark .stat-glass-card { background: rgba(255,255,255,0.06); }
 .stat-glass-card:hover { transform: translateY(-3px) scale(1.02); }
 .sgc-n { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.04em; color: #fff; line-height: 1; display: block; }
@@ -997,6 +806,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 
 <div id="page-root">
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <a class="nav-logo" href="/">
     <div class="logo-mark"></div>
@@ -1007,20 +817,23 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       <div class="live-dot"></div>
       <span class="live-text">Live Rescue Feed</span>
     </div>
-    
     <div class="city-pill locating" id="cityPill">
       <span class="cp-dot"></span>
-      <select id="citySelect" class="city-select" onchange="onCityChange()" aria-label="Select City">
-        <option value="auto" id="cityNameLoc">Locating…</option>
-      </select>
-      <svg class="city-arr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      <span id="cityName">Locating…</span>
     </div>
-
   </div>
   <div class="nav-right">
     <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
-      <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
     </button>
     <button class="nav-btn" id="openProfile" aria-label="Profile">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1028,134 +841,275 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </nav>
 
+<!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-left">
-      <div class="hero-kicker"><div class="hero-kicker-pill"><div class="hero-kicker-dot"></div><span class="hero-kicker-text">Premium Food Rescue · Est. 2024</span></div></div>
-      <h1 class="hero-h1"><span class="hero-line">Good food</span><span class="hero-line hero-accent">won't</span><span class="hero-line hero-light">waste.</span></h1>
+      <div class="hero-kicker">
+        <div class="hero-kicker-pill">
+          <div class="hero-kicker-dot"></div>
+          <span class="hero-kicker-text">Premium Food Rescue · Est. 2024</span>
+        </div>
+      </div>
+      <h1 class="hero-h1">
+        <span class="hero-line">Good food</span>
+        <span class="hero-line hero-accent">won't</span>
+        <span class="hero-line hero-light">waste.</span>
+      </h1>
       <p class="hero-sub">Surplus meals from the finest kitchens near you — rescued, discounted, ready before they disappear forever.</p>
       <div class="hero-ctas">
-        <button class="cta-main" onclick="document.getElementById('controlsBlock').scrollIntoView({behavior:'smooth'})">Browse Plates <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-        <button class="cta-sec" onclick="openSheet()">Chef's Special <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <button class="cta-main" onclick="document.getElementById('controlsBlock').scrollIntoView({behavior:'smooth'})">
+          Browse Plates
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="cta-sec" onclick="openSheet()">Chef's Special
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
       </div>
     </div>
     <div class="hero-right">
-      <div class="stat-card"><span class="stat-card-n" id="hs-count">—</span><span class="stat-card-l">Plates Live</span><span class="stat-card-icon">🍽</span></div>
-      <div class="stat-card"><span class="stat-card-n" id="hs-rest">—</span><span class="stat-card-l">Kitchens</span><span class="stat-card-icon">🏪</span></div>
-      <div class="stat-card feature"><span class="stat-card-n" style="font-size:1.5rem">Save 30–70%</span><span class="stat-card-l">on every rescue</span><span class="stat-card-icon" style="color:#fff;">✦</span></div>
+      <div class="stat-card">
+        <span class="stat-card-n" id="hs-count">—</span>
+        <span class="stat-card-l">Plates Live</span>
+        <span class="stat-card-icon">🍽</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-n" id="hs-rest">—</span>
+        <span class="stat-card-l">Kitchens</span>
+        <span class="stat-card-icon">🏪</span>
+      </div>
+      <div class="stat-card feature">
+        <span class="stat-card-n" style="font-size:1.5rem">Save 30–70%</span>
+        <span class="stat-card-l">on every rescue</span>
+        <span class="stat-card-icon" style="color:#fff;">✦</span>
+      </div>
     </div>
   </div>
 </header>
 
+<!-- TICKER -->
 <div class="ticker">
   <div class="ticker-inner">
-    <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span><span class="titem"><strong>Save 30–70%</strong><span class="tsep"></span></span><span class="titem">Zero Food Waste<span class="tsep"></span></span><span class="titem">Verified Kitchens<span class="tsep"></span></span><span class="titem">Fresh &amp; Safe<span class="tsep"></span></span><span class="titem"><strong>Same-Day Collection</strong><span class="tsep"></span></span>
-    <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span><span class="titem"><strong>Save 30–70%</strong><span class="tsep"></span></span><span class="titem">Zero Food Waste<span class="tsep"></span></span><span class="titem">Verified Kitchens<span class="tsep"></span></span><span class="titem">Fresh &amp; Safe<span class="tsep"></span></span><span class="titem"><strong>Same-Day Collection</strong><span class="tsep"></span></span>
+    <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span>
+    <span class="titem"><strong>Save 30–70%</strong><span class="tsep"></span></span>
+    <span class="titem">Zero Food Waste<span class="tsep"></span></span>
+    <span class="titem">Verified Kitchens<span class="tsep"></span></span>
+    <span class="titem">Fresh &amp; Safe<span class="tsep"></span></span>
+    <span class="titem"><strong>Same-Day Collection</strong><span class="tsep"></span></span>
+    <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span>
+    <span class="titem"><strong>Save 30–70%</strong><span class="tsep"></span></span>
+    <span class="titem">Zero Food Waste<span class="tsep"></span></span>
+    <span class="titem">Verified Kitchens<span class="tsep"></span></span>
+    <span class="titem">Fresh &amp; Safe<span class="tsep"></span></span>
+    <span class="titem"><strong>Same-Day Collection</strong><span class="tsep"></span></span>
   </div>
 </div>
 
+<!-- CONTROLS — COMPACT -->
 <div class="controls-sec" id="controlsBlock">
-  <div class="controls-inner">
-    
-    <div class="search-row">
-      <div class="search-box">
-        <button class="search-btn" id="searchBtn" aria-label="Search" onclick="applyFilters()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </button>
-        <input type="text" id="foodSearch" placeholder="Search dishes or kitchens…" autocomplete="off">
-        <button class="search-clear" id="searchClear" aria-label="Clear Search" onclick="document.getElementById('foodSearch').value=''; applyFilters();" style="display:none;">✕</button>
-      </div>
+
+  <!-- Single compact row: search + sort + filter toggle -->
+  <div class="ctrl-main-row">
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="foodSearch" placeholder="Search dishes or kitchens…" autocomplete="off">
     </div>
-    
-    <div class="filter-row-ctrl">
-      <div class="sort-wrap">
-        <select class="sort-sel" id="sortSelect">
-          <option value="default">Sort: Default</option>
-          <option value="nearest">Nearest First</option>
-          <option value="price_asc">Price: Low → High</option>
-          <option value="price_desc">Price: High → Low</option>
-          <option value="discount">Best Discount</option>
-          <option value="time_asc">Ending Soonest</option>
-          <option value="qty_desc">Most Available</option>
-        </select>
-        <svg class="sort-arr" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <button class="filter-btn" id="filterTrigger">
-        <svg class="fi" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> Filters <span class="fcnt" id="filterCnt">0</span>
-      </button>
-      <button class="nearby-btn" id="nearbyBtn" onclick="toggleNearby()" disabled title="Enable location to use this filter">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Within 2 km
-      </button>
+    <div class="sort-wrap">
+      <select class="sort-sel" id="sortSelect">
+        <option value="default">Default</option>
+        <option value="nearest">Nearest</option>
+        <option value="price_asc">Price ↑</option>
+        <option value="price_desc">Price ↓</option>
+        <option value="discount">Best Deal</option>
+        <option value="time_asc">Ending Soon</option>
+        <option value="qty_desc">Most Left</option>
+      </select>
+      <svg class="sort-arr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    
-    <div class="loc-row" id="locationRow">
-      <button class="loc-chip" id="locChipAll" onclick="setRadius(null,this)">All Areas</button>
-      <button class="loc-chip" id="locChip2"  onclick="setRadius(2,this)">Within 2 km</button>
-      <button class="loc-chip" id="locChip5"  onclick="setRadius(5,this)">Within 5 km</button>
-      <button class="loc-chip" id="locChip10" onclick="setRadius(10,this)">Within 10 km</button>
-      <button class="loc-chip active" id="locChip25" onclick="setRadius(25,this)">Within 25 km</button>
-      <button class="loc-chip loc-gps" id="locGpsBtn" onclick="requestGPS()">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="vertical-align:-1px"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use My Location
-      </button>
-    </div>
-    
-    <div class="pills-row" id="afRow"></div>
+    <button class="ctrl-icon-btn" id="filterTrigger" title="Filters">
+      <svg class="fi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      <span class="fcnt" id="filterCnt">0</span>
+    </button>
   </div>
-  
+
+  <!-- Location strip: radius pills | restaurant area chips | GPS -->
+  <div class="loc-strip" id="locationStrip">
+    <!-- Radius group -->
+    <div class="radius-group">
+      <button class="radius-pill" id="rpAll"  onclick="setRadius(null,this)">All</button>
+      <button class="radius-pill" id="rp2"    onclick="setRadius(2,this)">2 km</button>
+      <button class="radius-pill" id="rp5"    onclick="setRadius(5,this)">5 km</button>
+      <button class="radius-pill" id="rp10"   onclick="setRadius(10,this)">10 km</button>
+      <button class="radius-pill active" id="rp25"  onclick="setRadius(25,this)">25 km</button>
+    </div>
+    <!-- Divider (appears when restaurant chips are present) -->
+    <div class="loc-divider" id="locDivider" style="display:none"></div>
+    <!-- Restaurant area chips injected here -->
+    <div id="restAreaChips" style="display:contents"></div>
+    <!-- GPS -->
+    <button class="gps-btn" id="locGpsBtn" onclick="requestGPS()">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      Use GPS
+    </button>
+  </div>
+
+  <!-- Active filter pills -->
+  <div class="pills-row" id="afRow"></div>
+
+  <!-- Filter panel -->
   <div class="filter-panel" id="filterPanel">
     <div class="fp-inner">
       <div class="fp-grid">
-        <div class="fp-sec"><div class="fp-lbl">Diet Type</div><div class="fp-chips"><button class="fp-chip" data-diet="veg" onclick="toggleDiet('veg',this)">Veg</button><button class="fp-chip" data-diet="nonveg" onclick="toggleDiet('nonveg',this)">Non-Veg</button><button class="fp-chip" data-diet="egg" onclick="toggleDiet('egg',this)">Egg</button></div></div>
-        <div class="fp-sec"><div class="fp-lbl">Time Remaining</div><div class="fp-radios" id="urgencyRow"><button class="fp-radio on" data-urgency="all" onclick="setUrgency('all',this)">All</button><button class="fp-radio" data-urgency="urgent" onclick="setUrgency('urgent',this)">≤15m</button><button class="fp-radio" data-urgency="30" onclick="setUrgency('30',this)">≤30m</button><button class="fp-radio" data-urgency="60" onclick="setUrgency('60',this)">≤60m</button></div></div>
-        <div class="fp-sec"><div class="fp-lbl">Min Discount</div><div class="fp-range-wrap"><div class="fp-range-lbls"><span>Any</span><span class="fp-range-val" id="discountLabel">0%</span></div><input class="fp-range" type="range" min="0" max="70" step="5" value="0" id="discountRange" oninput="onDiscountInput(this.value)"></div></div>
-        <div class="fp-sec"><div class="fp-lbl">Price Range</div><div class="fp-range-wrap"><div class="fp-range-lbls"><span>₹<span id="priceMinLabel">0</span></span><span>₹<span id="priceMaxLabel">1000</span></span></div><div class="dual-range"><div class="dual-track"></div><div class="dual-fill" id="dualFill"></div><input type="range" id="priceMin" min="0" max="1000" step="10" value="0" oninput="onPriceRange()"><input type="range" id="priceMax" min="0" max="1000" step="10" value="1000" oninput="onPriceRange()"></div></div></div>
-        <div class="fp-sec"><div class="fp-lbl">Plates Available</div><div class="fp-chips" id="qtyRow"><button class="fp-chip on" data-qty="all" onclick="setQty('all',this)">Any</button><button class="fp-chip" data-qty="1" onclick="setQty('1',this)">1+</button><button class="fp-chip" data-qty="3" onclick="setQty('3',this)">3+</button><button class="fp-chip" data-qty="5" onclick="setQty('5',this)">5+</button></div></div>
-        <div class="fp-sec" id="cuisineSection" style="display:none"><div class="fp-lbl">Cuisine</div><div class="fp-chips" id="cuisineRow"></div></div>
+        <div class="fp-sec">
+          <div class="fp-lbl">Diet Type</div>
+          <div class="fp-chips">
+            <button class="fp-chip" data-diet="veg"    onclick="toggleDiet('veg',this)">Veg</button>
+            <button class="fp-chip" data-diet="nonveg" onclick="toggleDiet('nonveg',this)">Non-Veg</button>
+            <button class="fp-chip" data-diet="egg"    onclick="toggleDiet('egg',this)">Egg</button>
+          </div>
+        </div>
+        <div class="fp-sec">
+          <div class="fp-lbl">Time Remaining</div>
+          <div class="fp-radios" id="urgencyRow">
+            <button class="fp-radio on" data-urgency="all"    onclick="setUrgency('all',this)">All</button>
+            <button class="fp-radio"    data-urgency="urgent" onclick="setUrgency('urgent',this)">≤15m</button>
+            <button class="fp-radio"    data-urgency="30"     onclick="setUrgency('30',this)">≤30m</button>
+            <button class="fp-radio"    data-urgency="60"     onclick="setUrgency('60',this)">≤60m</button>
+          </div>
+        </div>
+        <div class="fp-sec">
+          <div class="fp-lbl">Min Discount</div>
+          <div class="fp-range-wrap">
+            <div class="fp-range-lbls"><span>Any</span><span class="fp-range-val" id="discountLabel">0%</span></div>
+            <input class="fp-range" type="range" min="0" max="70" step="5" value="0" id="discountRange" oninput="onDiscountInput(this.value)">
+          </div>
+        </div>
+        <div class="fp-sec">
+          <div class="fp-lbl">Price Range</div>
+          <div class="fp-range-wrap">
+            <div class="fp-range-lbls"><span>₹<span id="priceMinLabel">0</span></span><span>₹<span id="priceMaxLabel">1000</span></span></div>
+            <div class="dual-range">
+              <div class="dual-track"></div>
+              <div class="dual-fill" id="dualFill"></div>
+              <input type="range" id="priceMin" min="0" max="1000" step="10" value="0"    oninput="onPriceRange()">
+              <input type="range" id="priceMax" min="0" max="1000" step="10" value="1000" oninput="onPriceRange()">
+            </div>
+          </div>
+        </div>
+        <div class="fp-sec">
+          <div class="fp-lbl">Plates Available</div>
+          <div class="fp-chips" id="qtyRow">
+            <button class="fp-chip on" data-qty="all" onclick="setQty('all',this)">Any</button>
+            <button class="fp-chip"    data-qty="1"   onclick="setQty('1',this)">1+</button>
+            <button class="fp-chip"    data-qty="3"   onclick="setQty('3',this)">3+</button>
+            <button class="fp-chip"    data-qty="5"   onclick="setQty('5',this)">5+</button>
+          </div>
+        </div>
+        <div class="fp-sec" id="cuisineSection" style="display:none">
+          <div class="fp-lbl">Cuisine</div>
+          <div class="fp-chips" id="cuisineRow"></div>
+        </div>
       </div>
       <div class="fp-footer">
-        <div style="display:flex;align-items:center;gap:16px"><button class="fp-reset" onclick="resetAllFilters()">Reset all</button><span class="fp-hint" id="fpHint">— plates</span></div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <button class="fp-reset" onclick="resetAllFilters()">Reset all</button>
+          <span class="fp-hint" id="fpHint">— plates</span>
+        </div>
         <button class="fp-apply" onclick="commitFilters()">Apply Filters</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- SECTION HEADER -->
 <div class="sec-hdr">
-  <div class="sec-hdr-left"><div class="live-pip"></div><div class="sec-hdr-title">Available Now</div></div>
+  <div class="sec-hdr-left">
+    <div class="live-pip"></div>
+    <div class="sec-hdr-title">Available Now</div>
+  </div>
   <div class="sec-hdr-badge" id="plateCount">— plates</div>
 </div>
 
-<div class="food-grid" id="foodGrid"></div>
+<!-- FOOD GRID -->
+<div class="food-grid" id="foodGrid">
+  <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:34%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:70%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:44%;height:10px;margin-top:32px"></div></div></div>
+  <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:38%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:66%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:40%;height:10px;margin-top:32px"></div></div></div>
+  <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:30%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:54%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:48%;height:10px;margin-top:32px"></div></div></div>
+</div>
 
+<!-- FEATURES -->
 <div class="feat-sec">
   <div class="feat-eyebrow">// <span>Why</span> Last Plate //</div>
   <div class="feat-grid">
-    <div class="feat-card"><span class="feat-num">01</span><div class="feat-accent"></div><div class="feat-title">Zero Waste Mission</div><div class="feat-desc">Every plate rescued is a step toward a more sustainable food ecosystem. We partner only with verified, responsible kitchens.</div></div>
-    <div class="feat-card"><span class="feat-num">02</span><div class="feat-accent"></div><div class="feat-title">Rescue in Real-Time</div><div class="feat-desc">Our live feed updates every minute. Plates go fast — claim yours before the countdown hits zero.</div></div>
-    <div class="feat-card"><span class="feat-num">03</span><div class="feat-accent"></div><div class="feat-title">Honest Discounts</div><div class="feat-desc">Save 30–70% on restaurant-quality food. No hidden fees, no inflated prices. Real value, always.</div></div>
+    <div class="feat-card">
+      <span class="feat-num">01</span>
+      <div class="feat-accent"></div>
+      <div class="feat-title">Zero Waste Mission</div>
+      <div class="feat-desc">Every plate rescued is a step toward a more sustainable food ecosystem. We partner only with verified, responsible kitchens.</div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-num">02</span>
+      <div class="feat-accent"></div>
+      <div class="feat-title">Rescue in Real-Time</div>
+      <div class="feat-desc">Our live feed updates every minute. Plates go fast — claim yours before the countdown hits zero.</div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-num">03</span>
+      <div class="feat-accent"></div>
+      <div class="feat-title">Honest Discounts</div>
+      <div class="feat-desc">Save 30–70% on restaurant-quality food. No hidden fees, no inflated prices. Real value, always.</div>
+    </div>
   </div>
 </div>
 
+<!-- SUPPORT -->
 <section class="support-sec">
   <div class="support-inner">
-    <div class="supp-left"><div class="supp-kicker">Get in Touch</div><h2 class="supp-h">Need help<br>with your<br><em>rescue?</em></h2><p class="supp-d">Our team makes every mission smooth. Reach out any time — we're here for you.</p></div>
+    <div class="supp-left">
+      <div class="supp-kicker">Get in Touch</div>
+      <h2 class="supp-h">Need help<br>with your<br><em>rescue?</em></h2>
+      <p class="supp-d">Our team makes every mission smooth. Reach out any time — we're here for you.</p>
+    </div>
     <div class="supp-right">
-      <a href="mailto:terminalplate@gmail.com" class="supp-link"><div class="supp-link-ico">✉</div><div><span class="supp-link-lbl">Email Support</span><span class="supp-link-val">terminalplate@gmail.com</span></div><span class="supp-arr">→</span></a>
-      <a href="https://www.instagram.com/_lastplate_?igsh=anBqNXZ0Y250YWlu" target="_blank" class="supp-link"><div class="supp-link-ico">◎</div><div><span class="supp-link-lbl">Instagram</span><span class="supp-link-val">@lastplate.in</span></div><span class="supp-arr">→</span></a>
-      <a href="tel:9633890173" class="supp-link"><div class="supp-link-ico">⌀</div><div><span class="supp-link-lbl">Help Hotline</span><span class="supp-link-val">+91 9633890173</span></div><span class="supp-arr">→</span></a>
+      <a href="mailto:terminalplate@gmail.com" class="supp-link">
+        <div class="supp-link-ico">✉</div>
+        <div><span class="supp-link-lbl">Email Support</span><span class="supp-link-val">terminalplate@gmail.com</span></div>
+        <span class="supp-arr">→</span>
+      </a>
+      <a href="https://www.instagram.com/_lastplate_?igsh=anBqNXZ0Y250YWlu" target="_blank" class="supp-link">
+        <div class="supp-link-ico">◎</div>
+        <div><span class="supp-link-lbl">Instagram</span><span class="supp-link-val">@lastplate.in</span></div>
+        <span class="supp-arr">→</span>
+      </a>
+      <a href="tel:9633890173" class="supp-link">
+        <div class="supp-link-ico">⌀</div>
+        <div><span class="supp-link-lbl">Help Hotline</span><span class="supp-link-val">+91 9633890173</span></div>
+        <span class="supp-arr">→</span>
+      </a>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="foot-left"><div class="foot-brand">Last <em>Plate</em></div><div class="foot-sub">Est. 2024 — Redefining the Surplus</div></div>
+  <div class="foot-left">
+    <div class="foot-brand">Last <em>Plate</em></div>
+    <div class="foot-sub">Est. 2024 — Redefining the Surplus</div>
+  </div>
   <div class="foot-center">© 2024 Last Plate</div>
-  <div class="foot-right"><a href="https://last-plate-knowmore.vercel.app/" class="foot-link">Our Mission →</a></div>
+  <div class="foot-right">
+    <a href="https://last-plate-knowmore.vercel.app/" class="foot-link">Our Mission →</a>
+  </div>
 </footer>
 
-</div><div class="modal-overlay" id="modalOverlay">
+</div><!-- end page-root -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
-    <div class="modal-img-wrap"><img class="modal-img" id="modalImg" src="" alt=""><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="modal-img-wrap">
+      <img class="modal-img" id="modalImg" src="" alt="">
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
     <div class="modal-body">
       <div class="modal-kicker" id="modalKicker"></div>
       <h2 class="modal-title" id="modalTitle"></h2>
@@ -1165,25 +1119,44 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       <div class="modal-desc">Rescue mission active. Perfectly good food waiting for a home — reserved for the mindful few.</div>
       <div class="modal-foot">
         <div><span class="modal-mrp" id="modalMrp"></span><span class="modal-price" id="modalPrice"></span></div>
-        <a class="modal-cta" id="modalCta" href="#">Reserve Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a class="modal-cta" id="modalCta" href="#">
+          Reserve Now
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </div>
 </div>
 
+<!-- DRAWER -->
 <div class="drawer-bg" id="drawerOverlay">
   <div class="drawer-scrim" id="drawerScrim"></div>
   <div class="drawer-panel">
-    <div class="drawer-hdr"><button class="drawer-back" id="closeProfile">← Back</button><h2 class="drawer-title">Profile</h2></div>
+    <div class="drawer-hdr">
+      <button class="drawer-back" id="closeProfile">← Back</button>
+      <h2 class="drawer-title">Profile</h2>
+    </div>
     <div class="drawer-body">
       <div class="drawer-card"><div class="drawer-lbl">// Rescue Agent</div><div class="drawer-val" id="profileName">Syncing…</div></div>
       <div style="margin-top:14px">
         <div class="drawer-sec-ttl">Colour Vision</div>
         <div class="cb-grid" id="cbGrid">
-          <button class="cb-chip active" data-cb="none" onclick="setCB('none',this)"><div class="cb-sw"><div class="cb-dot" style="background:#30D158"></div><div class="cb-dot" style="background:var(--accent)"></div><div class="cb-dot" style="background:var(--gold)"></div></div><div class="cb-name">Standard</div><div class="cb-desc">Default</div></button>
-          <button class="cb-chip" data-cb="deuteranopia" onclick="setCB('deuteranopia',this)"><div class="cb-sw"><div class="cb-dot" style="background:#0077BB"></div><div class="cb-dot" style="background:#EE7733"></div><div class="cb-dot" style="background:#AA3377"></div></div><div class="cb-name">Deuteranopia</div><div class="cb-desc">Green-blind</div></button>
-          <button class="cb-chip" data-cb="protanopia" onclick="setCB('protanopia',this)"><div class="cb-sw"><div class="cb-dot" style="background:#0066CC"></div><div class="cb-dot" style="background:#F0A500"></div><div class="cb-dot" style="background:#7B4EA0"></div></div><div class="cb-name">Protanopia</div><div class="cb-desc">Red-blind</div></button>
-          <button class="cb-chip" data-cb="tritanopia" onclick="setCB('tritanopia',this)"><div class="cb-sw"><div class="cb-dot" style="background:#009988"></div><div class="cb-dot" style="background:#CC3311"></div><div class="cb-dot" style="background:#EE3377"></div></div><div class="cb-name">Tritanopia</div><div class="cb-desc">Blue-blind</div></button>
+          <button class="cb-chip active" data-cb="none" onclick="setCB('none',this)">
+            <div class="cb-sw"><div class="cb-dot" style="background:#30D158"></div><div class="cb-dot" style="background:var(--accent)"></div><div class="cb-dot" style="background:var(--gold)"></div></div>
+            <div class="cb-name">Standard</div><div class="cb-desc">Default</div>
+          </button>
+          <button class="cb-chip" data-cb="deuteranopia" onclick="setCB('deuteranopia',this)">
+            <div class="cb-sw"><div class="cb-dot" style="background:#0077BB"></div><div class="cb-dot" style="background:#EE7733"></div><div class="cb-dot" style="background:#AA3377"></div></div>
+            <div class="cb-name">Deuteranopia</div><div class="cb-desc">Green-blind</div>
+          </button>
+          <button class="cb-chip" data-cb="protanopia" onclick="setCB('protanopia',this)">
+            <div class="cb-sw"><div class="cb-dot" style="background:#0066CC"></div><div class="cb-dot" style="background:#F0A500"></div><div class="cb-dot" style="background:#7B4EA0"></div></div>
+            <div class="cb-name">Protanopia</div><div class="cb-desc">Red-blind</div>
+          </button>
+          <button class="cb-chip" data-cb="tritanopia" onclick="setCB('tritanopia',this)">
+            <div class="cb-sw"><div class="cb-dot" style="background:#009988"></div><div class="cb-dot" style="background:#CC3311"></div><div class="cb-dot" style="background:#EE3377"></div></div>
+            <div class="cb-name">Tritanopia</div><div class="cb-desc">Blue-blind</div>
+          </button>
         </div>
       </div>
       <div class="drawer-sec-ttl">Rescue History</div>
@@ -1193,25 +1166,67 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="bn-item active" id="bnBrowse" onclick="setNav('bnBrowse');window.scrollTo({top:0,behavior:'smooth'})"><div class="bn-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="bn-lbl">Browse</span></button>
-  <button class="bn-item" id="bnSecret" onclick="openSheet()"><div class="bn-ico" style="position:relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 10a2 2 0 0 0-2 2v4"/><path d="M10 10a4 4 0 0 1 7.97.93"/><path d="M7.63 7.63A6 6 0 0 0 6 12c0 1.65.5 3.18 1.36 4.44"/><path d="M16 17a6 6 0 0 0 1.64-4"/><path d="M4.6 4.6A9 9 0 0 0 3 12c0 2.43.96 4.63 2.52 6.24"/><path d="M19.4 4.6A9 9 0 0 1 21 12c0 1.45-.34 2.82-.95 4.04"/></svg><div class="bn-badge"></div></div><span class="bn-lbl">Chef's Secret</span></button>
-  <button class="bn-item" id="bnWallet" onclick="location.href='/savings'"><div class="bn-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></div><span class="bn-lbl">Impact</span></button>
-  <button class="bn-item" onclick="openWalkin()"><div class="bn-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><span class="bn-lbl">Walk-In</span></button>
+  <button class="bn-item active" id="bnBrowse" onclick="setNav('bnBrowse');window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="bn-ico">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="bn-lbl">Browse</span>
+  </button>
+  <button class="bn-item" id="bnSecret" onclick="openSheet()">
+    <div class="bn-ico" style="position:relative">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 10a2 2 0 0 0-2 2v4"/><path d="M10 10a4 4 0 0 1 7.97.93"/><path d="M7.63 7.63A6 6 0 0 0 6 12c0 1.65.5 3.18 1.36 4.44"/><path d="M16 17a6 6 0 0 0 1.64-4"/><path d="M4.6 4.6A9 9 0 0 0 3 12c0 2.43.96 4.63 2.52 6.24"/><path d="M19.4 4.6A9 9 0 0 1 21 12c0 1.45-.34 2.82-.95 4.04"/></svg>
+      <div class="bn-badge"></div>
+    </div>
+    <span class="bn-lbl">Chef's Secret</span>
+  </button>
+  <button class="bn-item" id="bnWallet" onclick="location.href='/savings'">
+    <div class="bn-ico">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6Z"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+    </div>
+    <span class="bn-lbl">Impact</span>
+  </button>
+  <button class="bn-item" onclick="openWalkin()">
+    <div class="bn-ico">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    </div>
+    <span class="bn-lbl">Walk-In</span>
+  </button>
 </nav>
 
+<!-- SHEET -->
 <div class="sheet-overlay" id="sheetOverlay">
   <div class="sheet-scrim" id="sheetScrim"></div>
   <div class="sheet" id="theSheet">
     <div class="sheet-drag" id="sheetDrag"><div class="sheet-handle"></div></div>
     <div class="sheet-hdr">
-      <div class="sheet-id-row"><div><div class="sheet-badge"><div class="sheet-exc-dot"></div>Exclusive Access</div><div class="sheet-title">Chef's Secret Menu</div><div class="sheet-sub">// Hidden dishes · not on main browse</div></div><button class="sheet-close" id="sheetClose">✕</button></div>
-      <div class="sheet-stats">
-        <div class="stat-glass-card accent-card"><span class="sgc-n" id="statDishes">—</span><span class="sgc-l">Dishes</span></div>
-        <div class="stat-glass-card"><span class="sgc-n" id="statKitchens">—</span><span class="sgc-l">Kitchens</span></div>
-        <div class="stat-glass-card"><span class="sgc-n" id="statDiscount">—</span><span class="sgc-l">Avg Off</span></div>
+      <div class="sheet-id-row">
+        <div>
+          <div class="sheet-badge"><div class="sheet-exc-dot"></div>Exclusive Access</div>
+          <div class="sheet-title">Chef's Secret Menu</div>
+          <div class="sheet-sub">// Hidden dishes · not on main browse</div>
+        </div>
+        <button class="sheet-close" id="sheetClose">✕</button>
       </div>
-      <div class="sheet-tabs" id="sheetTabsBar"><button class="sheet-tab active" data-tab="panelToday">Tonight <span class="tab-cnt" id="countToday">—</span></button><button class="sheet-tab" data-tab="panelTomorrow">Tomorrow <span class="tab-cnt" id="countTomorrow">—</span></button></div>
+      <div class="sheet-stats">
+        <div class="stat-glass-card accent-card">
+          <span class="sgc-n" id="statDishes">—</span>
+          <span class="sgc-l">Dishes</span>
+        </div>
+        <div class="stat-glass-card">
+          <span class="sgc-n" id="statKitchens">—</span>
+          <span class="sgc-l">Kitchens</span>
+        </div>
+        <div class="stat-glass-card">
+          <span class="sgc-n" id="statDiscount">—</span>
+          <span class="sgc-l">Avg Off</span>
+        </div>
+      </div>
+      <div class="sheet-tabs" id="sheetTabsBar">
+        <button class="sheet-tab active" data-tab="panelToday">Tonight <span class="tab-cnt" id="countToday">—</span></button>
+        <button class="sheet-tab" data-tab="panelTomorrow">Tomorrow <span class="tab-cnt" id="countTomorrow">—</span></button>
+      </div>
       <div class="sheet-search">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="sheet-search-input" id="secretSearch" type="text" placeholder="Search dish or kitchen…" autocomplete="off">
@@ -1227,353 +1242,199 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   §1  LOCATION STATE
-═══════════════════════════════════════════════════════════ */
+/* ═══ §1 LOCATION STATE ═══ */
 const GEO = {
-  lat: null,
-  lng: null,
-  city: null,
-  status: 'idle',
-  nearbyActive: false,
-  radiusKm: null,
+  lat: null, lng: null, city: null, status: 'idle',
+  nearbyActive: false, radiusKm: 25,           /* DEFAULT: 25 km */
   NEARBY_RADIUS_KM: 2,
   FALLBACK: { lat: 9.9312, lng: 76.2673, city: 'Kochi' },
 };
 
-/* ═══════════════════════════════════════════════════════════
-   §2  HAVERSINE DISTANCE 
-═══════════════════════════════════════════════════════════ */
+/* ═══ §2 HAVERSINE ═══ */
 function haversineKm(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
-
 function formatDistance(km) {
-  if (km === null || km === undefined || isNaN(km)) return null;
-  if (km < 1) return Math.round(km * 1000) + ' m';
-  return km.toFixed(1) + ' km';
+  if (km===null||km===undefined||isNaN(km)) return null;
+  return km < 1 ? Math.round(km*1000)+' m' : km.toFixed(1)+' km';
 }
 
-/* ═══════════════════════════════════════════════════════════
-   §3  EXTRACT RESTAURANT COORDS
-═══════════════════════════════════════════════════════════ */
+/* ═══ §3 FOOD COORDS ═══ */
 function getFoodCoords(food) {
-  const lat = parseFloat(food.restaurant_lat ?? food.restaurant_latitude ?? food.rest_lat ?? food.lat ?? food.latitude ?? NaN);
-  const lng = parseFloat(food.restaurant_lng ?? food.restaurant_lon ?? food.restaurant_longitude ?? food.rest_lng ?? food.lng ?? food.lon ?? food.longitude ?? NaN);
-  if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) return { lat, lng, source: 'api' };
+  const lat = parseFloat(food.restaurant_lat??food.restaurant_latitude??food.rest_lat??food.lat??food.latitude??NaN);
+  const lng = parseFloat(food.restaurant_lng??food.restaurant_lon??food.restaurant_longitude??food.rest_lng??food.lng??food.lon??food.longitude??NaN);
+  if (!isNaN(lat)&&!isNaN(lng)&&lat!==0&&lng!==0) return { lat, lng };
   return null;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   §4  USER LOCATION — AUTO DETECTION
-═══════════════════════════════════════════════════════════ */
+/* ═══ §4 USER LOCATION ═══ */
 function getUserLocation() {
   if (!navigator.geolocation) { applyFallbackLocation(); return; }
   GEO.status = 'locating';
-  updateCityPillState('locating');
+  updateCityPill('locating', 'Locating…');
   navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      GEO.lat    = pos.coords.latitude;
-      GEO.lng    = pos.coords.longitude;
-      GEO.status = 'ok';
+    pos => {
+      GEO.lat=pos.coords.latitude; GEO.lng=pos.coords.longitude; GEO.status='ok';
       reverseGeocode(GEO.lat, GEO.lng);
-      document.getElementById('nearbyBtn').disabled = false;
-      
-      // Feature Req: Automatically set to 25km radius when location is loaded
-      if (GEO.radiusKm === null && document.getElementById('citySelect').value === 'auto') {
-        setRadius(25, document.getElementById('locChip25'));
-      } else {
-        recomputeAndRefresh();
-      }
+      recomputeAndRefresh();
     },
-    function() { applyFallbackLocation(); },
-    { timeout: 8000, maximumAge: 5 * 60 * 1000 }
+    () => applyFallbackLocation(),
+    { timeout: 8000, maximumAge: 5*60*1000 }
   );
 }
 
 function requestGPS() {
   const btn = document.getElementById('locGpsBtn');
-  btn.classList.add('loading');
-  btn.textContent = 'Requesting…';
-  if (!navigator.geolocation) {
-    btn.classList.remove('loading');
-    btn.textContent = 'Not supported';
-    return;
-  }
+  btn.textContent = 'Finding…';
+  if (!navigator.geolocation) { btn.textContent = 'Use GPS'; return; }
   navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      GEO.lat    = pos.coords.latitude;
-      GEO.lng    = pos.coords.longitude;
-      GEO.status = 'ok';
+    pos => {
+      GEO.lat=pos.coords.latitude; GEO.lng=pos.coords.longitude; GEO.status='ok';
       reverseGeocode(GEO.lat, GEO.lng);
-      document.getElementById('nearbyBtn').disabled = false;
-      btn.classList.remove('loading');
-      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`;
-      recomputeAndRefresh();
-      applyFilters();
+      btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`;
+      btn.classList.add('located');
+      recomputeAndRefresh(); applyFilters();
     },
-    function() {
-      btn.classList.remove('loading');
-      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use My Location`;
-      applyFallbackLocation();
-    },
+    () => { btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`; applyFallbackLocation(); },
     { timeout: 8000 }
   );
 }
 
 function setRadius(km, el) {
   GEO.radiusKm = km;
-  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.radius-pill').forEach(c => c.classList.remove('active'));
   if (el) el.classList.add('active');
-
-  // If using a radius around user, reset city to "Auto"
-  if (km !== null) {
-      const cs = document.getElementById('citySelect');
-      if (cs && cs.value !== 'auto') {
-          cs.value = 'auto';
-      }
-  }
-
   applyFilters();
   if (navigator.vibrate) navigator.vibrate(6);
 }
 
 function applyFallbackLocation() {
-  GEO.lat    = GEO.FALLBACK.lat;
-  GEO.lng    = GEO.FALLBACK.lng;
-  GEO.city   = GEO.FALLBACK.city;
-  GEO.status = 'fallback';
-  updateCityPillState('denied');
+  GEO.lat=GEO.FALLBACK.lat; GEO.lng=GEO.FALLBACK.lng; GEO.city=GEO.FALLBACK.city; GEO.status='fallback';
+  updateCityPill('denied', 'Nearby');
   recomputeAndRefresh();
 }
 
 async function reverseGeocode(lat, lng) {
   try {
-    const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`, { headers: { 'Accept-Language': 'en' } });
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`,{headers:{'Accept-Language':'en'}});
     const data = await res.json();
-    const addr = data.address || {};
-    const city = addr.city || addr.town || addr.village || addr.county || addr.state_district || 'Your Area';
+    const addr = data.address||{};
+    const city = addr.city||addr.town||addr.village||addr.county||addr.state_district||'Your Area';
     GEO.city = city;
-    
-    const locOption = document.getElementById('cityNameLoc');
-    if (locOption) locOption.textContent = '📍 ' + city;
-    updateCityPillState('ok');
-  } catch {
-    const locOption = document.getElementById('cityNameLoc');
-    if (locOption) locOption.textContent = '📍 Live';
-    updateCityPillState('ok');
-  }
+    updateCityPill('ok', '📍 '+city);
+  } catch { updateCityPill('ok','📍 Live'); }
 }
 
-function updateCityPillState(state) {
-  const pill = document.getElementById('cityPill');
+function updateCityPill(state, text) {
+  const pill = document.getElementById('cityPill'), name = document.getElementById('cityName');
   pill.className = 'city-pill';
-  if (state === 'locating') pill.classList.add('locating');
-  if (state === 'denied')   pill.classList.add('denied');
+  if (state==='locating') pill.classList.add('locating');
+  if (state==='denied')   pill.classList.add('denied');
+  name.textContent = text;
 }
 
-window.onCityChange = function() {
-  const val = document.getElementById('citySelect').value;
-  
-  if (val === 'auto') {
-     // Revert back to User's GPS & default 25km if available
-     currentLoc = 'all';
-     if (GEO.lat !== null) setRadius(25, document.getElementById('locChip25'));
-     else setRadius(null, document.getElementById('locChipAll'));
-  } else {
-     // Specific City Override selected
-     GEO.radiusKm = null;
-     document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
-     const allChip = document.getElementById('locChipAll');
-     if(allChip) allChip.classList.add('active');
-     
-     applyFilters();
-  }
-};
-
-
-/* ═══════════════════════════════════════════════════════════
-   §5  DISTANCE HELPERS
-═══════════════════════════════════════════════════════════ */
+/* ═══ §5 DISTANCE HELPERS ═══ */
 function distanceForFood(food) {
-  if (GEO.lat === null || GEO.lng === null) return null;
-  if (food._distance !== undefined && food._distance !== null) return food._distance;
+  if (GEO.lat===null||GEO.lng===null) return null;
+  if (food._distance!==undefined&&food._distance!==null) return food._distance;
   const coords = getFoodCoords(food);
   if (!coords) return null;
   return haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng);
 }
-
 function cacheDistances() {
-  if (GEO.lat === null || GEO.lng === null) return;
+  if (GEO.lat===null||GEO.lng===null) return;
   allFoods.forEach(food => {
     const coords = getFoodCoords(food);
     if (coords) {
-      food._lat      = coords.lat;
-      food._lng      = coords.lng;
+      food._lat=coords.lat; food._lng=coords.lng;
       food._distance = haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng);
-    } else {
-      food._lat      = null;
-      food._lng      = null;
-      food._distance = null;
-    }
+    } else { food._lat=null; food._lng=null; food._distance=null; }
   });
 }
-
 function updateDistanceBadgesOnCards() {
   document.querySelectorAll('[data-food-id]').forEach(card => {
-    const distEl = card.querySelector('.card-distance');
-    if (!distEl) return;
-    const fLat = parseFloat(card.dataset.lat);
-    const fLng = parseFloat(card.dataset.lng);
-    if (isNaN(fLat) || isNaN(fLng) || (fLat === 0 && fLng === 0)) {
-      distEl.innerHTML = 'Nearby';
-      distEl.className = 'card-distance denied';
-      return;
-    }
-    if (GEO.lat === null) {
-      distEl.innerHTML = 'Calculating…';
-      distEl.className = 'card-distance calculating';
-      return;
-    }
-    const km      = haversineKm(GEO.lat, GEO.lng, fLat, fLng);
-    const label   = formatDistance(km);
-    const isClose = km <= 1.5;
-    distEl.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away`;
-    distEl.className  = 'card-distance' + (isClose ? ' close' : '');
-    card.dataset.distance = km.toFixed(3);
+    const distEl = card.querySelector('.card-distance'); if (!distEl) return;
+    const fLat=parseFloat(card.dataset.lat), fLng=parseFloat(card.dataset.lng);
+    if (isNaN(fLat)||isNaN(fLng)||(fLat===0&&fLng===0)) { distEl.innerHTML='Nearby'; distEl.className='card-distance denied'; return; }
+    if (GEO.lat===null) { distEl.innerHTML='Calculating…'; distEl.className='card-distance calculating'; return; }
+    const km=haversineKm(GEO.lat,GEO.lng,fLat,fLng), label=formatDistance(km), isClose=km<=1.5;
+    distEl.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away`;
+    distEl.className='card-distance'+(isClose?' close':'');
+    card.dataset.distance=km.toFixed(3);
   });
   markClosestCard();
 }
-
 function markClosestCard() {
-  document.querySelectorAll('.closest-badge').forEach(b => b.remove());
-  const cards = [...document.querySelectorAll('[data-food-id][data-distance]')];
+  document.querySelectorAll('.closest-badge').forEach(b=>b.remove());
+  const cards=[...document.querySelectorAll('[data-food-id][data-distance]')];
   if (!cards.length) return;
-  let closestCard = null, closestDist = Infinity;
-  cards.forEach(card => {
-    const d = parseFloat(card.dataset.distance);
-    if (!isNaN(d) && d < closestDist) { closestDist = d; closestCard = card; }
-  });
-  if (closestCard && closestDist < 50) {
-    const badge     = document.createElement('div');
-    badge.className = 'closest-badge';
-    badge.innerHTML = 'Closest to you';
+  let closestCard=null, closestDist=Infinity;
+  cards.forEach(card=>{ const d=parseFloat(card.dataset.distance); if(!isNaN(d)&&d<closestDist){closestDist=d;closestCard=card;} });
+  if (closestCard&&closestDist<50) {
+    const badge=document.createElement('div');
+    badge.className='closest-badge'; badge.innerHTML='Closest to you';
     closestCard.querySelector('.card-img-wrap').appendChild(badge);
   }
 }
-
 function recomputeAndRefresh() {
   cacheDistances();
-  if (document.querySelectorAll('[data-food-id]').length) {
-    updateDistanceBadgesOnCards();
-  }
+  if (document.querySelectorAll('[data-food-id]').length) updateDistanceBadgesOnCards();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   §6  TOGGLES
-═══════════════════════════════════════════════════════════ */
-function toggleNearby() {
-  GEO.nearbyActive = !GEO.nearbyActive;
-  const btn = document.getElementById('nearbyBtn');
-  btn.classList.toggle('active', GEO.nearbyActive);
-  applyFilters();
-  if (navigator.vibrate) navigator.vibrate(8);
-}
+/* ═══ §6 UTILS ═══ */
+function openWalkin() { window.location.href='/walkin'; }
 
-/* ═══════════════════════════════════════════════════════════
-   §7  SEARCH BOX & KEYBOARD EVENT (FIXED)
-═══════════════════════════════════════════════════════════ */
-const foodSearch = document.getElementById('foodSearch');
-const searchClear = document.getElementById('searchClear');
-
-foodSearch.addEventListener('input', () => {
-    searchClear.style.display = foodSearch.value ? 'block' : 'none';
-    applyFilters();
-});
-
-foodSearch.addEventListener('keypress', (e) => {
-    if(e.key === 'Enter') {
-        e.preventDefault();
-        applyFilters();
-        foodSearch.blur(); // Hides mobile keyboard
-    }
-});
-
-/* ═══════════════════════════════════════════════════════════
-   §8  UTILS
-═══════════════════════════════════════════════════════════ */
-function openWalkin() { window.location.href = '/walkin'; }
-
-(function(){
-  try { if (localStorage.getItem('lp-dark') === '1') document.body.classList.add('dark'); } catch {}
-})();
-document.getElementById('darkToggle').addEventListener('click', function() {
+(function(){ try { if(localStorage.getItem('lp-dark')==='1') document.body.classList.add('dark'); } catch {} })();
+document.getElementById('darkToggle').addEventListener('click',function(){
   document.body.classList.toggle('dark');
-  try { localStorage.setItem('lp-dark', document.body.classList.contains('dark') ? '1' : '0'); } catch {}
-  if (navigator.vibrate) navigator.vibrate(6);
+  try { localStorage.setItem('lp-dark',document.body.classList.contains('dark')?'1':'0'); } catch {}
+  if(navigator.vibrate) navigator.vibrate(6);
 });
 
 function initTabSlider() {
-  const bar = document.getElementById('sheetTabsBar');
-  if (!bar) return;
-  let slider = bar.querySelector('.sheet-tabs-slider');
-  if (!slider) {
-    slider = document.createElement('div');
-    slider.className = 'sheet-tabs-slider';
-    bar.insertBefore(slider, bar.firstChild);
-  }
+  const bar=document.getElementById('sheetTabsBar'); if(!bar) return;
+  let slider=bar.querySelector('.sheet-tabs-slider');
+  if(!slider){ slider=document.createElement('div'); slider.className='sheet-tabs-slider'; bar.insertBefore(slider,bar.firstChild); }
   function updateSlider(activeTab) {
-    if (!activeTab) return;
-    const barRect = bar.getBoundingClientRect();
-    const tabRect = activeTab.getBoundingClientRect();
-    slider.style.left  = (tabRect.left - barRect.left - 3) + 'px';
-    slider.style.width = tabRect.width + 'px';
+    if(!activeTab) return;
+    const barRect=bar.getBoundingClientRect(), tabRect=activeTab.getBoundingClientRect();
+    slider.style.left=(tabRect.left-barRect.left-3)+'px'; slider.style.width=tabRect.width+'px';
   }
-  bar.querySelectorAll('.sheet-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      bar.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-pnl').forEach(p => p.classList.remove('active'));
-      this.classList.add('active');
-      document.getElementById(this.dataset.tab).classList.add('active');
-      updateSlider(this);
-      clearSearch();
+  bar.querySelectorAll('.sheet-tab').forEach(tab=>{
+    tab.addEventListener('click',function(){
+      bar.querySelectorAll('.sheet-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-pnl').forEach(p=>p.classList.remove('active'));
+      this.classList.add('active'); document.getElementById(this.dataset.tab).classList.add('active');
+      updateSlider(this); clearSearch();
     });
   });
-  requestAnimationFrame(() => {
-    const active = bar.querySelector('.sheet-tab.active');
-    if (active) updateSlider(active);
-  });
+  requestAnimationFrame(()=>{ const active=bar.querySelector('.sheet-tab.active'); if(active) updateSlider(active); });
 }
 
 const CB_MAP = {
-  deuteranopia: { '--accent': '#0077BB', '--accent2': '#0099DD', '--gold': '#EE7733' },
-  protanopia:   { '--accent': '#0066CC', '--accent2': '#0088FF', '--gold': '#F0A500' },
-  tritanopia:   { '--accent': '#009988', '--accent2': '#00BB9F', '--gold': '#CC3311' },
+  deuteranopia:{'--accent':'#0077BB','--accent2':'#0099DD','--gold':'#EE7733'},
+  protanopia:  {'--accent':'#0066CC','--accent2':'#0088FF','--gold':'#F0A500'},
+  tritanopia:  {'--accent':'#009988','--accent2':'#00BB9F','--gold':'#CC3311'},
 };
-function setCB(mode, el) {
-  ['--accent','--accent2','--gold'].forEach(v => document.documentElement.style.removeProperty(v));
-  if (mode !== 'none' && CB_MAP[mode]) Object.entries(CB_MAP[mode]).forEach(([k,v]) => document.documentElement.style.setProperty(k,v));
-  document.querySelectorAll('.cb-chip').forEach(c => c.classList.remove('active'));
-  if (el) el.classList.add('active');
-  try { localStorage.setItem('lp-cb', mode); } catch {}
+function setCB(mode,el) {
+  ['--accent','--accent2','--gold'].forEach(v=>document.documentElement.style.removeProperty(v));
+  if(mode!=='none'&&CB_MAP[mode]) Object.entries(CB_MAP[mode]).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
+  document.querySelectorAll('.cb-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  try{localStorage.setItem('lp-cb',mode);}catch{}
 }
-(function(){
-  let s; try { s = localStorage.getItem('lp-cb'); } catch {}
-  if (s && s !== 'none') setCB(s, document.querySelector(`.cb-chip[data-cb="${s}"]`));
-})();
+(function(){ let s; try{s=localStorage.getItem('lp-cb');}catch{} if(s&&s!=='none') setCB(s,document.querySelector(`.cb-chip[data-cb="${s}"]`)); })();
 
-window.addEventListener('scroll', () => {
-  const p = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-  document.getElementById('sline').style.width = (p * 100) + '%';
-}, { passive: true });
+window.addEventListener('scroll',()=>{
+  const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  document.getElementById('sline').style.width=(p*100)+'%';
+},{passive:true});
 
 function getImg(name) {
-  const n = (name || '').toLowerCase();
-  const m = [
+  const n=(name||'').toLowerCase();
+  const m=[
     [['butter chicken','butter'],'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&q=80'],
     [['biriyani','biryani','briyani'],'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPkrextD5AUzleyWSR6wLohiJc4HD6ronEyg&s'],
     [['mandhi','mandi'],'https://images.unsplash.com/photo-1628294896516-344152572c7b?w=800&q=80'],
@@ -1590,172 +1451,105 @@ function getImg(name) {
     [['soup'],'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80'],
     [['cake','dessert','sweet'],'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80'],
   ];
-  for (const [k, u] of m) if (k.some(x => n.includes(x))) return u;
+  for(const[k,u]of m) if(k.some(x=>n.includes(x))) return u;
   return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80';
 }
 function cuisineEmoji(c) {
-  if (!c) return '○';
-  const m = { kerala:'◎', arabic:'◈', mughlai:'◆', continental:'◇', dessert:'◉', chinese:'⊕', italian:'⊗', seafood:'◐', biryani:'◑' };
-  return m[(c||'').toLowerCase()] || '○';
+  if(!c) return '○';
+  const m={kerala:'◎',arabic:'◈',mughlai:'◆',continental:'◇',dessert:'◉',chinese:'⊕',italian:'⊗',seafood:'◐',biryani:'◑'};
+  return m[(c||'').toLowerCase()]||'○';
 }
-function getFTBadge(type, small) {
-  if (!type) return '';
-  const t = type.toString().toLowerCase().trim();
-  let cls, label;
-  if (t === 'veg')                              { cls = 'veg';    label = 'Veg';     }
-  else if (t === 'egg')                         { cls = 'egg';    label = 'Egg';     }
-  else if (t.includes('non') || t === 'nonveg') { cls = 'nonveg'; label = 'Non-Veg'; }
+function getFTBadge(type,small) {
+  if(!type) return '';
+  const t=type.toString().toLowerCase().trim();
+  let cls,label;
+  if(t==='veg'){cls='veg';label='Veg';}
+  else if(t==='egg'){cls='egg';label='Egg';}
+  else if(t.includes('non')||t==='nonveg'){cls='nonveg';label='Non-Veg';}
   else return '';
   return `<span class="ft ${cls}${small?' sm':''}"><span class="fts ${cls}"></span>${label}</span>`;
 }
-function getTimeColor(mins) {
-  if (mins <= 15) return 'var(--accent)';
-  if (mins <= 30) return 'var(--gold)';
-  return 'var(--green)';
-}
-function getTimeWidth(mins) {
-  if (mins >= 120) return '100';
-  return Math.max(8, Math.round((mins / 120) * 100));
-}
-function calcDisc(mrp, price) {
-  if (!mrp || mrp <= price) return 0;
-  return Math.round(((mrp - price) / mrp) * 100);
-}
-function normDiet(raw) {
-  if (!raw) return null;
-  const t = raw.toString().toLowerCase().trim();
-  if (t === 'veg')   return 'veg';
-  if (t === 'egg')   return 'egg';
-  if (t.includes('non') || t === 'nonveg') return 'nonveg';
-  return null;
-}
+function getTimeColor(mins){if(mins<=15)return 'var(--accent)';if(mins<=30)return 'var(--gold)';return 'var(--green)';}
+function getTimeWidth(mins){if(mins>=120)return'100';return Math.max(8,Math.round((mins/120)*100));}
+function calcDisc(mrp,price){if(!mrp||mrp<=price)return 0;return Math.round(((mrp-price)/mrp)*100);}
+function normDiet(raw){if(!raw)return null;const t=raw.toString().toLowerCase().trim();if(t==='veg')return'veg';if(t==='egg')return'egg';if(t.includes('non')||t==='nonveg')return'nonveg';return null;}
 
-/* ═══════════════════════════════════════════════════════════
-   §8  BROWSE DATA + FILTER STATE
-═══════════════════════════════════════════════════════════ */
-let allFoods = [], currentLoc = 'all';
-const F = { diet: new Set(), urgency: 'all', discount: 0, priceMin: 0, priceMax: 1000, qty: 'all', cuisines: new Set(), sort: 'default' };
+/* ═══ §8 BROWSE DATA + FILTER STATE ═══ */
+let allFoods=[], currentLoc='all';
+const F={diet:new Set(),urgency:'all',discount:0,priceMin:0,priceMax:1000,qty:'all',cuisines:new Set(),sort:'default'};
 
 function sortFoods(arr) {
-  const s = F.sort;
-  if (s === 'default') return arr;
-  return [...arr].sort((a, b) => {
-    if (s === 'nearest') {
-      const dA = a._distance ?? 9999;
-      const dB = b._distance ?? 9999;
-      return dA - dB;
-    }
-    if (s === 'price_asc')  return a.price - b.price;
-    if (s === 'price_desc') return b.price - a.price;
-    if (s === 'discount')   return calcDisc(b.mrp, b.price) - calcDisc(a.mrp, a.price);
-    if (s === 'time_asc')   return (a.minutes_left || 999) - (b.minutes_left || 999);
-    if (s === 'qty_desc')   return (b.available_quantity || 0) - (a.available_quantity || 0);
+  const s=F.sort; if(s==='default') return arr;
+  return [...arr].sort((a,b)=>{
+    if(s==='nearest'){const dA=a._distance??9999,dB=b._distance??9999;return dA-dB;}
+    if(s==='price_asc') return a.price-b.price;
+    if(s==='price_desc') return b.price-a.price;
+    if(s==='discount') return calcDisc(b.mrp,b.price)-calcDisc(a.mrp,a.price);
+    if(s==='time_asc') return(a.minutes_left||999)-(b.minutes_left||999);
+    if(s==='qty_desc') return(b.available_quantity||0)-(a.available_quantity||0);
     return 0;
   });
 }
 
 function getFiltered() {
-  const q = document.getElementById('foodSearch').value.toLowerCase().trim();
-  const selCity = document.getElementById('citySelect') ? document.getElementById('citySelect').value : 'auto';
-
-  return allFoods.filter(f => {
-    // City Override
-    if (selCity !== 'auto') {
-      const fc = (f.city || f.restaurant_city || f.location || '').trim();
-      if (fc !== selCity) return false;
-    }
-
-    const locKey = f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
-    if (currentLoc !== 'all' && locKey !== currentLoc) return false;
-    if (q && !(f.name||'').toLowerCase().includes(q) && !(f.restaurant_name||'').toLowerCase().includes(q)) return false;
-    if (F.diet.size > 0) { const fd = normDiet(f.food_type); if (!fd || !F.diet.has(fd)) return false; }
-    const mins = f.minutes_left || 9999;
-    if (F.urgency === 'urgent' && mins > 15) return false;
-    if (F.urgency === '30'     && mins > 30)  return false;
-    if (F.urgency === '60'     && mins > 60)  return false;
-    if (F.discount > 0 && calcDisc(f.mrp, f.price) < F.discount) return false;
-    const p = f.price || 0;
-    if (p < F.priceMin || p > F.priceMax) return false;
-    const qty = f.available_quantity || 0;
-    if (F.qty !== 'all' && qty < parseInt(F.qty, 10)) return false;
-    if (F.cuisines.size > 0) {
-      const fc = (f.cuisine || '').toLowerCase();
-      let match = false;
-      F.cuisines.forEach(c => { if (fc.includes(c)) match = true; });
-      if (!match) return false;
-    }
-    if (GEO.nearbyActive && GEO.lat !== null) {
-      const d = f._distance ?? 9999;
-      if (d > GEO.NEARBY_RADIUS_KM) return false;
-    }
-    if (GEO.radiusKm !== null && GEO.lat !== null) {
-      const d = f._distance ?? 9999;
-      if (d > GEO.radiusKm) return false;
-    }
+  const q=document.getElementById('foodSearch').value.toLowerCase();
+  return allFoods.filter(f=>{
+    const locKey=f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
+    if(currentLoc!=='all'&&locKey!==currentLoc) return false;
+    if(q&&!(f.name||'').toLowerCase().includes(q)&&!(f.restaurant_name||'').toLowerCase().includes(q)) return false;
+    if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
+    const mins=f.minutes_left||9999;
+    if(F.urgency==='urgent'&&mins>15)return false;
+    if(F.urgency==='30'&&mins>30)return false;
+    if(F.urgency==='60'&&mins>60)return false;
+    if(F.discount>0&&calcDisc(f.mrp,f.price)<F.discount)return false;
+    const p=f.price||0;
+    if(p<F.priceMin||p>F.priceMax)return false;
+    const qty=f.available_quantity||0;
+    if(F.qty!=='all'&&qty<parseInt(F.qty,10))return false;
+    if(F.cuisines.size>0){const fc=(f.cuisine||'').toLowerCase();let match=false;F.cuisines.forEach(c=>{if(fc.includes(c))match=true;});if(!match)return false;}
+    if(GEO.nearbyActive&&GEO.lat!==null){const d=f._distance??9999;if(d>GEO.NEARBY_RADIUS_KM)return false;}
+    /* RADIUS FILTER — default 25 km */
+    if(GEO.radiusKm!==null&&GEO.lat!==null){const d=f._distance??9999;if(d>GEO.radiusKm)return false;}
     return true;
   });
 }
 
 function applyFilters() {
   cacheDistances();
-  const filtered = sortFoods(getFiltered());
-  render(filtered);
-  updateHint(filtered.length);
-  updatePills();
+  const filtered=sortFoods(getFiltered());
+  render(filtered); updateHint(filtered.length); updatePills();
 }
 
-document.getElementById('sortSelect').addEventListener('change', function() { F.sort = this.value; applyFilters(); });
+document.getElementById('foodSearch').addEventListener('input',applyFilters);
+document.getElementById('sortSelect').addEventListener('change',function(){F.sort=this.value;applyFilters();});
 
-/* ═══════════════════════════════════════════════════════════
-   §9  RENDER
-═══════════════════════════════════════════════════════════ */
+/* ═══ §9 RENDER ═══ */
 function render(foods) {
-  const grid = document.getElementById('foodGrid');
-  document.getElementById('plateCount').textContent = `${foods.length} plate${foods.length !== 1 ? 's' : ''}`;
-  document.getElementById('hs-count').textContent   = foods.length;
-
-  if (!foods.length) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-big">Empty</div><div class="empty-ttl">No plates match</div><div class="empty-sub">Try adjusting your filters or <button onclick="resetAllFilters()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-weight:600;font-size:inherit;padding:0;font-family:inherit;">clear them all</button>.</div></div>`;
+  const grid=document.getElementById('foodGrid');
+  document.getElementById('plateCount').textContent=`${foods.length} plate${foods.length!==1?'s':''}`;
+  document.getElementById('hs-count').textContent=foods.length;
+  if(!foods.length){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-big">Empty</div><div class="empty-ttl">No plates match</div><div class="empty-sub">Try adjusting your filters or <button onclick="resetAllFilters()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-weight:600;font-size:inherit;padding:0;font-family:inherit;">clear them all</button>.</div></div>`;
     return;
   }
-
-  grid.innerHTML = foods.map((f, i) => {
-    const disc      = calcDisc(f.mrp, f.price);
-    const urgent    = (f.minutes_left || 999) <= 15;
-    const mins      = f.minutes_left || 0;
-    const timeColor = getTimeColor(mins);
-    const timeW     = getTimeWidth(mins);
-
-    const coords    = getFoodCoords(f);
-    const cardLat   = coords ? coords.lat : 0;
-    const cardLng   = coords ? coords.lng : 0;
-
-    const km        = f._distance !== undefined && f._distance !== null
-      ? f._distance
-      : (coords && GEO.lat !== null ? haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng) : null);
-
-    const distHtml  = buildDistanceBadge(km);
-
-    const urgencyCombo = (km !== null && (f.available_quantity || 0) <= 3)
-      ? `<span class="urgency-combo">${formatDistance(km)} · ${f.available_quantity} left</span>`
-      : '';
-
-    return `<article class="food-card"
-        style="animation-delay:${i * 0.04}s"
-        data-food-id="${f.id}"
-        data-lat="${cardLat}"
-        data-lng="${cardLng}"
-        ${km !== null ? `data-distance="${km.toFixed(3)}"` : ''}
-        onclick="openModalById('${f.id}')">
+  grid.innerHTML=foods.map((f,i)=>{
+    const disc=calcDisc(f.mrp,f.price),urgent=(f.minutes_left||999)<=15,mins=f.minutes_left||0;
+    const timeColor=getTimeColor(mins),timeW=getTimeWidth(mins);
+    const coords=getFoodCoords(f),cardLat=coords?coords.lat:0,cardLng=coords?coords.lng:0;
+    const km=f._distance!==undefined&&f._distance!==null?f._distance:(coords&&GEO.lat!==null?haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng):null);
+    const distHtml=buildDistanceBadge(km);
+    const urgencyCombo=(km!==null&&(f.available_quantity||0)<=3)?`<span class="urgency-combo">${formatDistance(km)} · ${f.available_quantity} left</span>`:'';
+    return `<article class="food-card" style="animation-delay:${i*0.04}s" data-food-id="${f.id}" data-lat="${cardLat}" data-lng="${cardLng}" ${km!==null?`data-distance="${km.toFixed(3)}"`:''}  onclick="openModalById('${f.id}')">
       <div class="card-hover-bar"></div>
       <div class="card-img-wrap">
         <img class="card-img" src="${getImg(f.name)}" alt="${f.name}" loading="lazy">
         <div class="card-img-overlay"></div>
         <div class="card-badges">
-          <span class="ibadge${urgent ? ' urgent' : ''}">${mins}m</span>
+          <span class="ibadge${urgent?' urgent':''}">${mins}m</span>
           <span class="ibadge right"><span class="ib-dot"></span>${f.available_quantity} left</span>
         </div>
-        ${disc ? `<div class="disc-stamp"><span class="disc-pct">${disc}%</span><span class="disc-off">off</span></div>` : ''}
+        ${disc?`<div class="disc-stamp"><span class="disc-pct">${disc}%</span><span class="disc-off">off</span></div>`:''}
         <div class="card-img-name"><div class="name-text">${f.name}</div></div>
       </div>
       <div class="card-body">
@@ -1764,429 +1558,376 @@ function render(foods) {
           <div class="card-qty"><strong>${f.available_quantity}</strong> left</div>
         </div>
         <div class="card-loc-row">
-          ${f.restaurant_short_address ? `<div class="card-addr">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            ${f.restaurant_short_address}
-          </div>` : ''}
+          ${f.restaurant_short_address?`<div class="card-addr"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${f.restaurant_short_address}</div>`:''}
           ${distHtml}
         </div>
         ${urgencyCombo}
         ${getFTBadge(f.food_type)}
         <div class="time-bar">
           <div class="time-bar-track"><div class="time-bar-fill" style="width:${timeW}%;background:${timeColor}"></div></div>
-          <div class="time-bar-label">
-            <span class="time-label-text">Time left</span>
-            <span class="time-label-val" style="color:${timeColor}">${mins}m</span>
-          </div>
+          <div class="time-bar-label"><span class="time-label-text">Time left</span><span class="time-label-val" style="color:${timeColor}">${mins}m</span></div>
         </div>
         <div class="card-divider"></div>
         <div class="card-footer">
           <div class="price-block">
-            ${f.mrp ? `<span class="price-old">₹${f.mrp}</span>` : ''}
+            ${f.mrp?`<span class="price-old">₹${f.mrp}</span>`:''}
             <span class="price-new"><span class="price-currency">₹</span>${Math.ceil(f.price)}</span>
           </div>
           <button class="reserve-btn" onclick="event.stopPropagation();location.href='/checkout/${f.id}'">
-            Reserve
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Reserve <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
       </div>
     </article>`;
   }).join('');
-
   requestAnimationFrame(markClosestCard);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   §10  FILTER PANEL
-═══════════════════════════════════════════════════════════ */
-let panelOpen = false;
-document.getElementById('filterTrigger').addEventListener('click', () => {
-  panelOpen = !panelOpen;
-  document.getElementById('filterPanel').classList.toggle('open', panelOpen);
-  document.getElementById('filterTrigger').classList.toggle('open', panelOpen);
-  if (navigator.vibrate) navigator.vibrate(8);
+function buildDistanceBadge(km) {
+  if(GEO.status==='idle'||GEO.status==='locating') return`<span class="card-distance calculating">Calculating…</span>`;
+  if(km===null||km===undefined||isNaN(km)) return`<span class="card-distance denied">Nearby</span>`;
+  const label=formatDistance(km),isClose=km<=1.5;
+  return`<span class="card-distance${isClose?' close':''}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away</span>`;
+}
+
+/* ═══ §10 FILTER PANEL ═══ */
+let panelOpen=false;
+document.getElementById('filterTrigger').addEventListener('click',()=>{
+  panelOpen=!panelOpen;
+  document.getElementById('filterPanel').classList.toggle('open',panelOpen);
+  document.getElementById('filterTrigger').classList.toggle('open',panelOpen);
+  if(navigator.vibrate) navigator.vibrate(8);
 });
-function toggleDiet(type, el) { if (F.diet.has(type)) { F.diet.delete(type); el.classList.remove('on'); } else { F.diet.add(type); el.classList.add('on'); } livePreview(); }
-function setUrgency(val, el) { F.urgency = val; document.querySelectorAll('#urgencyRow .fp-radio').forEach(b => b.classList.remove('on')); el.classList.add('on'); livePreview(); }
-function onDiscountInput(v) { F.discount = parseInt(v, 10); document.getElementById('discountLabel').textContent = v > 0 ? `${v}%` : 'Any'; livePreview(); }
-function onPriceRange() {
-  const mn = document.getElementById('priceMin'), mxEl = document.getElementById('priceMax');
-  let lo = parseInt(mn.value, 10), hi = parseInt(mxEl.value, 10);
-  if (lo > hi - 50) { lo = hi - 50; mn.value = lo; }
-  F.priceMin = lo; F.priceMax = hi;
-  document.getElementById('priceMinLabel').textContent = lo;
-  document.getElementById('priceMaxLabel').textContent = hi >= 1000 ? hi + '+' : hi;
-  updateFill(lo, hi); livePreview();
+function toggleDiet(type,el){if(F.diet.has(type)){F.diet.delete(type);el.classList.remove('on');}else{F.diet.add(type);el.classList.add('on');}livePreview();}
+function setUrgency(val,el){F.urgency=val;document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));el.classList.add('on');livePreview();}
+function onDiscountInput(v){F.discount=parseInt(v,10);document.getElementById('discountLabel').textContent=v>0?`${v}%`:'Any';livePreview();}
+function onPriceRange(){
+  const mn=document.getElementById('priceMin'),mxEl=document.getElementById('priceMax');
+  let lo=parseInt(mn.value,10),hi=parseInt(mxEl.value,10);
+  if(lo>hi-50){lo=hi-50;mn.value=lo;}
+  F.priceMin=lo;F.priceMax=hi;
+  document.getElementById('priceMinLabel').textContent=lo;
+  document.getElementById('priceMaxLabel').textContent=hi>=1000?hi+'+':hi;
+  updateFill(lo,hi);livePreview();
 }
-function updateFill(lo, hi) {
-  const max  = parseInt(document.getElementById('priceMax').max) || 1000;
-  const fill = document.getElementById('dualFill');
-  fill.style.left  = (lo / max * 100) + '%';
-  fill.style.width = ((hi - lo) / max * 100) + '%';
-}
-updateFill(0, 1000);
-function setQty(val, el) { F.qty = val; document.querySelectorAll('#qtyRow .fp-chip').forEach(b => b.classList.remove('on')); el.classList.add('on'); livePreview(); }
-function toggleCuisine(val, el) { if (F.cuisines.has(val)) { F.cuisines.delete(val); el.classList.remove('on'); } else { F.cuisines.add(val); el.classList.add('on'); } livePreview(); }
-function livePreview() { const c = getFiltered().length; updateHint(c); }
-function updateHint(c) { const el = document.getElementById('fpHint'); el.textContent = `${c} plate${c !== 1 ? 's' : ''}`; el.classList.add('lit'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('lit'), 800); }
-function commitFilters() { applyFilters(); panelOpen = false; document.getElementById('filterPanel').classList.remove('open'); document.getElementById('filterTrigger').classList.remove('open'); updateBadge(); if (navigator.vibrate) navigator.vibrate(10); }
+function updateFill(lo,hi){const max=parseInt(document.getElementById('priceMax').max)||1000,fill=document.getElementById('dualFill');fill.style.left=(lo/max*100)+'%';fill.style.width=((hi-lo)/max*100)+'%';}
+updateFill(0,1000);
+function setQty(val,el){F.qty=val;document.querySelectorAll('#qtyRow .fp-chip').forEach(b=>b.classList.remove('on'));el.classList.add('on');livePreview();}
+function toggleCuisine(val,el){if(F.cuisines.has(val)){F.cuisines.delete(val);el.classList.remove('on');}else{F.cuisines.add(val);el.classList.add('on');}livePreview();}
+function livePreview(){const c=getFiltered().length;updateHint(c);}
+function updateHint(c){const el=document.getElementById('fpHint');el.textContent=`${c} plate${c!==1?'s':''}`;el.classList.add('lit');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('lit'),800);}
+function commitFilters(){applyFilters();panelOpen=false;document.getElementById('filterPanel').classList.remove('open');document.getElementById('filterTrigger').classList.remove('open');updateBadge();if(navigator.vibrate)navigator.vibrate(10);}
 
 function resetAllFilters() {
-  F.diet.clear(); F.urgency = 'all'; F.discount = 0; F.priceMin = 0; F.priceMax = 1000; F.qty = 'all'; F.cuisines.clear(); F.sort = 'default';
-  GEO.nearbyActive = false;
-  GEO.radiusKm     = null;
-  document.getElementById('nearbyBtn').classList.remove('active');
-  document.getElementById('sortSelect').value = 'default';
-  document.querySelectorAll('#urgencyRow .fp-radio').forEach(b => b.classList.remove('on'));
+  F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';
+  GEO.nearbyActive=false; GEO.radiusKm=25;  /* RESET to 25 km default */
+  document.getElementById('sortSelect').value='default';
+  document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));
   document.querySelector('#urgencyRow [data-urgency="all"]').classList.add('on');
-  document.querySelectorAll('#qtyRow .fp-chip').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('#qtyRow .fp-chip').forEach(b=>b.classList.remove('on'));
   document.querySelector('#qtyRow [data-qty="all"]').classList.add('on');
-  document.querySelectorAll('.fp-chip[data-diet],.fp-chip[data-cuisine]').forEach(b => b.classList.remove('on'));
-  document.getElementById('discountRange').value = 0;
-  document.getElementById('discountLabel').textContent = 'Any';
-  document.getElementById('priceMin').value = 0;
-  const mx = parseInt(document.getElementById('priceMax').max) || 1000;
-  document.getElementById('priceMax').value = mx;
-  document.getElementById('priceMinLabel').textContent = 0;
-  document.getElementById('priceMaxLabel').textContent = mx + '+';
-  updateFill(0, mx);
-  
-  // RESET TEXT SEARCH
-  document.getElementById('foodSearch').value = '';
-  document.getElementById('searchClear').style.display = 'none';
-
-  // RESET CITY / AREA
-  currentLoc = 'all';
-  document.getElementById('citySelect').value = 'auto';
-  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('locChipAll').classList.add('active');
-  
-  applyFilters();
-  updateBadge();
+  document.querySelectorAll('.fp-chip[data-diet],.fp-chip[data-cuisine]').forEach(b=>b.classList.remove('on'));
+  document.getElementById('discountRange').value=0;
+  document.getElementById('discountLabel').textContent='Any';
+  document.getElementById('priceMin').value=0;
+  const mx=parseInt(document.getElementById('priceMax').max)||1000;
+  document.getElementById('priceMax').value=mx;
+  document.getElementById('priceMinLabel').textContent=0;
+  document.getElementById('priceMaxLabel').textContent=mx+'+';
+  updateFill(0,mx);
+  /* Reset radius pills to 25km default */
+  document.querySelectorAll('.radius-pill').forEach(c=>c.classList.remove('active'));
+  document.getElementById('rp25').classList.add('active');
+  /* Reset restaurant area chips */
+  document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));
+  currentLoc='all';
+  applyFilters(); updateBadge();
 }
 
 function countActive() {
-  let n = 0;
-  if (F.diet.size)         n += F.diet.size;
-  if (F.urgency !== 'all') n++;
-  if (F.discount > 0)      n++;
-  if (F.priceMin > 0 || F.priceMax < 1000) n++;
-  if (F.qty !== 'all')     n++;
-  if (F.cuisines.size)     n += F.cuisines.size;
-  if (GEO.nearbyActive)    n++;
-  if (GEO.radiusKm !== null) n++;
+  let n=0;
+  if(F.diet.size)n+=F.diet.size;
+  if(F.urgency!=='all')n++;
+  if(F.discount>0)n++;
+  if(F.priceMin>0||F.priceMax<1000)n++;
+  if(F.qty!=='all')n++;
+  if(F.cuisines.size)n+=F.cuisines.size;
+  if(GEO.nearbyActive)n++;
+  if(GEO.radiusKm!==null&&GEO.radiusKm!==25)n++;  /* only count if not default */
   return n;
 }
-function updateBadge() {
-  const n   = countActive();
-  const cnt = document.getElementById('filterCnt');
-  cnt.textContent = n;
-  cnt.style.display = n ? 'inline-flex' : 'none';
-  document.getElementById('filterTrigger').classList.toggle('open', n > 0 && !panelOpen);
+function updateBadge(){
+  const n=countActive(),cnt=document.getElementById('filterCnt');
+  cnt.textContent=n;cnt.style.display=n?'inline-flex':'none';
 }
-
 function updatePills() {
-  const row = document.getElementById('afRow'), pills = [];
-  F.diet.forEach(d => pills.push({ label: d === 'veg' ? 'Veg' : d === 'egg' ? 'Egg' : 'Non-Veg', remove: () => { F.diet.delete(d); document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on'); applyFilters(); } }));
-  if (F.urgency !== 'all') { const m = { urgent:'Urgent','30':'≤30m','60':'≤60m' }; pills.push({ label: m[F.urgency], remove: () => { F.urgency = 'all'; setUrgency('all', document.querySelector('[data-urgency="all"]')); applyFilters(); } }); }
-  if (F.discount > 0) pills.push({ label: `${F.discount}%+ off`, remove: () => { F.discount = 0; document.getElementById('discountRange').value = 0; document.getElementById('discountLabel').textContent = 'Any'; applyFilters(); } });
-  if (F.priceMin > 0 || F.priceMax < 1000) pills.push({ label: `₹${F.priceMin}–${F.priceMax < 1000 ? F.priceMax : '1000+'}`, remove: () => { F.priceMin = 0; F.priceMax = 1000; document.getElementById('priceMin').value = 0; const mx = parseInt(document.getElementById('priceMax').max) || 1000; document.getElementById('priceMax').value = mx; document.getElementById('priceMinLabel').textContent = 0; document.getElementById('priceMaxLabel').textContent = mx + '+'; updateFill(0, mx); applyFilters(); } });
-  if (F.qty !== 'all') pills.push({ label: `${F.qty}+ plates`, remove: () => { F.qty = 'all'; applyFilters(); } });
-  F.cuisines.forEach(c => pills.push({ label: c, remove: () => { F.cuisines.delete(c); document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on'); applyFilters(); } }));
-  if (GEO.nearbyActive) pills.push({ label: '📍 Within 2 km', remove: () => { GEO.nearbyActive = false; document.getElementById('nearbyBtn').classList.remove('active'); applyFilters(); } });
-  if (GEO.radiusKm !== null) pills.push({ label: `📍 Within ${GEO.radiusKm} km`, remove: () => { GEO.radiusKm = null; document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active')); document.getElementById('locChipAll').classList.add('active'); applyFilters(); } });
-  if (!pills.length) { row.classList.remove('vis'); row.innerHTML = ''; updateBadge(); return; }
+  const row=document.getElementById('afRow'),pills=[];
+  F.diet.forEach(d=>pills.push({label:d==='veg'?'Veg':d==='egg'?'Egg':'Non-Veg',remove:()=>{F.diet.delete(d);document.querySelector(`.fp-chip[data-diet="${d}"]`)?.classList.remove('on');applyFilters();}}));
+  if(F.urgency!=='all'){const m={urgent:'Urgent','30':'≤30m','60':'≤60m'};pills.push({label:m[F.urgency],remove:()=>{F.urgency='all';setUrgency('all',document.querySelector('[data-urgency="all"]'));applyFilters();}});}
+  if(F.discount>0)pills.push({label:`${F.discount}%+ off`,remove:()=>{F.discount=0;document.getElementById('discountRange').value=0;document.getElementById('discountLabel').textContent='Any';applyFilters();}});
+  if(F.priceMin>0||F.priceMax<1000)pills.push({label:`₹${F.priceMin}–${F.priceMax<1000?F.priceMax:'1000+'}`,remove:()=>{F.priceMin=0;F.priceMax=1000;document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);applyFilters();}});
+  if(F.qty!=='all')pills.push({label:`${F.qty}+ plates`,remove:()=>{F.qty='all';applyFilters();}});
+  F.cuisines.forEach(c=>pills.push({label:c,remove:()=>{F.cuisines.delete(c);document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on');applyFilters();}}));
+  if(GEO.nearbyActive)pills.push({label:'📍 Within 2 km',remove:()=>{GEO.nearbyActive=false;applyFilters();}});
+  if(GEO.radiusKm!==null&&GEO.radiusKm!==25)pills.push({label:`📍 Within ${GEO.radiusKm} km`,remove:()=>{GEO.radiusKm=25;document.querySelectorAll('.radius-pill').forEach(c=>c.classList.remove('active'));document.getElementById('rp25').classList.add('active');applyFilters();}});
+  if(currentLoc!=='all')pills.push({label:`📍 ${currentLoc}`,remove:()=>{currentLoc='all';document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));applyFilters();}});
+  if(!pills.length){row.classList.remove('vis');row.innerHTML='';updateBadge();return;}
   row.classList.add('vis');
-  row.innerHTML = pills.map(p => `<span class="pill">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('') + `<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
+  row.innerHTML=pills.map(p=>`<span class="pill">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('')+`<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
   updateBadge();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   §11  DATA FETCH
-═══════════════════════════════════════════════════════════ */
+/* ═══ §11 DATA FETCH ═══ */
 fetch('/api/foods')
-  .then(r => { if (!r.ok) throw 0; return r.json(); })
-  .then(data => {
-    allFoods = data.foods || [];
+  .then(r=>{if(!r.ok)throw 0;return r.json();})
+  .then(data=>{
+    allFoods=data.foods||[];
+    if(allFoods.length){
+      console.log('[LastPlate] First food keys:',Object.keys(allFoods[0]));
+      const coords=getFoodCoords(allFoods[0]);
+      console.log('[LastPlate] Resolved coords for first item:',coords);
+    }
+    const locKey=f=>f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
+    const locs=[...new Set(allFoods.map(locKey).filter(Boolean))];
+    const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
+    document.getElementById('hs-rest').textContent=rests.size||'—';
 
-    // POPULATE CITY DROPDOWN
-    const citySelect = document.getElementById('citySelect');
-    const uniqueCities = [...new Set(allFoods.map(f => (f.city || f.restaurant_city || f.location || '').trim()).filter(Boolean))];
-    uniqueCities.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c;
-      opt.textContent = c;
-      citySelect.appendChild(opt);
-    });
+    /* Build restaurant area chips in the location strip */
+    const chipsContainer=document.getElementById('restAreaChips');
+    const divider=document.getElementById('locDivider');
+    if(locs.length>1){
+      divider.style.display='';
+      locs.forEach(loc=>{
+        const cnt=allFoods.filter(f=>locKey(f)===loc).length;
+        const btn=document.createElement('button');
+        btn.className='rest-loc-chip';
+        btn.innerHTML=`${loc} <span class="rlc-count">${cnt}</span>`;
+        btn.onclick=()=>{
+          currentLoc=currentLoc===loc?'all':loc;
+          document.querySelectorAll('.rest-loc-chip').forEach(c=>c.classList.remove('active'));
+          if(currentLoc!=='all') btn.classList.add('active');
+          applyFilters();
+          if(navigator.vibrate) navigator.vibrate(6);
+        };
+        chipsContainer.appendChild(btn);
+      });
+    }
 
-    const locKey = f => f.location || f.area || f.locality || f.restaurant_address || f.restaurant_name || '';
-    const locs   = [...new Set(allFoods.map(locKey).filter(Boolean))];
-    const rests  = new Set(allFoods.map(f => f.restaurant_name).filter(Boolean));
-    document.getElementById('hs-rest').textContent = rests.size || '—';
-
-    locs.forEach(loc => {
-      const cnt = allFoods.filter(f => locKey(f) === loc).length;
-      const c   = document.createElement('div');
-      c.className  = 'loc-chip';
-      c.innerHTML  = `${loc} <span style="opacity:.4;font-size:.8em">(${cnt})</span>`;
-      c.onclick    = () => { currentLoc = loc; setLocChip(c); applyFilters(); };
-      document.getElementById('locationRow').appendChild(c);
-    });
-
-    const cuisines = [...new Set(allFoods.map(f => (f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
-    if (cuisines.length > 1) {
-      const sec = document.getElementById('cuisineSection'), row = document.getElementById('cuisineRow');
-      sec.style.display = '';
-      cuisines.forEach(c => {
-        const btn        = document.createElement('button');
-        btn.className    = 'fp-chip'; btn.dataset.cuisine = c;
-        btn.textContent  = c.charAt(0).toUpperCase() + c.slice(1);
-        btn.onclick      = function() { toggleCuisine(c, this); };
+    const cuisines=[...new Set(allFoods.map(f=>(f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
+    if(cuisines.length>1){
+      const sec=document.getElementById('cuisineSection'),row=document.getElementById('cuisineRow');
+      sec.style.display='';
+      cuisines.forEach(c=>{
+        const btn=document.createElement('button');
+        btn.className='fp-chip';btn.dataset.cuisine=c;
+        btn.textContent=c.charAt(0).toUpperCase()+c.slice(1);
+        btn.onclick=function(){toggleCuisine(c,this);};
         row.appendChild(btn);
       });
     }
 
-    const prices = allFoods.map(f => f.price || 0);
-    const maxP   = Math.ceil(Math.max(...prices) / 50) * 50 || 1000;
-    document.getElementById('priceMax').max = maxP;
-    document.getElementById('priceMin').max = maxP;
-    document.getElementById('priceMax').value = maxP;
-    F.priceMax = maxP;
-    document.getElementById('priceMaxLabel').textContent = maxP + '+';
-    updateFill(0, maxP);
+    const prices=allFoods.map(f=>f.price||0);
+    const maxP=Math.ceil(Math.max(...prices)/50)*50||1000;
+    document.getElementById('priceMax').max=maxP;
+    document.getElementById('priceMin').max=maxP;
+    document.getElementById('priceMax').value=maxP;
+    F.priceMax=maxP;
+    document.getElementById('priceMaxLabel').textContent=maxP+'+';
+    updateFill(0,maxP);
 
+    /* Cache and render — 25km default already set in GEO */
     cacheDistances();
     applyFilters();
   })
-  .catch(() => {
-    allFoods = [];
-    render([]);
-    document.getElementById('hs-count').textContent = '0';
-    document.getElementById('hs-rest').textContent  = '0';
+  .catch(()=>{
+    allFoods=[]; render([]);
+    document.getElementById('hs-count').textContent='0';
+    document.getElementById('hs-rest').textContent='0';
   });
 
-function setLocChip(el) {
-  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
+/* ═══ §12 MODAL ═══ */
+function openModalById(id){
+  const f=allFoods.find(item=>String(item.id)===String(id));
+  if(!f) return; openModal(f);
 }
-
-/* ═══════════════════════════════════════════════════════════
-   §12  MODAL 
-═══════════════════════════════════════════════════════════ */
-function openModalById(id) {
-  const f = allFoods.find(item => String(item.id) === String(id));
-  if (!f) return;
-  openModal(f);
-}
-
-function openModal(f) {
-  const disc = calcDisc(f.mrp, f.price);
-  document.getElementById('modalImg').src          = getImg(f.name);
-  document.getElementById('modalImg').alt          = f.name;
-  document.getElementById('modalKicker').textContent = f.restaurant_name + (disc ? ` — ${disc}% off` : '');
-  document.getElementById('modalTitle').textContent  = f.name;
-  document.getElementById('modalRestaurant').textContent = f.restaurant_short_address || f.restaurant_name || '';
-
-  const distRow = document.getElementById('modalDistanceRow');
-  if (GEO.lat !== null) {
-    const coords = getFoodCoords(f);
-    if (coords) {
-      const km = haversineKm(GEO.lat, GEO.lng, coords.lat, coords.lng);
-      distRow.innerHTML = `
-        <div class="modal-dist-pill">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          ${formatDistance(km)} away
-        </div>
-        ${f.minutes_left ? `<span style="font-size:.6875rem;color:var(--ink3);">${f.minutes_left}m remaining</span>` : ''}`;
-    } else {
-      distRow.innerHTML = '';
-    }
-  } else {
-    distRow.innerHTML = '';
-  }
-
-  document.getElementById('modalFoodType').innerHTML = getFTBadge(f.food_type);
-  document.getElementById('modalMrp').textContent    = f.mrp ? `₹${f.mrp}` : '';
-  document.getElementById('modalPrice').textContent  = `₹${Math.ceil(f.price)}`;
-  document.getElementById('modalCta').href           = `/checkout/${f.id}`;
+function openModal(f){
+  const disc=calcDisc(f.mrp,f.price);
+  document.getElementById('modalImg').src=getImg(f.name);
+  document.getElementById('modalImg').alt=f.name;
+  document.getElementById('modalKicker').textContent=f.restaurant_name+(disc?` — ${disc}% off`:'');
+  document.getElementById('modalTitle').textContent=f.name;
+  document.getElementById('modalRestaurant').textContent=f.restaurant_short_address||f.restaurant_name||'';
+  const distRow=document.getElementById('modalDistanceRow');
+  if(GEO.lat!==null){
+    const coords=getFoodCoords(f);
+    if(coords){
+      const km=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);
+      distRow.innerHTML=`<div class="modal-dist-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${formatDistance(km)} away</div>${f.minutes_left?`<span style="font-size:.6875rem;color:var(--ink3);">${f.minutes_left}m remaining</span>`:''}`;
+    } else distRow.innerHTML='';
+  } else distRow.innerHTML='';
+  document.getElementById('modalFoodType').innerHTML=getFTBadge(f.food_type);
+  document.getElementById('modalMrp').textContent=f.mrp?`₹${f.mrp}`:'';
+  document.getElementById('modalPrice').textContent=`₹${Math.ceil(f.price)}`;
+  document.getElementById('modalCta').href=`/checkout/${f.id}`;
   document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('modalClose').onclick=closeModal;
+document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
+
+/* ═══ §13 DRAWER ═══ */
+function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.body.classList.add('page-pushed');loadProfile();}
+function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.body.classList.remove('page-pushed');}
+document.getElementById('openProfile').onclick=openDrawer;
+document.getElementById('closeProfile').onclick=closeDrawer;
+document.getElementById('drawerScrim').onclick=closeDrawer;
+async function loadProfile(){
+  try{
+    const[uRes,oRes]=await Promise.all([fetch('/api/user/profile').catch(()=>null),fetch('/api/user/orders').catch(()=>null)]);
+    const u=uRes?.ok?await uRes.json():{name:'Rescue Agent'};
+    const orders=oRes?.ok?await oRes.json():[];
+    document.getElementById('profileName').textContent=u.name||'Agent';
+    document.getElementById('historyList').innerHTML=orders.length
+      ?orders.map(o=>`<div class="hist-item"><div class="hist-name">${o.food}</div><div class="hist-meta">₹${o.total_amount} · ${o.status}</div></div>`).join('')
+      :`<p style="font-size:.82rem;color:var(--ink3);padding:12px 0">No rescue history yet.</p>`;
+  }catch{document.getElementById('profileName').textContent='Guest';}
 }
 
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow = ''; }
-document.getElementById('modalClose').onclick = closeModal;
-document.getElementById('modalOverlay').onclick = e => { if (e.target === document.getElementById('modalOverlay')) closeModal(); };
-
-/* ═══════════════════════════════════════════════════════════
-   §13  DRAWER
-═══════════════════════════════════════════════════════════ */
-function openDrawer() { document.getElementById('drawerOverlay').classList.add('open'); document.body.classList.add('page-pushed'); loadProfile(); }
-function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.body.classList.remove('page-pushed'); }
-document.getElementById('openProfile').onclick  = openDrawer;
-document.getElementById('closeProfile').onclick = closeDrawer;
-document.getElementById('drawerScrim').onclick  = closeDrawer;
-async function loadProfile() {
-  try {
-    const [uRes, oRes] = await Promise.all([fetch('/api/user/profile').catch(() => null), fetch('/api/user/orders').catch(() => null)]);
-    const u      = uRes?.ok ? await uRes.json() : { name: 'Rescue Agent' };
-    const orders = oRes?.ok ? await oRes.json() : [];
-    document.getElementById('profileName').textContent = u.name || 'Agent';
-    document.getElementById('historyList').innerHTML = orders.length
-      ? orders.map(o => `<div class="hist-item"><div class="hist-name">${o.food}</div><div class="hist-meta">₹${o.total_amount} · ${o.status}</div></div>`).join('')
-      : `<p style="font-size:.82rem;color:var(--ink3);padding:12px 0">No rescue history yet.</p>`;
-  } catch { document.getElementById('profileName').textContent = 'Guest'; }
-}
-
-function setNav(id) { document.querySelectorAll('.bn-item').forEach(e => e.classList.remove('active')); const el = document.getElementById(id); if (el) el.classList.add('active'); }
+/* BOTTOM NAV */
+function setNav(id){document.querySelectorAll('.bn-item').forEach(e=>e.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');}
 setNav('bnBrowse');
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDrawer(); closeSheet(); } });
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();closeSheet();}});
 
-/* ═══════════════════════════════════════════════════════════
-   §14  CHEF'S SHEET
-═══════════════════════════════════════════════════════════ */
-const sheetOverlay = document.getElementById('sheetOverlay'),
-      theSheet     = document.getElementById('theSheet'),
-      bottomNav    = document.getElementById('bottomNav');
-let secretLoaded = false, secretRests = [], dishCache = {};
+/* ═══ §14 CHEF'S SHEET ═══ */
+const sheetOverlay=document.getElementById('sheetOverlay'),theSheet=document.getElementById('theSheet'),bottomNav=document.getElementById('bottomNav');
+let secretLoaded=false,secretRests=[],dishCache={};
 
-function openSheet() {
+function openSheet(){
   sheetOverlay.classList.add('open');
-  bottomNav.style.transform = 'translateY(100%)';
-  document.body.style.overflow = 'hidden';
+  bottomNav.style.transform='translateY(100%)';
+  document.body.style.overflow='hidden';
   setNav('bnSecret');
-  if (navigator.vibrate) navigator.vibrate(12);
-  if (!secretLoaded) loadSecretRests();
-  setTimeout(initTabSlider, 60);
+  if(navigator.vibrate) navigator.vibrate(12);
+  if(!secretLoaded) loadSecretRests();
+  setTimeout(initTabSlider,60);
 }
-function closeSheet() { sheetOverlay.classList.remove('open'); bottomNav.style.transform = ''; document.body.style.overflow = ''; setNav('bnBrowse'); }
-document.getElementById('sheetClose').addEventListener('click', closeSheet);
-document.getElementById('sheetScrim').addEventListener('click', closeSheet);
+function closeSheet(){sheetOverlay.classList.remove('open');bottomNav.style.transform='';document.body.style.overflow='';setNav('bnBrowse');}
+document.getElementById('sheetClose').addEventListener('click',closeSheet);
+document.getElementById('sheetScrim').addEventListener('click',closeSheet);
 
-const dragZone = document.getElementById('sheetDrag');
-let drag = { active: false, startY: 0, startX: 0, lastY: 0, startTime: 0, moved: false };
-dragZone.addEventListener('touchstart', e => { const t = e.touches[0]; drag = { active: true, startY: t.clientY, startX: t.clientX, lastY: t.clientY, startTime: Date.now(), moved: false }; }, { passive: true });
-dragZone.addEventListener('touchmove', e => {
-  if (!drag.active) return;
-  const t = e.touches[0]; const dY = t.clientY - drag.startY; const dX = Math.abs(t.clientX - drag.startX);
-  if (dX > Math.abs(dY) + 10 || dY < 0) { drag.active = false; return; }
-  drag.moved = true; drag.lastY = t.clientY;
-  theSheet.style.transform  = `translateY(${Math.min(dY * 0.45, 80)}px)`;
-  theSheet.style.transition = 'none';
-}, { passive: true });
-dragZone.addEventListener('touchend', () => {
-  if (!drag.active || !drag.moved) { theSheet.style.transform = ''; theSheet.style.transition = ''; drag.active = false; return; }
-  const dY = drag.lastY - drag.startY, vel = dY / (Date.now() - drag.startTime);
-  theSheet.style.transform  = '';
-  theSheet.style.transition = '';
-  if (dY > 90 || vel > 0.55) closeSheet();
-  drag.active = false;
-}, { passive: true });
-document.getElementById('sheetBody').addEventListener('touchstart', () => { drag.active = false; }, { passive: true });
+const dragZone=document.getElementById('sheetDrag');
+let drag={active:false,startY:0,startX:0,lastY:0,startTime:0,moved:false};
+dragZone.addEventListener('touchstart',e=>{const t=e.touches[0];drag={active:true,startY:t.clientY,startX:t.clientX,lastY:t.clientY,startTime:Date.now(),moved:false};},{passive:true});
+dragZone.addEventListener('touchmove',e=>{
+  if(!drag.active)return;
+  const t=e.touches[0],dY=t.clientY-drag.startY,dX=Math.abs(t.clientX-drag.startX);
+  if(dX>Math.abs(dY)+10||dY<0){drag.active=false;return;}
+  drag.moved=true;drag.lastY=t.clientY;
+  theSheet.style.transform=`translateY(${Math.min(dY*0.45,80)}px)`;
+  theSheet.style.transition='none';
+},{passive:true});
+dragZone.addEventListener('touchend',()=>{
+  if(!drag.active||!drag.moved){theSheet.style.transform='';theSheet.style.transition='';drag.active=false;return;}
+  const dY=drag.lastY-drag.startY,vel=dY/(Date.now()-drag.startTime);
+  theSheet.style.transform='';theSheet.style.transition='';
+  if(dY>90||vel>0.55) closeSheet();
+  drag.active=false;
+},{passive:true});
+document.getElementById('sheetBody').addEventListener('touchstart',()=>{drag.active=false;},{passive:true});
 
-const sInput = document.getElementById('secretSearch'), sClear = document.getElementById('secretClearBtn'), sPanel = document.getElementById('searchResults');
-function getAllDishes() { return Object.values(dishCache).flat(); }
-function runSearchSecret(q) {
-  q = q.trim().toLowerCase(); sClear.style.display = q ? 'block' : 'none';
-  if (!q) { sPanel.classList.remove('vis'); sPanel.innerHTML = ''; document.querySelectorAll('.tab-pnl').forEach(p => p.style.display = ''); return; }
-  document.querySelectorAll('.tab-pnl').forEach(p => p.style.display = 'none'); sPanel.classList.add('vis');
-  const res = getAllDishes().filter(d => (d.name||'').toLowerCase().includes(q) || (d.restaurant_name||'').toLowerCase().includes(q) || (d.cuisine||'').toLowerCase().includes(q));
-  if (!res.length) { sPanel.innerHTML = `<div class="search-none">Nothing found for "<strong>${q}</strong>"</div>`; return; }
-  sPanel.innerHTML = res.map(d => `<a class="search-row-item" href="/checkout/secret/${d.id}">
+const sInput=document.getElementById('secretSearch'),sClear=document.getElementById('secretClearBtn'),sPanel=document.getElementById('searchResults');
+function getAllDishes(){return Object.values(dishCache).flat();}
+function runSearch(q){
+  q=q.trim().toLowerCase();sClear.style.display=q?'block':'none';
+  if(!q){sPanel.classList.remove('vis');sPanel.innerHTML='';document.querySelectorAll('.tab-pnl').forEach(p=>p.style.display='');return;}
+  document.querySelectorAll('.tab-pnl').forEach(p=>p.style.display='none');sPanel.classList.add('vis');
+  const res=getAllDishes().filter(d=>(d.name||'').toLowerCase().includes(q)||(d.restaurant_name||'').toLowerCase().includes(q)||(d.cuisine||'').toLowerCase().includes(q));
+  if(!res.length){sPanel.innerHTML=`<div class="search-none">Nothing found for "<strong>${q}</strong>"</div>`;return;}
+  sPanel.innerHTML=res.map(d=>`<a class="search-row-item" href="/checkout/secret/${d.id}">
     <img class="search-img" src="${d.img||getImg(d.name)}" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=70'" loading="lazy">
     <div style="flex:1;min-width:0"><div class="search-name">${d.name}</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px"><span class="search-meta">${d.restaurant_name||''}${d.cuisine?' · '+d.cuisine:''}</span>${getFTBadge(d.food_type,'sm')}</div></div>
     <div class="search-price">₹${Math.ceil(d.price)}</div>
   </a>`).join('');
 }
-function clearSearch() { sInput.value = ''; runSearchSecret(''); }
-sInput.addEventListener('input', () => runSearchSecret(sInput.value));
-sClear.addEventListener('click', () => { clearSearch(); sInput.focus(); });
+function clearSearch(){sInput.value='';runSearch('');}
+sInput.addEventListener('input',()=>runSearch(sInput.value));
+sClear.addEventListener('click',()=>{clearSearch();sInput.focus();});
 
-async function loadSecretRests() {
-  secretLoaded = true;
-  document.getElementById('panelToday').innerHTML    = skelN(3);
-  document.getElementById('panelTomorrow').innerHTML = skelN(2);
-  try {
-    const res  = await fetch('/api/secret-menu/restaurants');
-    const data = await res.json();
-    secretRests = data.restaurants || [];
-    const total = secretRests.reduce((s, r) => s + (r.dish_count || 0), 0);
-    document.getElementById('statDishes').textContent   = total || '0';
-    document.getElementById('statKitchens').textContent = secretRests.length || '0';
-    document.getElementById('statDiscount').textContent = total ? '35%' : '—';
-    document.getElementById('countToday').textContent    = total || '0';
-    document.getElementById('countTomorrow').textContent = secretRests.length || '0';
-    if (!secretRests.length) {
-      document.getElementById('panelToday').innerHTML    = emptySheet('No exclusive dishes tonight.');
-      document.getElementById('panelTomorrow').innerHTML = emptySheet('Nothing coming up yet.');
+async function loadSecretRests(){
+  secretLoaded=true;
+  document.getElementById('panelToday').innerHTML=skelN(3);
+  document.getElementById('panelTomorrow').innerHTML=skelN(2);
+  try{
+    const res=await fetch('/api/secret-menu/restaurants');
+    const data=await res.json();
+    secretRests=data.restaurants||[];
+    const total=secretRests.reduce((s,r)=>s+(r.dish_count||0),0);
+    document.getElementById('statDishes').textContent=total||'0';
+    document.getElementById('statKitchens').textContent=secretRests.length||'0';
+    document.getElementById('statDiscount').textContent=total?'35%':'—';
+    document.getElementById('countToday').textContent=total||'0';
+    document.getElementById('countTomorrow').textContent=secretRests.length||'0';
+    if(!secretRests.length){
+      document.getElementById('panelToday').innerHTML=emptySheet('No exclusive dishes tonight.');
+      document.getElementById('panelTomorrow').innerHTML=emptySheet('Nothing coming up yet.');
       return;
     }
-    prefetchAll(secretRests); renderToday(secretRests); renderTomorrow(secretRests);
-  } catch {
-    document.getElementById('panelToday').innerHTML    = errSheet();
-    document.getElementById('panelTomorrow').innerHTML = errSheet();
+    prefetchAll(secretRests);renderToday(secretRests);renderTomorrow(secretRests);
+  }catch{
+    document.getElementById('panelToday').innerHTML=errSheet();
+    document.getElementById('panelTomorrow').innerHTML=errSheet();
   }
 }
-async function prefetchAll(rests) {
-  await Promise.all(rests.map(async r => {
-    if (dishCache[r.restaurant_id]) return;
-    try {
-      const res  = await fetch(`/api/secret-menu/${r.restaurant_id}`);
-      const data = await res.json();
-      dishCache[r.restaurant_id] = (data.dishes || []).map(d => ({...d, restaurant_name: r.restaurant_name}));
-    } catch { dishCache[r.restaurant_id] = []; }
+async function prefetchAll(rests){
+  await Promise.all(rests.map(async r=>{
+    if(dishCache[r.restaurant_id])return;
+    try{const res=await fetch(`/api/secret-menu/${r.restaurant_id}`);const data=await res.json();dishCache[r.restaurant_id]=(data.dishes||[]).map(d=>({...d,restaurant_name:r.restaurant_name}));}
+    catch{dishCache[r.restaurant_id]=[];}
   }));
 }
-function renderToday(rests) {
-  const p = document.getElementById('panelToday');
-  p.innerHTML = `<div class="excl-banner"><div class="excl-ico"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>Only visible here — hidden from main browse</div>
+function renderToday(rests){
+  const p=document.getElementById('panelToday');
+  p.innerHTML=`<div class="excl-banner"><div class="excl-ico"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>Only visible here — hidden from main browse</div>
   <div class="sec-lbl">Kitchens</div>
-  <div class="kitchen-chips" id="kchipsToday">${rests.map((r,i) => `<button class="kitch-chip${i===0?' active':''}" data-rid="${r.restaurant_id}" onclick="selKitch('today','${r.restaurant_id}',this)"><span class="kitch-name">${r.restaurant_name}</span><span class="kitch-cnt">${r.dish_count} dish${r.dish_count!==1?'es':''}</span></button>`).join('')}</div>
+  <div class="kitchen-chips" id="kchipsToday">${rests.map((r,i)=>`<button class="kitch-chip${i===0?' active':''}" data-rid="${r.restaurant_id}" onclick="selKitch('today','${r.restaurant_id}',this)"><span class="kitch-name">${r.restaurant_name}</span><span class="kitch-cnt">${r.dish_count} dish${r.dish_count!==1?'es':''}</span></button>`).join('')}</div>
   <div class="sec-lbl">Dishes</div>
   <div id="dishesToday">${skelN(2)}</div>`;
-  if (rests[0]) loadKitchDishes('today', rests[0].restaurant_id);
+  if(rests[0]) loadKitchDishes('today',rests[0].restaurant_id);
 }
-function renderTomorrow(rests) {
-  const p = document.getElementById('panelTomorrow');
-  p.innerHTML = `<div class="tmrw-banner"><div class="tmrw-banner-ico">🌙</div><div><div class="tmrw-banner-ttl">Tomorrow's drops are being prepped.</div><div class="tmrw-banner-sub">Check back after 5 PM.</div></div></div>
+function renderTomorrow(rests){
+  const p=document.getElementById('panelTomorrow');
+  p.innerHTML=`<div class="tmrw-banner"><div class="tmrw-banner-ico">🌙</div><div><div class="tmrw-banner-ttl">Tomorrow's drops are being prepped.</div><div class="tmrw-banner-sub">Check back after 5 PM.</div></div></div>
   <div class="sec-lbl">Kitchens</div>
-  <div class="kitchen-chips" id="kchipsTomorrow">${rests.map((r,i) => `<button class="kitch-chip${i===0?' active':''}" data-rid="${r.restaurant_id}" onclick="selKitch('tomorrow','${r.restaurant_id}',this)"><span class="kitch-name">${r.restaurant_name}</span><span class="kitch-cnt">${r.dish_count} dish${r.dish_count!==1?'es':''}</span></button>`).join('')}</div>
+  <div class="kitchen-chips" id="kchipsTomorrow">${rests.map((r,i)=>`<button class="kitch-chip${i===0?' active':''}" data-rid="${r.restaurant_id}" onclick="selKitch('tomorrow','${r.restaurant_id}',this)"><span class="kitch-name">${r.restaurant_name}</span><span class="kitch-cnt">${r.dish_count} dish${r.dish_count!==1?'es':''}</span></button>`).join('')}</div>
   <div class="sec-lbl">Coming Tomorrow</div>
   <div id="dishesTomorrow">${skelN(2)}</div>`;
-  if (rests[0]) loadKitchDishes('tomorrow', rests[0].restaurant_id);
+  if(rests[0]) loadKitchDishes('tomorrow',rests[0].restaurant_id);
 }
-function selKitch(mode, rid, el) {
-  document.getElementById(`kchips${mode==='today'?'Today':'Tomorrow'}`)?.querySelectorAll('.kitch-chip').forEach(c => c.classList.remove('active'));
-  if (el) el.classList.add('active');
-  loadKitchDishes(mode, rid);
+function selKitch(mode,rid,el){
+  document.getElementById(`kchips${mode==='today'?'Today':'Tomorrow'}`)?.querySelectorAll('.kitch-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  loadKitchDishes(mode,rid);
 }
-async function loadKitchDishes(mode, rid) {
-  const cid  = mode === 'today' ? 'dishesToday' : 'dishesTomorrow';
-  const cont = document.getElementById(cid); if (!cont) return;
-  cont.innerHTML = skelN(2);
-  if (dishCache[rid]) { renderDishes(cont, dishCache[rid], mode); return; }
-  try {
-    const res    = await fetch(`/api/secret-menu/${rid}`);
-    const data   = await res.json();
-    const dishes = (data.dishes||[]).map(d => ({...d, restaurant_name: secretRests.find(r => r.restaurant_id === rid)?.restaurant_name||''}));
-    dishCache[rid] = dishes;
-    renderDishes(cont, dishes, mode);
-  } catch { cont.innerHTML = errSheet(); }
+async function loadKitchDishes(mode,rid){
+  const cid=mode==='today'?'dishesToday':'dishesTomorrow';
+  const cont=document.getElementById(cid);if(!cont)return;
+  cont.innerHTML=skelN(2);
+  if(dishCache[rid]){renderDishes(cont,dishCache[rid],mode);return;}
+  try{
+    const res=await fetch(`/api/secret-menu/${rid}`);const data=await res.json();
+    const dishes=(data.dishes||[]).map(d=>({...d,restaurant_name:secretRests.find(r=>r.restaurant_id===rid)?.restaurant_name||''}));
+    dishCache[rid]=dishes;renderDishes(cont,dishes,mode);
+  }catch{cont.innerHTML=errSheet();}
 }
-function renderDishes(cont, dishes, mode) {
-  if (!dishes.length) { cont.innerHTML = emptySheet('No dishes from this kitchen right now.'); return; }
-  cont.innerHTML = mode === 'tomorrow' ? dishes.map(tmrwRow).join('') : dishes.map(dishCard).join('');
-}
-function dishCard(d) {
-  const img  = d.img || getImg(d.name);
-  const disc = d.mrp && d.mrp > d.price ? Math.round(((d.mrp-d.price)/d.mrp)*100) : null;
-  const sp   = d.stock && d.total_stock ? Math.round((d.stock/d.total_stock)*100) : 60;
-  const sc   = sp < 25 ? 'var(--accent)' : sp < 50 ? 'var(--gold)' : 'var(--green)';
-  const sold = d.stock === 0;
-  return `<div class="dish-card" onclick="${sold?'':'location.href=\'/checkout/secret/'+d.id+'\''}" style="${sold?'opacity:.4;cursor:default':''}">
+function renderDishes(cont,dishes,mode){if(!dishes.length){cont.innerHTML=emptySheet('No dishes from this kitchen right now.');return;}cont.innerHTML=mode==='tomorrow'?dishes.map(tmrwRow).join(''):dishes.map(dishCard).join('');}
+function dishCard(d){
+  const img=d.img||getImg(d.name);
+  const disc=d.mrp&&d.mrp>d.price?Math.round(((d.mrp-d.price)/d.mrp)*100):null;
+  const sp=d.stock&&d.total_stock?Math.round((d.stock/d.total_stock)*100):60;
+  const sc=sp<25?'var(--accent)':sp<50?'var(--gold)':'var(--green)';
+  const sold=d.stock===0;
+  return`<div class="dish-card" onclick="${sold?'':'location.href=\'/checkout/secret/'+d.id+'\''}" style="${sold?'opacity:.4;cursor:default':''}">
     <div class="dish-img"><img src="${img}" alt="${d.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80'"></div>
     <div class="dish-body">
       <div>
@@ -2205,15 +1946,13 @@ function dishCard(d) {
     </div>
   </div>`;
 }
-function tmrwRow(d) { return `<div class="tmrw-row"><div class="tmrw-emoji">${cuisineEmoji(d.cuisine)}</div><div style="flex:1;min-width:0"><div class="tmrw-name">${d.name}</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="dish-kitchen">${d.restaurant_name||''}</span>${getFTBadge(d.food_type,'sm')}</div><div class="tmrw-hint">Unlocks tomorrow evening</div></div><button class="notify-btn" onclick="handleNotify(this)">Notify</button></div>`; }
-function handleNotify(btn) { btn.textContent = 'Set!'; btn.classList.add('notified'); btn.disabled = true; if (navigator.vibrate) navigator.vibrate(6); }
-function skelN(n) { return Array.from({length:n},()=>`<div class="skel-dish"><div class="skel-dish-img"></div><div class="skel-dish-body"><div class="skel-line" style="width:34%;height:8px;margin-bottom:8px;border-radius:4px"></div><div class="skel-line" style="width:64%;height:16px;margin-bottom:5px;border-radius:4px"></div><div class="skel-line" style="width:44%;height:8px;margin-top:14px;border-radius:4px"></div></div></div>`).join(''); }
-function emptySheet(msg) { return `<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`; }
-function errSheet()   { return `<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`; }
+function tmrwRow(d){return`<div class="tmrw-row"><div class="tmrw-emoji">${cuisineEmoji(d.cuisine)}</div><div style="flex:1;min-width:0"><div class="tmrw-name">${d.name}</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="dish-kitchen">${d.restaurant_name||''}</span>${getFTBadge(d.food_type,'sm')}</div><div class="tmrw-hint">Unlocks tomorrow evening</div></div><button class="notify-btn" onclick="handleNotify(this)">Notify</button></div>`;}
+function handleNotify(btn){btn.textContent='Set!';btn.classList.add('notified');btn.disabled=true;if(navigator.vibrate)navigator.vibrate(6);}
+function skelN(n){return Array.from({length:n},()=>`<div class="skel-dish"><div class="skel-dish-img"></div><div class="skel-dish-body"><div class="skel-line" style="width:34%;height:8px;margin-bottom:8px;border-radius:4px"></div><div class="skel-line" style="width:64%;height:16px;margin-bottom:5px;border-radius:4px"></div><div class="skel-line" style="width:44%;height:8px;margin-top:14px;border-radius:4px"></div></div></div>`).join('');}
+function emptySheet(msg){return`<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`;}
+function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`;}
 
-/* ═══════════════════════════════════════════════════════════
-   §15  BOOT  — start location detection on page load
-═══════════════════════════════════════════════════════════ */
+/* ═══ §15 BOOT ═══ */
 getUserLocation();
 </script>
 </body>
