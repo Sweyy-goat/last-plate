@@ -159,12 +159,22 @@ body.dark .navbar {
   border-radius: 100px;
   font-size: 0.625rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--blue);
-  cursor: default;
   transition: all 0.35s var(--ease-apple);
   white-space: nowrap;
-  overflow: hidden; max-width: 140px;
-  text-overflow: ellipsis;
 }
+
+/* NEW: City Select Dropdown styles */
+.city-select {
+  appearance: none; -webkit-appearance: none;
+  background: transparent; border: none; color: inherit;
+  font-family: inherit; font-size: inherit; font-weight: inherit;
+  text-transform: inherit; letter-spacing: inherit;
+  cursor: pointer; outline: none; padding-right: 4px;
+  max-width: 120px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+}
+.city-select option { color: var(--ink); background: var(--bg); text-transform: none; letter-spacing: normal; }
+.city-arr { flex-shrink: 0; pointer-events: none; opacity: 0.8; }
+
 .city-pill .cp-dot {
   width: 5px; height: 5px; background: var(--blue); border-radius: 50%; flex-shrink: 0;
   animation: blink 3s step-end infinite;
@@ -172,7 +182,12 @@ body.dark .navbar {
 .city-pill.locating { opacity: 0.55; }
 .city-pill.denied { background: rgba(174,174,178,0.1); border-color: rgba(174,174,178,0.2); color: var(--ink3); }
 .city-pill.denied .cp-dot { background: var(--ink3); animation: none; }
-@media (max-width: 600px) { .city-pill { display: none; } }
+
+@media (max-width: 600px) { 
+  .live-indicator { display: none; } /* Hide live indicator to ensure city and sort fit cleanly on mobile */
+  .logo-text { display: none; }
+}
+
 .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .nav-btn {
   width: 34px; height: 34px; border-radius: 50%;
@@ -204,10 +219,10 @@ body.dark .dark-toggle .icon-sun  { transform: rotate(90deg) scale(0.6); opacity
 body.dark .dark-toggle .icon-moon { transform: rotate(0deg) scale(1); opacity: 1; }
 body.dark .dark-toggle:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #F5C518; box-shadow: 0 0 14px rgba(245,197,24,0.12); }
 
-/* ═══ HERO — shortened ═══ */
+/* ═══ HERO ═══ */
 .hero {
   padding-top: var(--nav-h);
-  min-height: 65svh; /* FIX: was 100svh — now cards are visible on first scroll */
+  min-height: 65svh; 
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   position: relative; overflow: hidden;
@@ -261,7 +276,7 @@ body.dark .hero::before {
 .hero-kicker-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
 .hero-kicker-text { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.02em; color: var(--accent); }
 .hero-h1 {
-  font-size: clamp(2.8rem, 6.5vw, 5.2rem); /* FIX: slightly smaller to save vertical space */
+  font-size: clamp(2.8rem, 6.5vw, 5.2rem); 
   line-height: 1.0;
   letter-spacing: -0.04em;
   font-weight: 700;
@@ -354,7 +369,7 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
 .titem strong { color: rgba(255,255,255,0.65); font-weight: 600; }
 .tsep { width: 3px; height: 3px; background: var(--accent); border-radius: 50%; opacity: 0.6; display: inline-block; }
 
-/* ═══ CONTROLS — KEY FIX: tighter, single-row, compact on scroll ═══ */
+/* ═══ CONTROLS ═══ */
 .controls-sec {
   background: rgba(255,255,255,0.82);
   backdrop-filter: saturate(180%) blur(20px);
@@ -364,11 +379,8 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
   transition: var(--theme-trans);
 }
 body.dark .controls-sec { background: rgba(11,11,15,0.88); }
-
-/* FIX: tightened from 14px/12px to 8px/6px */
 .controls-inner { max-width: 1200px; margin: 0 auto; padding: 8px 20px 6px; }
 
-/* FIX: single merged row — search + sort + filter + nearby all in one line */
 .search-filter-row {
   display: flex;
   gap: 8px;
@@ -378,7 +390,7 @@ body.dark .controls-sec { background: rgba(11,11,15,0.88); }
   flex: 1; display: flex; align-items: center; gap: 10px;
   background: rgba(118,118,128,0.12);
   border: none; border-radius: var(--radius-sm);
-  padding: 9px 14px; /* FIX: reduced from 11px */
+  padding: 9px 14px; 
   transition: all 0.2s var(--ease);
   min-width: 0;
 }
@@ -393,7 +405,7 @@ body.dark .search-box:focus-within { background: rgba(28,28,32,0.95); box-shadow
 
 .sort-wrap { position: relative; flex-shrink: 0; }
 .sort-sel {
-  appearance: none; padding: 9px 30px 9px 12px; /* FIX: reduced padding */
+  appearance: none; padding: 9px 30px 9px 12px;
   background: rgba(118,118,128,0.1); border: none; border-radius: var(--radius-sm);
   font-size: 0.8125rem; font-weight: 500; color: var(--ink); cursor: pointer;
   transition: background 0.2s, color 0.4s;
@@ -405,8 +417,11 @@ body.dark .sort-sel { background: rgba(255,255,255,0.07); }
 body.dark .sort-sel:focus { background: rgba(28,28,32,0.95); }
 .sort-arr { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
 
-/* FIX: hide sort label on small screens to save space */
-@media (max-width: 600px) { .sort-sel { display: none; } .sort-arr { display: none; } }
+/* FIXED: Allow sort label to shrink properly on small screens instead of disappearing */
+@media (max-width: 600px) { 
+  .sort-sel { padding: 7px 22px 7px 8px; font-size: 0.75rem; }
+  .sort-arr { right: 5px; }
+}
 
 .filter-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -436,10 +451,8 @@ body.dark .filter-btn { background: rgba(255,255,255,0.07); }
 .nearby-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
 .nearby-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* FIX: hide "Within 2 km" text on very small screens, keep icon */
 @media (max-width: 480px) { .nearby-btn .nearby-label { display: none; } }
 
-/* FIX: location row hidden by default, shown via toggle */
 .loc-row-wrap {
   overflow: hidden;
   max-height: 0;
@@ -464,7 +477,6 @@ body.dark .loc-chip { background: rgba(255,255,255,0.07); }
 .loc-chip:hover { background: rgba(118,118,128,0.18); color: var(--ink); transform: translateY(-1px); }
 .loc-chip.active { background: var(--ink); color: #fff; }
 
-/* Location toggle button (inside the main row) */
 .loc-toggle-btn {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 9px 12px;
@@ -481,7 +493,6 @@ body.dark .loc-chip { background: rgba(255,255,255,0.07); }
 .loc-toggle-btn.open .loc-arr { transform: rotate(180deg); }
 @media (max-width: 480px) { .loc-toggle-btn .loc-toggle-label { display: none; } }
 
-/* Active filter pills */
 .pills-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s, opacity 0.3s, margin 0.3s; }
 .pills-row.vis { max-height: 80px; opacity: 1; margin-top: 6px; }
 .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 12px; background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2); border-radius: 100px; font-size: 0.6875rem; font-weight: 500; color: var(--accent); animation: ppop 0.2s var(--ease-spring) both; }
@@ -491,7 +502,6 @@ body.dark .loc-chip { background: rgba(255,255,255,0.07); }
 .pill-clear { padding: 4px 10px; font-size: 0.6875rem; font-weight: 500; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: inherit; transition: color 0.2s; }
 .pill-clear:hover { color: var(--accent); }
 
-/* FIX: compact mode when scrolled — auto-shrink the sticky bar */
 .controls-sec.compact .controls-inner { padding: 5px 20px 4px; }
 .controls-sec.compact .search-box { padding: 7px 12px; }
 .controls-sec.compact .sort-sel { padding: 7px 28px 7px 12px; }
@@ -547,7 +557,7 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 /* ═══ SECTION HEADER ═══ */
 .sec-hdr {
   background: var(--bg2); border-bottom: 0.5px solid var(--border);
-  padding: 10px 24px; /* FIX: reduced from 12px */
+  padding: 10px 24px; 
   display: flex; align-items: center; justify-content: space-between;
   transition: var(--theme-trans);
 }
@@ -573,7 +583,7 @@ body.dark .fp-radio { background: rgba(255,255,255,0.07); }
 /* ═══ FOOD GRID & CARDS ═══ */
 .food-grid {
   max-width: 1200px; margin: 0 auto;
-  padding: 20px 20px 80px; /* FIX: reduced top padding from 28px */
+  padding: 20px 20px 80px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 18px;
@@ -981,7 +991,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 
 <div id="page-root">
 
-<!-- ═══ NAVBAR ═══ -->
 <nav class="navbar">
   <a class="nav-logo" href="/">
     <div class="logo-mark"></div>
@@ -992,10 +1001,15 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       <div class="live-dot"></div>
       <span class="live-text">Live Rescue Feed</span>
     </div>
+    
     <div class="city-pill locating" id="cityPill">
       <span class="cp-dot"></span>
-      <span id="cityName">Locating…</span>
+      <select id="citySelect" class="city-select" onchange="onCityChange()">
+        <option value="all" id="cityNameLoc">Locating…</option>
+      </select>
+      <svg class="city-arr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+
   </div>
   <div class="nav-right">
     <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
@@ -1016,7 +1030,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-left">
@@ -1062,7 +1075,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </header>
 
-<!-- ═══ TICKER ═══ -->
 <div class="ticker">
   <div class="ticker-inner">
     <span class="titem">Rescue Today's Surplus<span class="tsep"></span></span>
@@ -1080,11 +1092,9 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ CONTROLS — FIX: single row layout + collapsible location chips ═══ -->
 <div class="controls-sec" id="controlsBlock">
   <div class="controls-inner">
 
-    <!-- SINGLE MERGED ROW: search + sort + filter + location toggle + nearby -->
     <div class="search-filter-row">
       <div class="search-box">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -1110,7 +1120,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
         <span class="fcnt" id="filterCnt">0</span>
       </button>
 
-      <!-- Location toggle — expands the chips row below -->
       <button class="loc-toggle-btn" id="locToggleBtn" onclick="toggleLocRow()">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         <span class="loc-toggle-label">Area</span>
@@ -1123,10 +1132,9 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       </button>
     </div>
 
-    <!-- LOCATION CHIPS — hidden by default, toggled -->
     <div class="loc-row-wrap" id="locRowWrap">
       <div class="loc-row" id="locationRow">
-        <button class="loc-chip active" id="locChipAll" onclick="setRadius(null,this)">All Kitchens</button>
+        <button class="loc-chip active" id="locChipAll" onclick="setRadius(null,this)">All Areas</button>
         <button class="loc-chip" id="locChip2"  onclick="setRadius(2,this)">Within 2 km</button>
         <button class="loc-chip" id="locChip5"  onclick="setRadius(5,this)">Within 5 km</button>
         <button class="loc-chip" id="locChip10" onclick="setRadius(10,this)">Within 10 km</button>
@@ -1138,11 +1146,9 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       </div>
     </div>
 
-    <!-- ACTIVE FILTER PILLS -->
     <div class="pills-row" id="afRow"></div>
   </div>
 
-  <!-- FILTER PANEL -->
   <div class="filter-panel" id="filterPanel">
     <div class="fp-inner">
       <div class="fp-grid">
@@ -1207,7 +1213,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ SECTION HEADER ═══ -->
 <div class="sec-hdr">
   <div class="sec-hdr-left">
     <div class="live-pip"></div>
@@ -1216,14 +1221,12 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   <div class="sec-hdr-badge" id="plateCount">— plates</div>
 </div>
 
-<!-- ═══ FOOD GRID ═══ -->
 <div class="food-grid" id="foodGrid">
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:34%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:70%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:44%;height:10px;margin-top:32px"></div></div></div>
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:38%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:66%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:40%;height:10px;margin-top:32px"></div></div></div>
   <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:30%;height:8px;margin-bottom:10px"></div><div class="skel-line" style="width:54%;height:24px;margin-bottom:8px"></div><div class="skel-line" style="width:48%;height:10px;margin-top:32px"></div></div></div>
 </div>
 
-<!-- ═══ FEATURES ═══ -->
 <div class="feat-sec">
   <div class="feat-eyebrow">// <span>Why</span> Last Plate //</div>
   <div class="feat-grid">
@@ -1248,7 +1251,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ SUPPORT ═══ -->
 <section class="support-sec">
   <div class="support-inner">
     <div class="supp-left">
@@ -1287,10 +1289,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </footer>
 
-</div><!-- end page-root -->
-
-<!-- ═══ MODAL ═══ -->
-<div class="modal-overlay" id="modalOverlay">
+</div><div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <div class="modal-img-wrap">
       <img class="modal-img" id="modalImg" src="" alt="">
@@ -1314,7 +1313,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ DRAWER ═══ -->
 <div class="drawer-bg" id="drawerOverlay">
   <div class="drawer-scrim" id="drawerScrim"></div>
   <div class="drawer-panel">
@@ -1352,7 +1350,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══ BOTTOM NAV ═══ -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bn-item active" id="bnBrowse" onclick="setNav('bnBrowse');window.scrollTo({top:0,behavior:'smooth'})">
     <div class="bn-ico">
@@ -1381,7 +1378,6 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </button>
 </nav>
 
-<!-- ═══ SHEET ═══ -->
 <div class="sheet-overlay" id="sheetOverlay">
   <div class="sheet-scrim" id="sheetScrim"></div>
   <div class="sheet" id="theSheet">
@@ -1464,7 +1460,7 @@ function getFoodCoords(food){
 }
 
 /* ═══════════════════════════════════════════════════════
-   §4  USER LOCATION
+   §4  USER LOCATION & CITY SWITCHING
 ═══════════════════════════════════════════════════════ */
 function getUserLocation(){
   if(!navigator.geolocation){applyFallbackLocation();return;}
@@ -1530,12 +1526,22 @@ async function reverseGeocode(lat,lng){
 }
 
 function updateCityPill(state,text){
-  const pill=document.getElementById('cityPill'),name=document.getElementById('cityName');
+  const pill=document.getElementById('cityPill');
   pill.className='city-pill';
   if(state==='locating')pill.classList.add('locating');
   if(state==='denied')pill.classList.add('denied');
-  name.textContent=text;
+  
+  const locOption = document.getElementById('cityNameLoc');
+  if(locOption) locOption.textContent = text;
 }
+
+window.onCityChange = function() {
+  currentLoc = 'all'; // reset fine-grained locality when changing master city
+  document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c=>c.classList.remove('active'));
+  const allChip = document.getElementById('locChipAll');
+  if (allChip) allChip.classList.add('active');
+  applyFilters();
+};
 
 /* ═══════════════════════════════════════════════════════
    §5  DISTANCE HELPERS
@@ -1590,7 +1596,7 @@ function recomputeAndRefresh(){
 }
 
 /* ═══════════════════════════════════════════════════════
-   §6  LOCATION ROW TOGGLE (NEW)
+   §6  LOCATION ROW TOGGLE
 ═══════════════════════════════════════════════════════ */
 let locRowOpen = false;
 function toggleLocRow(){
@@ -1630,7 +1636,6 @@ document.getElementById('darkToggle').addEventListener('click',function(){
 window.addEventListener('scroll',()=>{
   const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
   document.getElementById('sline').style.width=(p*100)+'%';
-  // FIX: compact sticky bar after scrolling 80px
   document.querySelector('.controls-sec').classList.toggle('compact',window.scrollY>80);
 },{passive:true});
 
@@ -1741,9 +1746,18 @@ function sortFoods(arr){
 
 function getFiltered(){
   const q=document.getElementById('foodSearch').value.toLowerCase();
+  const selCity=document.getElementById('citySelect').value;
+  
   return allFoods.filter(f=>{
+    // City Switching check
+    if (selCity !== 'all') {
+       const fc = (f.city || f.restaurant_city || f.location || '').toLowerCase();
+       if (fc !== selCity.toLowerCase()) return false;
+    }
+
     const locKey=f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
     if(currentLoc!=='all'&&locKey!==currentLoc)return false;
+    
     if(q&&!(f.name||'').toLowerCase().includes(q)&&!(f.restaurant_name||'').toLowerCase().includes(q))return false;
     if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
     const mins=f.minutes_left||9999;
@@ -1912,7 +1926,6 @@ function resetAllFilters(){
   currentLoc='all';
   document.getElementById('locationRow').querySelectorAll('.loc-chip').forEach(c=>c.classList.remove('active'));
   document.getElementById('locChipAll').classList.add('active');
-  // Close location row
   locRowOpen=false;
   document.getElementById('locRowWrap').classList.remove('expanded');
   document.getElementById('locToggleBtn').classList.remove('open');
@@ -1955,11 +1968,17 @@ fetch('/api/foods')
   .then(r=>{if(!r.ok)throw 0;return r.json();})
   .then(data=>{
     allFoods=data.foods||[];
-    if(allFoods.length){
-      console.log('[LastPlate] First food item keys:',Object.keys(allFoods[0]));
-      console.log('[LastPlate] First food item:',allFoods[0]);
-      console.log('[LastPlate] Resolved coords for first item:',getFoodCoords(allFoods[0]));
-    }
+    
+    // CITY DROPDOWN POPULATION
+    const citySelect = document.getElementById('citySelect');
+    const uniqueCities = [...new Set(allFoods.map(f => f.city || f.restaurant_city || f.location).filter(Boolean))];
+    uniqueCities.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      citySelect.appendChild(opt);
+    });
+
     const locKey=f=>f.location||f.area||f.locality||f.restaurant_address||f.restaurant_name||'';
     const locs=[...new Set(allFoods.map(locKey).filter(Boolean))];
     const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
