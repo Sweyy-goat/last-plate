@@ -262,9 +262,7 @@ body.dark .ticker::after  { background: linear-gradient(-90deg, #0D0D11, transpa
 .titem strong { color: rgba(255,255,255,0.65); font-weight: 600; }
 .tsep { width: 3px; height: 3px; background: var(--accent); border-radius: 50%; opacity: 0.6; display: inline-block; }
 
-/* ═══════════════════════════════════════════
-   CONTROLS — COMPACT SINGLE-ROW DESIGN
-═══════════════════════════════════════════ */
+/* CONTROLS */
 .controls-sec {
   background: rgba(255,255,255,0.82);
   backdrop-filter: saturate(180%) blur(20px);
@@ -329,8 +327,7 @@ body.dark .ctrl-icon-btn { background: rgba(255,255,255,0.07); }
 body.dark .fcnt { border-color: rgba(11,11,15,0.9); }
 
 /* ═══════════════════════════════════════════
-   RESTAURANT LOCATION SELECTOR — UNIQUE MAP STRIP
-   Sits BETWEEN controls and food grid, full width
+   LOCATION MAP STRIP — Shows areas/zones, not restaurants
 ═══════════════════════════════════════════ */
 .loc-map-section {
   background: var(--bg2);
@@ -375,7 +372,7 @@ body.dark .loc-map-section::before {
 .loc-map-gps:hover { background: rgba(0,113,227,0.14); }
 .loc-map-gps.located { background: rgba(48,209,88,0.1); border-color: rgba(48,209,88,0.3); color: var(--green); }
 
-/* Horizontal scrollable track with pins */
+/* Horizontal scrollable track */
 .loc-track-wrap {
   position: relative;
   overflow: hidden;
@@ -386,8 +383,6 @@ body.dark .loc-map-section::before {
 }
 .loc-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg2), transparent); }
 .loc-track-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--bg2), transparent); }
-body.dark .loc-track-wrap::before { background: linear-gradient(90deg, var(--bg2), transparent); }
-body.dark .loc-track-wrap::after  { background: linear-gradient(-90deg, var(--bg2), transparent); }
 
 .loc-track {
   display: flex; align-items: stretch; gap: 0;
@@ -397,7 +392,7 @@ body.dark .loc-track-wrap::after  { background: linear-gradient(-90deg, var(--bg
 }
 .loc-track::-webkit-scrollbar { display: none; }
 
-/* The "All" pin — always first */
+/* "All" pin */
 .loc-pin-all {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   cursor: pointer; flex-shrink: 0; padding: 0 14px;
@@ -406,7 +401,7 @@ body.dark .loc-track-wrap::after  { background: linear-gradient(-90deg, var(--bg
 }
 .loc-pin-all:not(:last-child)::after {
   content: '';
-  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 0; top: 20px;
   width: 1px; height: 32px; background: var(--border);
 }
 
@@ -431,96 +426,101 @@ body.dark .loc-track-wrap::after  { background: linear-gradient(-90deg, var(--bg
 }
 .loc-pin-all.active .loc-pin-all-lbl { color: var(--accent); }
 
-/* Individual restaurant pin */
-.loc-pin {
+/* ═══ AREA/LOCATION PIN — unique map marker per zone ═══ */
+.loc-area-pin {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
-  cursor: pointer; flex-shrink: 0; padding: 0 10px;
+  cursor: pointer; flex-shrink: 0; padding: 0 12px;
   position: relative; transition: opacity 0.25s;
 }
-.loc-pin:hover { opacity: 0.9; }
 
-/* Connector line between pins */
-.loc-connector {
-  position: absolute; top: 20px; right: -10px; width: 20px; height: 1px;
-  background: var(--border); z-index: 0;
+/* Dashed connector line between pins */
+.loc-area-pin::after {
+  content: '';
+  position: absolute; right: -1px; top: 18px;
+  width: 2px; height: 28px;
+  border-right: 1.5px dashed var(--border);
+  z-index: 0;
 }
-.loc-pin.active .loc-connector { background: rgba(255,59,48,0.25); }
+.loc-area-pin:last-child::after { display: none; }
+.loc-area-pin.active::after { border-right-color: rgba(255,59,48,0.2); }
 
-/* The pin marker */
-.loc-pin-marker {
-  width: 40px; height: 40px;
+/* The animated map-pin marker */
+.loc-area-marker {
+  width: 40px; height: 50px;
   position: relative; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.35s var(--ease-spring);
+  display: flex; align-items: flex-start; justify-content: center;
+  transition: transform 0.4s var(--ease-spring);
 }
-.loc-pin:hover .loc-pin-marker { transform: translateY(-4px); }
-.loc-pin.active .loc-pin-marker { transform: translateY(-5px); }
+.loc-area-pin:hover .loc-area-marker { transform: translateY(-5px); }
+.loc-area-pin.active .loc-area-marker { transform: translateY(-7px); }
 
-/* SVG pin shape */
-.loc-pin-svg {
-  width: 36px; height: 44px;
-  transition: all 0.3s var(--ease-spring);
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.18));
+/* SVG teardrop pin */
+.loc-area-pin-svg {
+  width: 38px; height: 48px;
+  transition: filter 0.3s;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
 }
-.loc-pin.active .loc-pin-svg {
-  filter: drop-shadow(0 4px 12px rgba(255,59,48,0.4));
-}
-
-/* Initials inside pin */
-.loc-pin-initials {
-  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-  font-size: 0.625rem; font-weight: 800; color: #fff; letter-spacing: -0.02em;
-  text-align: center; line-height: 1; pointer-events: none;
-  width: 24px; white-space: nowrap; overflow: hidden;
-  text-overflow: clip;
+.loc-area-pin.active .loc-area-pin-svg {
+  filter: drop-shadow(0 5px 14px rgba(255,59,48,0.45));
 }
 
-/* Pulse ring for active pin */
-.loc-pin-pulse {
-  position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
-  width: 12px; height: 12px; border-radius: 50%;
-  background: var(--accent); opacity: 0;
+/* Icon or letter inside pin */
+.loc-area-pin-icon {
+  position: absolute;
+  top: 7px; left: 50%; transform: translateX(-50%);
+  font-size: 0.75rem; font-weight: 800; color: #fff;
+  pointer-events: none; line-height: 1;
+  width: 24px; text-align: center;
+  white-space: nowrap; overflow: hidden;
+}
+
+/* Pulse dot at base of active pin */
+.loc-area-pin-dot {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,59,48,0.6); opacity: 0;
   transition: opacity 0.2s;
 }
-.loc-pin.active .loc-pin-pulse {
+.loc-area-pin.active .loc-area-pin-dot {
   opacity: 1;
-  animation: pinPulse 1.8s ease-in-out infinite;
+  animation: areaPinPulse 2s ease-in-out infinite;
 }
-@keyframes pinPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.5); }
-  50% { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
+@keyframes areaPinPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.5); transform: translateX(-50%) scale(1); }
+  50% { box-shadow: 0 0 0 6px rgba(255,59,48,0); transform: translateX(-50%) scale(1.2); }
 }
 
-/* Restaurant label card under pin */
-.loc-pin-card {
-  background: var(--white); border: 0.5px solid var(--border); border-radius: var(--radius-sm);
-  padding: 6px 10px; min-width: 80px; max-width: 110px;
+/* Label card below pin */
+.loc-area-card {
+  background: var(--white); border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px; min-width: 72px; max-width: 100px;
   text-align: center;
   transition: all 0.3s var(--ease-out), var(--theme-trans);
   box-shadow: var(--shadow-xs);
   position: relative; z-index: 1;
 }
-.loc-pin.active .loc-pin-card {
-  border-color: rgba(255,59,48,0.25); background: var(--white);
-  box-shadow: 0 4px 16px rgba(255,59,48,0.12);
+.loc-area-pin.active .loc-area-card {
+  border-color: rgba(255,59,48,0.3);
+  box-shadow: 0 4px 16px rgba(255,59,48,0.14);
 }
-.loc-pin-name {
+.loc-area-name {
   font-size: 0.625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
   display: block; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   transition: color 0.2s;
 }
-.loc-pin.active .loc-pin-name { color: var(--accent); }
-.loc-pin-count {
+.loc-area-pin.active .loc-area-name { color: var(--accent); }
+.loc-area-meta {
   font-size: 0.5rem; font-weight: 500; color: var(--ink3);
   display: flex; align-items: center; justify-content: center; gap: 3px;
 }
-.loc-pin-count-dot { width: 4px; height: 4px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
-.loc-pin-dist {
+.loc-area-meta-dot { width: 4px; height: 4px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+.loc-area-dist {
   font-size: 0.5rem; font-weight: 600; color: var(--blue);
-  margin-top: 1px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-top: 2px; display: block;
 }
 
-/* Active radius badge that pops up */
+/* Active badge */
 .loc-active-badge {
   display: none; align-items: center; gap: 5px;
   padding: 3px 10px; background: rgba(255,59,48,0.08); border: 0.5px solid rgba(255,59,48,0.2);
@@ -1058,7 +1058,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- CONTROLS — COMPACT -->
+<!-- CONTROLS -->
 <div class="controls-sec" id="controlsBlock">
   <div class="ctrl-main-row">
     <div class="search-box">
@@ -1083,10 +1083,8 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
     </button>
   </div>
 
-  <!-- Active filter pills -->
   <div class="pills-row" id="afRow"></div>
 
-  <!-- Filter panel -->
   <div class="filter-panel" id="filterPanel">
     <div class="fp-inner">
       <div class="fp-grid">
@@ -1151,18 +1149,16 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     RESTAURANT LOCATION MAP STRIP — Unique section
-═══════════════════════════════════════════ -->
+<!-- ═══ LOCATION AREA STRIP ═══ -->
 <div class="loc-map-section" id="locMapSection" style="display:none">
   <div class="loc-map-inner">
     <div class="loc-map-header">
       <div class="loc-map-title">
         <div class="loc-map-title-dot"></div>
-        Kitchens Near You
+        Areas with Plates
         <span id="locActiveBadge" class="loc-active-badge">
           <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span id="locActiveBadgeText">All kitchens</span>
+          <span id="locActiveBadgeText">All areas</span>
         </span>
       </div>
       <button class="loc-map-gps" id="locMapGpsBtn" onclick="requestGPS()">
@@ -1171,9 +1167,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
       </button>
     </div>
     <div class="loc-track-wrap">
-      <div class="loc-track" id="locTrack">
-        <!-- "All" pin injected first, then restaurant pins -->
-      </div>
+      <div class="loc-track" id="locTrack"></div>
     </div>
   </div>
 </div>
@@ -1402,8 +1396,7 @@ body.dark .tmrw-row { background: rgba(255,255,255,0.04); }
 /* ═══ §1 LOCATION STATE ═══ */
 const GEO = {
   lat: null, lng: null, city: null, status: 'idle',
-  radiusKm: 25,
-  selectedRestaurantName: null,
+  selectedAreaKey: null,   /* null = All */
   FALLBACK: { lat: 9.9312, lng: 76.2673, city: 'Kochi' },
 };
 
@@ -1618,150 +1611,236 @@ function getTimeWidth(mins){if(mins>=120)return'100';return Math.max(8,Math.roun
 function calcDisc(mrp,price){if(!mrp||mrp<=price)return 0;return Math.round(((mrp-price)/mrp)*100);}
 function normDiet(raw){if(!raw)return null;const t=raw.toString().toLowerCase().trim();if(t==='veg')return'veg';if(t==='egg')return'egg';if(t.includes('non')||t==='nonveg')return'nonveg';return null;}
 
-/* ═══ §7 PIN COLORS — unique per restaurant ═══ */
-const PIN_COLORS = [
-  {body:'#FF3B30',shadow:'rgba(255,59,48,0.45)'},
-  {body:'#0071E3',shadow:'rgba(0,113,227,0.45)'},
-  {body:'#FF9F0A',shadow:'rgba(255,159,10,0.45)'},
-  {body:'#30D158',shadow:'rgba(48,209,88,0.45)'},
-  {body:'#AF52DE',shadow:'rgba(175,82,222,0.45)'},
-  {body:'#FF6B35',shadow:'rgba(255,107,53,0.45)'},
-  {body:'#00C7BE',shadow:'rgba(0,199,190,0.45)'},
-  {body:'#5856D6',shadow:'rgba(88,86,214,0.45)'},
+/* ═══ §7 AREA COLOR PALETTES — visually distinct per zone ═══ */
+const AREA_PALETTES = [
+  /* body color,   shadow color,    accent ring */
+  { body:'#0071E3', shadow:'rgba(0,113,227,0.45)',   ring:'rgba(0,113,227,0.18)' },  /* blue */
+  { body:'#30D158', shadow:'rgba(48,209,88,0.45)',   ring:'rgba(48,209,88,0.18)'  },  /* green */
+  { body:'#FF9F0A', shadow:'rgba(255,159,10,0.45)',  ring:'rgba(255,159,10,0.18)' },  /* amber */
+  { body:'#AF52DE', shadow:'rgba(175,82,222,0.45)',  ring:'rgba(175,82,222,0.18)' },  /* purple */
+  { body:'#FF6B35', shadow:'rgba(255,107,53,0.45)',  ring:'rgba(255,107,53,0.18)' },  /* orange */
+  { body:'#00C7BE', shadow:'rgba(0,199,190,0.45)',   ring:'rgba(0,199,190,0.18)'  },  /* teal */
+  { body:'#5856D6', shadow:'rgba(88,86,214,0.45)',   ring:'rgba(88,86,214,0.18)'  },  /* indigo */
+  { body:'#FF2D55', shadow:'rgba(255,45,85,0.45)',   ring:'rgba(255,45,85,0.18)'  },  /* pink-red */
 ];
-function getPinColor(index) { return PIN_COLORS[index % PIN_COLORS.length]; }
+function getAreaPalette(index) { return AREA_PALETTES[index % AREA_PALETTES.length]; }
 
-/* Build an SVG map-pin shape */
-function buildPinSVG(color, active) {
-  const c = active ? '#FF3B30' : color.body;
-  return `<svg class="loc-pin-svg" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 0C8.059 0 0 8.059 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8.059 27.941 0 18 0z" fill="${c}"/>
-    <circle cx="18" cy="18" r="8" fill="rgba(255,255,255,0.25)"/>
-    <circle cx="18" cy="18" r="4" fill="white" opacity="0.9"/>
-  </svg>`;
+/* Build SVG teardrop pin with unique shape variation per index */
+function buildAreaPinSVG(palette, active, index) {
+  const c = active ? '#FF3B30' : palette.body;
+  /* Slightly different pin shapes for uniqueness: rounded vs sharp tip, different inner icon */
+  const shapes = [
+    /* circle-marker */
+    `<path d="M19 8.5C19 14.5 12 21 12 21S5 14.5 5 8.5a7 7 0 0 1 14 0z" fill="${c}"/>
+     <circle cx="12" cy="8.5" r="3" fill="rgba(255,255,255,0.85)"/>`,
+    /* diamond-tip */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <rect x="9.5" y="6.5" width="5" height="5" rx="1" fill="rgba(255,255,255,0.85)" transform="rotate(45 12 9)"/>`,
+    /* hexagonal feel */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <path d="M14.5 7.5 L12 6 L9.5 7.5 L9.5 10.5 L12 12 L14.5 10.5 Z" fill="rgba(255,255,255,0.85)"/>`,
+    /* star center */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <text x="12" y="12" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="7" font-weight="bold">✦</text>`,
+    /* dot pattern */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <circle cx="10" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/>
+     <circle cx="14" cy="8" r="1.5" fill="rgba(255,255,255,0.8)"/>
+     <circle cx="12" cy="11" r="1.5" fill="rgba(255,255,255,0.8)"/>`,
+    /* ring */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <circle cx="12" cy="9" r="4" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
+     <circle cx="12" cy="9" r="1.5" fill="rgba(255,255,255,0.85)"/>`,
+    /* cross/plus */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <line x1="12" y1="6" x2="12" y2="12" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>
+     <line x1="9" y1="9" x2="15" y2="9" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"/>`,
+    /* triangle */
+    `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/>
+     <polygon points="12,6 15,12 9,12" fill="rgba(255,255,255,0.85)"/>`,
+  ];
+  const shape = shapes[index % shapes.length];
+  return `<svg class="loc-area-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${shape}</svg>`;
 }
 
-/* Get initials from restaurant name */
-function getInitials(name) {
-  return (name||'?').split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+/* Derive a short area label from an address string or coords */
+function deriveAreaLabel(address, lat, lng) {
+  if (address) {
+    /* Try to extract a meaningful area name from the address */
+    const parts = address.split(/[,\/]/);
+    for (const p of parts) {
+      const t = p.trim();
+      if (t.length >= 3 && t.length <= 20 && !/^\d/.test(t)) return t;
+    }
+  }
+  /* Fallback: grid-based label using lat/lng rounded to 2 decimals */
+  if (lat && lng) return `${parseFloat(lat).toFixed(1)}°N`;
+  return 'Area';
 }
 
-/* ═══ §8 RESTAURANT LOCATION PINS ═══ */
-let allFoods=[], currentRestaurantFilter='all';
-const restaurantMeta = {}; /* name -> { count, coords, km } */
+/* Group foods into geographic clusters (≤3km radius per cluster) */
+function clusterFoodsByArea(foods) {
+  const CLUSTER_RADIUS_KM = 3;
+  const clusters = []; /* [{ label, centLat, centLng, foods[] }] */
 
-function buildRestaurantMeta() {
-  Object.keys(restaurantMeta).forEach(k=>delete restaurantMeta[k]);
-  allFoods.forEach(f => {
-    const name = f.restaurant_name || 'Unknown';
-    if (!restaurantMeta[name]) restaurantMeta[name] = { count: 0, coords: null, km: null };
-    restaurantMeta[name].count++;
-    if (!restaurantMeta[name].coords) {
-      const c = getFoodCoords(f);
-      if (c) restaurantMeta[name].coords = c;
+  foods.forEach(food => {
+    const coords = getFoodCoords(food);
+    if (!coords) {
+      /* Foods with no coords go into a catch-all "Other" bucket */
+      let other = clusters.find(c => c.label === 'Other');
+      if (!other) { other = { label:'Other', centLat:null, centLng:null, foods:[] }; clusters.push(other); }
+      other.foods.push(food);
+      return;
+    }
+
+    /* Try to add to existing cluster within radius */
+    let assigned = false;
+    for (const cluster of clusters) {
+      if (cluster.centLat === null) continue;
+      const dist = haversineKm(cluster.centLat, cluster.centLng, coords.lat, coords.lng);
+      if (dist <= CLUSTER_RADIUS_KM) {
+        cluster.foods.push(food);
+        /* Update centroid (running average) */
+        const n = cluster.foods.length;
+        cluster.centLat = ((cluster.centLat * (n-1)) + coords.lat) / n;
+        cluster.centLng = ((cluster.centLng * (n-1)) + coords.lng) / n;
+        assigned = true;
+        break;
+      }
+    }
+    if (!assigned) {
+      /* Derive label from first food's address */
+      const label = deriveAreaLabel(food.restaurant_short_address || food.restaurant_address || '', coords.lat, coords.lng);
+      clusters.push({ label, centLat: coords.lat, centLng: coords.lng, foods: [food] });
     }
   });
-  /* compute distances */
-  Object.values(restaurantMeta).forEach(r => {
-    if (r.coords && GEO.lat !== null) {
-      r.km = haversineKm(GEO.lat, GEO.lng, r.coords.lat, r.coords.lng);
+
+  /* Merge duplicate labels by appending count suffix */
+  const seen = {};
+  clusters.forEach(c => {
+    if (c.label === 'Other') return;
+    seen[c.label] = (seen[c.label]||0) + 1;
+  });
+  const labelCount = {};
+  clusters.forEach(c => {
+    if (c.label === 'Other') return;
+    if (seen[c.label] > 1) {
+      labelCount[c.label] = (labelCount[c.label]||0) + 1;
+      c.label = c.label + ' ' + labelCount[c.label];
     }
   });
+
+  return clusters;
 }
 
+/* ═══ §8 AREA STATE ═══ */
+let allFoods = [];
+let areaClusterKey = null; /* null = All */
+let builtClusters = [];   /* last built clusters */
+
+/* ═══ §9 LOCATION PIN BUILDER ═══ */
 function rebuildLocationPins() {
-  buildRestaurantMeta();
+  /* Re-cluster from scratch */
+  builtClusters = clusterFoodsByArea(allFoods);
+
   const track = document.getElementById('locTrack');
   const section = document.getElementById('locMapSection');
-  const names = Object.keys(restaurantMeta);
 
-  if (!names.length) { section.style.display='none'; return; }
-  section.style.display='';
-  track.innerHTML='';
+  if (!builtClusters.length) { section.style.display='none'; return; }
+  section.style.display = '';
+  track.innerHTML = '';
 
-  /* "All" pin */
-  const allPin = document.createElement('div');
-  allPin.className = 'loc-pin-all' + (currentRestaurantFilter==='all'?' active':'');
-  allPin.id = 'locPinAll';
-  allPin.innerHTML = `
-    <div class="loc-pin-globe">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-    </div>
-    <div class="loc-pin-all-lbl">All</div>`;
-  allPin.onclick = () => selectRestaurantPin('all', null, null);
-  track.appendChild(allPin);
-
-  /* Sort by distance if available */
-  const sorted = names.slice().sort((a,b) => {
-    const dA = restaurantMeta[a].km ?? 9999;
-    const dB = restaurantMeta[b].km ?? 9999;
+  /* Sort clusters: known-coord clusters by distance to user, "Other" last */
+  const userLat = GEO.lat || GEO.FALLBACK.lat;
+  const userLng = GEO.lng || GEO.FALLBACK.lng;
+  builtClusters.sort((a, b) => {
+    if (a.label === 'Other') return 1;
+    if (b.label === 'Other') return -1;
+    const dA = a.centLat !== null ? haversineKm(userLat, userLng, a.centLat, a.centLng) : 9999;
+    const dB = b.centLat !== null ? haversineKm(userLat, userLng, b.centLat, b.centLng) : 9999;
     return dA - dB;
   });
 
-  sorted.forEach((name, i) => {
-    const meta = restaurantMeta[name];
-    const color = getPinColor(i);
-    const initials = getInitials(name);
-    const isActive = currentRestaurantFilter === name;
-    const distLabel = meta.km !== null ? formatDistance(meta.km) : null;
+  /* ── "All" pin ── */
+  const allPin = document.createElement('div');
+  allPin.className = 'loc-pin-all' + (areaClusterKey === null ? ' active' : '');
+  allPin.id = 'locPinAll';
+  allPin.innerHTML = `
+    <div class="loc-pin-globe">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    <div class="loc-pin-all-lbl">All</div>`;
+  allPin.onclick = () => selectAreaPin(null);
+  track.appendChild(allPin);
+
+  /* ── Area pins ── */
+  builtClusters.forEach((cluster, i) => {
+    const palette = getAreaPalette(i);
+    const isActive = areaClusterKey === cluster.label;
+    const distKm = cluster.centLat !== null ? haversineKm(userLat, userLng, cluster.centLat, cluster.centLng) : null;
+    const distLabel = distKm !== null ? formatDistance(distKm) : null;
 
     const pin = document.createElement('div');
-    pin.className = 'loc-pin' + (isActive ? ' active' : '');
-    pin.dataset.restName = name;
+    pin.className = 'loc-area-pin' + (isActive ? ' active' : '');
+    pin.dataset.areaKey = cluster.label;
+
     pin.innerHTML = `
-      ${i < sorted.length - 1 ? '<div class="loc-connector"></div>' : ''}
-      <div class="loc-pin-marker">
-        ${buildPinSVG(color, isActive)}
-        <div class="loc-pin-initials">${initials}</div>
-        <div class="loc-pin-pulse"></div>
+      <div class="loc-area-marker">
+        ${buildAreaPinSVG(palette, isActive, i)}
+        <div class="loc-area-pin-dot"></div>
       </div>
-      <div class="loc-pin-card">
-        <span class="loc-pin-name">${name}</span>
-        <div class="loc-pin-count"><div class="loc-pin-count-dot"></div>${meta.count} plate${meta.count!==1?'s':''}</div>
-        ${distLabel ? `<span class="loc-pin-dist">${distLabel} away</span>` : ''}
+      <div class="loc-area-card">
+        <span class="loc-area-name">${cluster.label}</span>
+        <div class="loc-area-meta"><div class="loc-area-meta-dot"></div>${cluster.foods.length} plate${cluster.foods.length!==1?'s':''}</div>
+        ${distLabel ? `<span class="loc-area-dist">${distLabel}</span>` : ''}
       </div>`;
-    pin.onclick = () => selectRestaurantPin(name, meta, color);
+    pin.onclick = () => selectAreaPin(cluster.label);
     track.appendChild(pin);
   });
 }
 
-function selectRestaurantPin(name, meta, color) {
-  currentRestaurantFilter = name;
-  GEO.selectedRestaurantName = name === 'all' ? null : name;
+function selectAreaPin(key) {
+  /* Toggle: clicking active area deselects (goes back to All) */
+  if (areaClusterKey === key && key !== null) {
+    key = null;
+  }
+  areaClusterKey = key;
 
-  /* Update active states on all pins */
-  document.querySelectorAll('.loc-pin-all').forEach(p => p.classList.toggle('active', name==='all'));
-  document.querySelectorAll('.loc-pin[data-rest-name]').forEach(p => {
-    const isThis = p.dataset.restName === name;
-    p.classList.toggle('active', isThis);
-    /* Swap the pin SVG color to accent red when active */
-    const svg = p.querySelector('.loc-pin-svg');
-    if (svg) {
-      const pinColor = getPinColor([...document.querySelectorAll('.loc-pin[data-rest-name]')].indexOf(p));
-      const c = isThis ? '#FF3B30' : pinColor.body;
-      const path = svg.querySelector('path');
-      if (path) path.setAttribute('fill', c);
+  /* Update visual active states */
+  const allPinEl = document.getElementById('locPinAll');
+  if (allPinEl) allPinEl.classList.toggle('active', key === null);
+
+  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach((pin, i) => {
+    const isThis = pin.dataset.areaKey === key;
+    pin.classList.toggle('active', isThis);
+
+    /* Re-color the SVG path fill */
+    const svgPath = pin.querySelector('.loc-area-pin-svg path');
+    if (svgPath) {
+      const palette = getAreaPalette(
+        [...document.querySelectorAll('.loc-area-pin[data-area-key]')].indexOf(pin)
+      );
+      svgPath.setAttribute('fill', isThis ? '#FF3B30' : palette.body);
     }
   });
 
   /* Update active badge */
   const badge = document.getElementById('locActiveBadge');
   const badgeText = document.getElementById('locActiveBadgeText');
-  if (name === 'all') {
+  if (key === null) {
     badge.classList.remove('vis');
-    badgeText.textContent = 'All kitchens';
-    /* Reset radius to 25km default */
-    GEO.radiusKm = 25;
+    badgeText.textContent = 'All areas';
   } else {
+    const cluster = builtClusters.find(c => c.label === key);
     badge.classList.add('vis');
-    /* Auto-set radius: distance to restaurant + 1km buffer, minimum 1km */
-    if (meta && meta.km !== null) {
-      const autoRadius = Math.max(1, Math.ceil(meta.km + 1));
-      GEO.radiusKm = autoRadius;
-      badgeText.textContent = `${name} · ${formatDistance(meta.km)}`;
+    if (cluster && cluster.centLat !== null && GEO.lat !== null) {
+      const km = haversineKm(GEO.lat, GEO.lng, cluster.centLat, cluster.centLng);
+      badgeText.textContent = `${key} · ${formatDistance(km)}`;
     } else {
-      GEO.radiusKm = 25;
-      badgeText.textContent = name;
+      badgeText.textContent = key;
     }
   }
 
@@ -1769,8 +1848,8 @@ function selectRestaurantPin(name, meta, color) {
   applyFilters();
 }
 
-/* ═══ §9 BROWSE DATA + FILTER STATE ═══ */
-const F={diet:new Set(),urgency:'all',discount:0,priceMin:0,priceMax:1000,qty:'all',cuisines:new Set(),sort:'default'};
+/* ═══ §10 BROWSE FILTER STATE ═══ */
+const F = {diet:new Set(), urgency:'all', discount:0, priceMin:0, priceMax:1000, qty:'all', cuisines:new Set(), sort:'default'};
 
 function sortFoods(arr) {
   const s=F.sort; if(s==='default') return arr;
@@ -1786,12 +1865,21 @@ function sortFoods(arr) {
 }
 
 function getFiltered() {
-  const q=document.getElementById('foodSearch').value.toLowerCase();
-  return allFoods.filter(f=>{
-    /* Restaurant pin filter */
-    if (GEO.selectedRestaurantName !== null) {
-      if ((f.restaurant_name||'') !== GEO.selectedRestaurantName) return false;
+  const q = document.getElementById('foodSearch').value.toLowerCase();
+
+  /* Determine which food IDs belong to the selected area */
+  let areaFoodIds = null;
+  if (areaClusterKey !== null) {
+    const cluster = builtClusters.find(c => c.label === areaClusterKey);
+    if (cluster) {
+      areaFoodIds = new Set(cluster.foods.map(f => String(f.id)));
     }
+  }
+
+  return allFoods.filter(f => {
+    /* Area cluster filter — restricts to foods in that geographic cluster */
+    if (areaFoodIds !== null && !areaFoodIds.has(String(f.id))) return false;
+
     if(q&&!(f.name||'').toLowerCase().includes(q)&&!(f.restaurant_name||'').toLowerCase().includes(q)) return false;
     if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
     const mins=f.minutes_left||9999;
@@ -1804,10 +1892,6 @@ function getFiltered() {
     const qty=f.available_quantity||0;
     if(F.qty!=='all'&&qty<parseInt(F.qty,10))return false;
     if(F.cuisines.size>0){const fc=(f.cuisine||'').toLowerCase();let match=false;F.cuisines.forEach(c=>{if(fc.includes(c))match=true;});if(!match)return false;}
-    /* Radius filter — only applies when no specific restaurant is selected */
-    if (GEO.selectedRestaurantName === null && GEO.radiusKm !== null && GEO.lat !== null) {
-      const d=f._distance??9999; if(d>GEO.radiusKm) return false;
-    }
     return true;
   });
 }
@@ -1821,7 +1905,7 @@ function applyFilters() {
 document.getElementById('foodSearch').addEventListener('input',applyFilters);
 document.getElementById('sortSelect').addEventListener('change',function(){F.sort=this.value;applyFilters();});
 
-/* ═══ §10 RENDER ═══ */
+/* ═══ §11 RENDER ═══ */
 function render(foods) {
   const grid=document.getElementById('foodGrid');
   document.getElementById('plateCount').textContent=`${foods.length} plate${foods.length!==1?'s':''}`;
@@ -1887,7 +1971,7 @@ function buildDistanceBadge(km) {
   return`<span class="card-distance${isClose?' close':''}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${label} away</span>`;
 }
 
-/* ═══ §11 FILTER PANEL ═══ */
+/* ═══ §12 FILTER PANEL ═══ */
 let panelOpen=false;
 document.getElementById('filterTrigger').addEventListener('click',()=>{
   panelOpen=!panelOpen;
@@ -1917,7 +2001,7 @@ function commitFilters(){applyFilters();panelOpen=false;document.getElementById(
 
 function resetAllFilters() {
   F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';
-  GEO.radiusKm=25; GEO.selectedRestaurantName=null; currentRestaurantFilter='all';
+  areaClusterKey = null;
   document.getElementById('sortSelect').value='default';
   document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));
   document.querySelector('#urgencyRow [data-urgency="all"]').classList.add('on');
@@ -1932,10 +2016,12 @@ function resetAllFilters() {
   document.getElementById('priceMinLabel').textContent=0;
   document.getElementById('priceMaxLabel').textContent=mx+'+';
   updateFill(0,mx);
-  /* reset location pins */
-  document.querySelectorAll('.loc-pin-all').forEach(p=>p.classList.add('active'));
-  document.querySelectorAll('.loc-pin[data-rest-name]').forEach(p=>p.classList.remove('active'));
-  const badge=document.getElementById('locActiveBadge'); if(badge) badge.classList.remove('vis');
+  /* Reset location pins to "All" */
+  const allPinEl = document.getElementById('locPinAll');
+  if (allPinEl) allPinEl.classList.add('active');
+  document.querySelectorAll('.loc-area-pin[data-area-key]').forEach(p => p.classList.remove('active'));
+  const badge = document.getElementById('locActiveBadge');
+  if (badge) badge.classList.remove('vis');
   applyFilters(); updateBadge();
 }
 
@@ -1947,7 +2033,7 @@ function countActive() {
   if(F.priceMin>0||F.priceMax<1000)n++;
   if(F.qty!=='all')n++;
   if(F.cuisines.size)n+=F.cuisines.size;
-  if(GEO.selectedRestaurantName!==null)n++;
+  if(areaClusterKey!==null)n++;
   return n;
 }
 function updateBadge(){
@@ -1962,14 +2048,14 @@ function updatePills() {
   if(F.priceMin>0||F.priceMax<1000)pills.push({label:`₹${F.priceMin}–${F.priceMax<1000?F.priceMax:'1000+'}`,remove:()=>{F.priceMin=0;F.priceMax=1000;document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);applyFilters();}});
   if(F.qty!=='all')pills.push({label:`${F.qty}+ plates`,remove:()=>{F.qty='all';applyFilters();}});
   F.cuisines.forEach(c=>pills.push({label:c,remove:()=>{F.cuisines.delete(c);document.querySelector(`.fp-chip[data-cuisine="${c}"]`)?.classList.remove('on');applyFilters();}}));
-  if(GEO.selectedRestaurantName!==null)pills.push({label:`📍 ${GEO.selectedRestaurantName}`,remove:()=>{selectRestaurantPin('all',null,null);}});
+  if(areaClusterKey!==null)pills.push({label:`📍 ${areaClusterKey}`,remove:()=>{ selectAreaPin(areaClusterKey); /* will toggle off */ }});
   if(!pills.length){row.classList.remove('vis');row.innerHTML='';updateBadge();return;}
   row.classList.add('vis');
   row.innerHTML=pills.map(p=>`<span class="pill">${p.label}<button class="pill-x" onclick="(${p.remove.toString()})()">✕</button></span>`).join('')+`<button class="pill-clear" onclick="resetAllFilters()">Clear all</button>`;
   updateBadge();
 }
 
-/* ═══ §12 DATA FETCH ═══ */
+/* ═══ §13 DATA FETCH ═══ */
 fetch('/api/foods')
   .then(r=>{if(!r.ok)throw 0;return r.json();})
   .then(data=>{
@@ -2009,7 +2095,7 @@ fetch('/api/foods')
     document.getElementById('hs-rest').textContent='0';
   });
 
-/* ═══ §13 MODAL ═══ */
+/* ═══ §14 MODAL ═══ */
 function openModalById(id){
   const f=allFoods.find(item=>String(item.id)===String(id));
   if(!f) return; openModal(f);
@@ -2040,7 +2126,7 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
 
-/* ═══ §14 DRAWER ═══ */
+/* ═══ §15 DRAWER ═══ */
 function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.body.classList.add('page-pushed');loadProfile();}
 function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.body.classList.remove('page-pushed');}
 document.getElementById('openProfile').onclick=openDrawer;
@@ -2063,7 +2149,7 @@ function setNav(id){document.querySelectorAll('.bn-item').forEach(e=>e.classList
 setNav('bnBrowse');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();closeSheet();}});
 
-/* ═══ §15 CHEF'S SHEET ═══ */
+/* ═══ §16 CHEF'S SHEET ═══ */
 const sheetOverlay=document.getElementById('sheetOverlay'),theSheet=document.getElementById('theSheet'),bottomNav=document.getElementById('bottomNav');
 let secretLoaded=false,secretRests=[],dishCache={};
 
@@ -2216,7 +2302,7 @@ function skelN(n){return Array.from({length:n},()=>`<div class="skel-dish"><div 
 function emptySheet(msg){return`<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`;}
 function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`;}
 
-/* ═══ §16 BOOT ═══ */
+/* ═══ §17 BOOT ═══ */
 getUserLocation();
 </script>
 </body>
