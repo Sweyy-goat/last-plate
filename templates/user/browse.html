@@ -1969,15 +1969,19 @@ function render(foods) {
             ${f.mrp?`<span class="price-old">₹${f.mrp}</span>`:''}
             <span class="price-new"><span class="price-currency">₹</span>${Math.ceil(f.price)}</span>
           </div>
-          <button class="reserve-btn" onclick="event.stopPropagation();location.href='/checkout/${f.id}'">
-            Reserve <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
+          <button class="reserve-btn" onclick="event.stopPropagation(); handleBuy('${f.id}')">
+           Buy
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <path d="M5 12h14M12 5l7 7-7 7"/>
+  </svg>
+</button>
         </div>
       </div>
     </article>`;
   }).join('');
   requestAnimationFrame(markClosestCard);
 }
+
 
 function buildDistanceBadge(km) {
   if(GEO.status==='idle'||GEO.status==='locating') return`<span class="card-distance calculating">Calculating…</span>`;
@@ -2454,6 +2458,30 @@ function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico"
    §19  BOOT
 ══════════════════════════════════════════════ */
 getUserLocation();
+async function handleBuy(foodId) {
+  try {
+    const res = await fetch('/api/check-auth', {
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    if (!data.logged_in) {
+      // Save what user wanted
+      localStorage.setItem("pendingFood", foodId);
+
+      // Redirect to login
+      window.location.href = "/login";
+      return;
+    }
+
+    // Logged in → go to checkout
+    window.location.href = '/checkout/' + foodId;
+
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
 </script>
 </body>
 </html>
