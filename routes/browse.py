@@ -12,7 +12,11 @@ def browse_entry():
 @browse_bp.route("/browse")
 def browse_page():
     return render_template("user/browse.html")
-    
+@browse_bp.route("/api/check-auth")
+def check_auth():
+    if "user_id" in session:
+        return jsonify({"logged_in": True})
+    return jsonify({"logged_in": False})
 
 @browse_bp.route("/api/foods")
 def food_list():
