@@ -1423,14 +1423,14 @@ async function loadAuthUI() {
 
         if (data.logged_in) {
             container.innerHTML = `
-                <button onclick="logout()" class="btn-logout">
+                <button onclick="logout()" class="drawer-logout">
                     Sign Out
                 </button>
             `;
         } else {
             container.innerHTML = `
-                <a href="/login" class="btn-login">Login</a>
-                <a href="/signup" class="btn-signup">Sign Up</a>
+                <a href="/login" class="drawer-logout">Login</a>
+                <a href="/signup" class="drawer-logout">Sign Up</a>
             `;
         }
 
