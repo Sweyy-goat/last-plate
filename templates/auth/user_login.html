@@ -761,7 +761,17 @@ submitBtn.onclick = async () => {
     if (data.success) {
       btnText.textContent = 'Redirecting…';
       showToast('success', '✓ Welcome back!');
-      setTimeout(() => window.location.href = '/browse', 800);
+      setTimeout(() => {
+  const foodId = localStorage.getItem("pendingFood");
+
+  if (foodId) {
+    localStorage.removeItem("pendingFood");
+    window.location.href = '/checkout/' + foodId;
+  } else {
+    window.location.href = '/browse';
+  }
+}, 800);
+      
     } else {
       setFieldState(mobileEl, mobileErr, false);
       setFieldState(passwordEl, passwordErr, false);
