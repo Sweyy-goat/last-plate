@@ -8,17 +8,11 @@ browse_bp = Blueprint("browse", __name__)
 
 @browse_bp.route("/browse-entry")
 def browse_entry():
-    if "user_id" not in session:
-        return redirect("/login")
-    if session.get("role") != "user":
-        return redirect("/")
     return redirect("/browse")
-
 @browse_bp.route("/browse")
 def browse_page():
-    if "user_id" not in session or session.get("role") != "user":
-        return redirect("/login")
     return render_template("user/browse.html")
+    
 
 @browse_bp.route("/api/foods")
 def food_list():
