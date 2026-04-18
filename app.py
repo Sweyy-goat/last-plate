@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 from utils.db import mysql, set_mysql_timezone
 
 from flask_limiter import Limiter
@@ -6,6 +8,8 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+CORS(app)
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 app.config.from_pyfile("config.py")
 
@@ -25,7 +29,7 @@ with app.app_context():
     except Exception as e:
         print("Timezone init skipped:", e)
 
-
+# Blueprints
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp)
 
@@ -50,20 +54,13 @@ app.register_blueprint(savings_bp)
 from routes.secret import secret_bp
 app.register_blueprint(secret_bp)
 
+# Error handler (API)
 @app.errorhandler(429)
 def ratelimit_handler(e):
-    return render_template("429.html"), 429
-
-
-@app.route("/how")
-def how():
-    return render_template("how.html")
-
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
+    return jsonify({
+        "status": "error",
+        "message": "Too many requests"
+    }), 429
 
 if __name__ == "__main__":
     app.run()
