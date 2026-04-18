@@ -6,3 +6,4 @@ python-dotenv
 razorpay
 Flask-Limiter
 flask-cors
+flask-jwt-extended
