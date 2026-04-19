@@ -7,37 +7,29 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# 🔥 JWT
 from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
 
-# 🔥 Config
+# Config
 app.config.from_pyfile("config.py")
 app.secret_key = app.config["SECRET_KEY"]
 
-# 🔥 CORS (for Flutter)
 CORS(app)
-
-# 🔥 Proxy fix (Railway)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
-# 🔥 JWT
 app.config["JWT_SECRET_KEY"] = app.config["SECRET_KEY"]
 jwt = JWTManager(app)
 
-# 🔥 Rate limiter
 limiter = Limiter(
     get_remote_address,
     app=app,
     default_limits=["100 per minute"]
 )
 
-# 🔥 MySQL
 mysql.init_app(app)
 
-# 🔥 DB init
 with app.app_context():
     try:
         set_mysql_timezone()
@@ -57,7 +49,7 @@ from routes.savings import savings_bp
 from routes.secret import secret_bp
 
 
-# 🔥 REGISTER ONCE (WEBSITE)
+# 🔥 WEBSITE (normal)
 app.register_blueprint(auth_bp)
 app.register_blueprint(cities_bp)
 app.register_blueprint(reserve_seat_bp)
@@ -68,15 +60,15 @@ app.register_blueprint(savings_bp)
 app.register_blueprint(secret_bp)
 
 
-# 🔥 REGISTER AGAIN (API PREFIX)
-app.register_blueprint(auth_bp, url_prefix="/api")
-app.register_blueprint(cities_bp, url_prefix="/api")
-app.register_blueprint(reserve_seat_bp, url_prefix="/api")
-app.register_blueprint(restaurant_bp, url_prefix="/api")
-app.register_blueprint(browse_bp, url_prefix="/api")
-app.register_blueprint(order_bp, url_prefix="/api")
-app.register_blueprint(savings_bp, url_prefix="/api")
-app.register_blueprint(secret_bp, url_prefix="/api")
+# 🔥 API (same blueprints, DIFFERENT NAMES)
+app.register_blueprint(auth_bp, url_prefix="/api", name="auth_api")
+app.register_blueprint(cities_bp, url_prefix="/api", name="cities_api")
+app.register_blueprint(reserve_seat_bp, url_prefix="/api", name="reserve_api")
+app.register_blueprint(restaurant_bp, url_prefix="/api", name="restaurant_api")
+app.register_blueprint(browse_bp, url_prefix="/api", name="browse_api")
+app.register_blueprint(order_bp, url_prefix="/api", name="order_api")
+app.register_blueprint(savings_bp, url_prefix="/api", name="savings_api")
+app.register_blueprint(secret_bp, url_prefix="/api", name="secret_api")
 
 
 # ================= WEBSITE ROUTES =================
