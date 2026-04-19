@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 from utils.db import mysql
 import MySQLdb.cursors
 import math
@@ -6,6 +6,13 @@ from datetime import datetime, timedelta
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 browse_bp = Blueprint("browse", __name__)
+
+
+# ================= WEB PAGE =================
+@browse_bp.route("/browse")
+def browse_page():
+    return render_template("browse.html")
+
 
 # ================= FOOD LIST API =================
 @browse_bp.route("/api/foods", methods=["GET"])
