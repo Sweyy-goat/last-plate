@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 
 from utils.db import mysql, set_mysql_timezone
@@ -7,22 +7,22 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# 🔥 JWT
 from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
 
-# 🔥 Enable CORS (Flutter needs this)
-CORS(app)
+# 🔥 Config
+app.config.from_pyfile("config.py")
+app.secret_key = app.config["SECRET_KEY"]
 
-# 🔥 Fix proxy (Railway)
+# 🔥 Proxy fix (Railway / deployment)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
-# 🔥 Load config
-app.config.from_pyfile("config.py")
+# 🔥 Enable CORS (ONLY needed for API)
+CORS(app)
 
-# 🔥 JWT INIT (VERY IMPORTANT)
+# 🔥 JWT
 app.config["JWT_SECRET_KEY"] = app.config["SECRET_KEY"]
 jwt = JWTManager(app)
 
@@ -33,13 +33,10 @@ limiter = Limiter(
     default_limits=["100 per minute"]
 )
 
-# 🔥 MySQL init
+# 🔥 MySQL
 mysql.init_app(app)
 
-# 🔥 Secret key for sessions (website)
-app.secret_key = app.config["SECRET_KEY"]
-
-# 🔥 Run DB setup
+# 🔥 DB init
 with app.app_context():
     try:
         set_mysql_timezone()
@@ -49,39 +46,49 @@ with app.app_context():
 
 # ================= BLUEPRINTS =================
 
+# 👉 API routes (used by Flutter)
 from routes.auth import auth_bp
-app.register_blueprint(auth_bp)
-
 from routes.cities import cities_bp
-app.register_blueprint(cities_bp)
-
 from routes.reserve_seat import reserve_seat_bp
-app.register_blueprint(reserve_seat_bp)
-
 from routes.restaurant import restaurant_bp
-app.register_blueprint(restaurant_bp)
-
 from routes.browse import browse_bp
-app.register_blueprint(browse_bp)
-
 from routes.order import order_bp
-app.register_blueprint(order_bp)
-
 from routes.savings import savings_bp
-app.register_blueprint(savings_bp)
-
 from routes.secret import secret_bp
-app.register_blueprint(secret_bp)
+
+# Optional: prefix API routes
+app.register_blueprint(auth_bp, url_prefix="/api")
+app.register_blueprint(cities_bp, url_prefix="/api")
+app.register_blueprint(reserve_seat_bp, url_prefix="/api")
+app.register_blueprint(restaurant_bp, url_prefix="/api")
+app.register_blueprint(browse_bp, url_prefix="/api")
+app.register_blueprint(order_bp, url_prefix="/api")
+app.register_blueprint(savings_bp, url_prefix="/api")
+app.register_blueprint(secret_bp, url_prefix="/api")
 
 
-# ================= ERROR HANDLER =================
+# ================= WEBSITE ROUTES =================
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/how")
+def how():
+    return render_template("how.html")
+
+
+# ================= ERROR HANDLING =================
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
-    return jsonify({
-        "status": "error",
-        "message": "Too many requests"
-    }), 429
+    # Detect API vs website
+    if "/api/" in str(e.description) or "application/json" in str(e):
+        return jsonify({
+            "status": "error",
+            "message": "Too many requests"
+        }), 429
+    return render_template("429.html"), 429
 
 
 # ================= MAIN =================
