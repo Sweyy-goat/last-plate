@@ -11,7 +11,7 @@ browse_bp = Blueprint("browse", __name__)
 # ================= WEB PAGE =================
 @browse_bp.route("/browse")
 def browse_page():
-    return render_template("browse.html")
+    return render_template("user/browse.html")
 
 
 # ================= FOOD LIST API =================
