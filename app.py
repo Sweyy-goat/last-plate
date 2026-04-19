@@ -46,8 +46,12 @@ with app.app_context():
 
 # ================= BLUEPRINTS =================
 
-# 👉 API routes (used by Flutter)
+# 👉 Auth (SPECIAL CASE: contains BOTH web + API routes)
 from routes.auth import auth_bp
+app.register_blueprint(auth_bp)   # ❗ NO prefix here
+
+
+# 👉 PURE API routes (safe to prefix)
 from routes.cities import cities_bp
 from routes.reserve_seat import reserve_seat_bp
 from routes.restaurant import restaurant_bp
@@ -56,8 +60,6 @@ from routes.order import order_bp
 from routes.savings import savings_bp
 from routes.secret import secret_bp
 
-# Optional: prefix API routes
-app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(cities_bp, url_prefix="/api")
 app.register_blueprint(reserve_seat_bp, url_prefix="/api")
 app.register_blueprint(restaurant_bp, url_prefix="/api")
@@ -82,12 +84,14 @@ def how():
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
-    # Detect API vs website
-    if "/api/" in str(e.description) or "application/json" in str(e):
+    # API → JSON
+    if request.path.startswith("/api"):
         return jsonify({
             "status": "error",
             "message": "Too many requests"
         }), 429
+
+    # Website → HTML
     return render_template("429.html"), 429
 
 
