@@ -6,11 +6,7 @@ from app import limiter
 import MySQLdb.cursors
 
 # 🔥 JWT
-from flask_jwt_extended import (
-    create_access_token,
-    jwt_required,
-    get_jwt_identity
-)
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -35,7 +31,7 @@ def restaurant_login_page():
 
 # ================= USER SIGNUP =================
 
-@auth_bp.route("/api/user/signup", methods=["POST"])
+@auth_bp.route("/user/signup", methods=["POST"])
 @limiter.limit("3 per minute")
 def user_signup():
     data = request.get_json(silent=True) or {}
@@ -73,7 +69,7 @@ def user_signup():
 
 # ================= USER LOGIN (HYBRID) =================
 
-@auth_bp.route("/api/user/login", methods=["POST"])
+@auth_bp.route("/user/login", methods=["POST"])
 @limiter.limit("5 per minute")
 def user_login():
     data = request.get_json(silent=True) or {}
@@ -106,7 +102,8 @@ def user_login():
         return jsonify({
             "success": True,
             "access_token": token,
-            "user_id": user["id"]
+            "user_id": user["id"],
+            "role": "user"
         })
     else:
         # 🌐 Website → session
@@ -118,12 +115,18 @@ def user_login():
 
 # ================= USER PROFILE =================
 
-@auth_bp.route("/api/user/profile", methods=["GET"])
+@auth_bp.route("/user/profile", methods=["GET"])
 def user_profile():
-    # 🔥 Try JWT first (mobile)
+    user_id = None
+
+    # Try JWT (mobile)
     try:
         user_id = get_jwt_identity()
     except:
+        pass
+
+    # Fallback to session (web)
+    if not user_id:
         user_id = session.get("user_id")
 
     if not user_id:
@@ -141,11 +144,16 @@ def user_profile():
 
 # ================= USER ORDERS =================
 
-@auth_bp.route("/api/user/orders", methods=["GET"])
+@auth_bp.route("/user/orders", methods=["GET"])
 def user_orders():
+    user_id = None
+
     try:
         user_id = get_jwt_identity()
     except:
+        pass
+
+    if not user_id:
         user_id = session.get("user_id")
 
     if not user_id:
@@ -169,7 +177,7 @@ def user_orders():
 
 # ================= RESTAURANT LOGIN =================
 
-@auth_bp.route("/api/restaurant/login", methods=["POST"])
+@auth_bp.route("/restaurant/login", methods=["POST"])
 @limiter.limit("5 per minute")
 def restaurant_login():
     data = request.get_json(silent=True) or {}
@@ -193,12 +201,14 @@ def restaurant_login():
     if not verify_password(restaurant["password_hash"], password):
         return jsonify({"error": "Invalid password"}), 401
 
+    # API → JWT
     token = create_access_token(identity=restaurant["id"])
 
     return jsonify({
         "success": True,
         "access_token": token,
-        "restaurant_id": restaurant["id"]
+        "restaurant_id": restaurant["id"],
+        "role": "restaurant"
     })
 
 
