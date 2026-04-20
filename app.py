@@ -49,7 +49,9 @@ from routes.savings import savings_bp
 from routes.secret import secret_bp
 
 
-# 🔥 WEBSITE (normal)
+# ✅ FIX: Register blueprints ONCE only.
+# The routes inside each blueprint already include /api/ where needed,
+# so adding url_prefix="/api" again would double it → /api/api/foods (broken)
 app.register_blueprint(auth_bp)
 app.register_blueprint(cities_bp)
 app.register_blueprint(reserve_seat_bp)
@@ -58,17 +60,6 @@ app.register_blueprint(browse_bp)
 app.register_blueprint(order_bp)
 app.register_blueprint(savings_bp)
 app.register_blueprint(secret_bp)
-
-
-# 🔥 API (same blueprints, DIFFERENT NAMES)
-app.register_blueprint(auth_bp, url_prefix="/api", name="auth_api")
-app.register_blueprint(cities_bp, url_prefix="/api", name="cities_api")
-app.register_blueprint(reserve_seat_bp, url_prefix="/api", name="reserve_api")
-app.register_blueprint(restaurant_bp, url_prefix="/api", name="restaurant_api")
-app.register_blueprint(browse_bp, url_prefix="/api", name="browse_api")
-app.register_blueprint(order_bp, url_prefix="/api", name="order_api")
-app.register_blueprint(savings_bp, url_prefix="/api", name="savings_api")
-app.register_blueprint(secret_bp, url_prefix="/api", name="secret_api")
 
 
 # ================= WEBSITE ROUTES =================
