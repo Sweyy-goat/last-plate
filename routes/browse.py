@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, render_template
 from utils.db import mysql
+from utils.auth_helper import get_current_user_id, login_required
 import MySQLdb.cursors
 import math
 from datetime import datetime, timedelta
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 browse_bp = Blueprint("browse", __name__)
 
@@ -15,6 +15,7 @@ def browse_page():
 
 
 # ================= FOOD LIST API =================
+# No auth needed — open to both web and Android
 @browse_bp.route("/api/foods", methods=["GET"])
 def food_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -64,6 +65,10 @@ def food_list():
 
     foods = []
     for f in rows:
+        # ✅ FIX: Guard against NULL minutes_left — skipping a row instead of crashing the whole response
+        if f["minutes_left"] is None:
+            continue
+
         restaurant_price = float(f["price"])
         raw_original = float(f["original_price"]) if f.get("original_price") and f["original_price"] > 0 else restaurant_price
 
@@ -92,41 +97,38 @@ def food_list():
 
 
 # ================= CHECK AUTH =================
+# ✅ Returns logged_in: false gracefully instead of 401 — safe for both platforms
 @browse_bp.route("/api/check-auth", methods=["GET"])
-@jwt_required()
 def check_auth():
+    user_id = get_current_user_id()
+    if user_id is None:
+        return jsonify({"status": "success", "logged_in": False}), 200
     return jsonify({
         "status": "success",
         "logged_in": True,
-        "user_id": get_jwt_identity()
+        "user_id": user_id
     })
 
 
 # ================= WALK-IN RESTAURANTS =================
 @browse_bp.route("/api/walkin", methods=["GET"])
-@jwt_required()
+@login_required
 def walkin_list():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
     cur.execute("""
         SELECT r.id, r.name, r.address
         FROM restaurants r
         JOIN restaurant_scenes s ON s.restaurant_id = r.id
         GROUP BY r.id
     """)
-
     restaurants = cur.fetchall()
     cur.close()
-
-    return jsonify({
-        "status": "success",
-        "data": restaurants
-    })
+    return jsonify({"status": "success", "data": restaurants})
 
 
 # ================= WALK-IN VIEW =================
 @browse_bp.route("/api/restaurant/<int:rid>/walkin", methods=["GET"])
-@jwt_required()
+@login_required
 def walkin_view(rid):
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -140,10 +142,7 @@ def walkin_view(rid):
 
     if not scene:
         cur.close()
-        return jsonify({
-            "status": "error",
-            "message": "No walk-in scene found"
-        }), 404
+        return jsonify({"status": "error", "message": "No walk-in scene found"}), 404
 
     cur.execute("""
         SELECT pitch, yaw, seat_number
@@ -151,11 +150,6 @@ def walkin_view(rid):
         WHERE scene_id = %s
     """, (scene["id"],))
     hotspots = cur.fetchall()
-
     cur.close()
 
-    return jsonify({
-        "status": "success",
-        "scene": scene,
-        "hotspots": hotspots
-    })
+    return jsonify({"status": "success", "scene": scene, "hotspots": hotspots})
