@@ -26,12 +26,11 @@ def food_list():
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     current_time_ist = ist_now.strftime('%H:%M:%S')
 
-    # UPDATED QUERY: Added f.original_price to the SELECT list
     query = """
     SELECT 
         f.id, f.name, f.original_price, f.price, f.available_quantity,
-        f.id, f.name, f.original_price, f.price, f.available_quantity,f.food_type,
-        f.pickup_start, f.pickup_end,
+        f.food_type, f.pickup_start, f.pickup_end,
+        r.id AS restaurant_id,
         r.name AS restaurant_name,
         r.address AS restaurant_address,
         r.short_address AS restaurant_short_address,
@@ -84,6 +83,12 @@ def food_list():
         # We apply the same 15% to the original price so the discount ratio stays consistent
         display_mrp = math.ceil(raw_original * 1.15)
 
+        # The address shown for grouping/area display always comes straight from
+        # restaurants.address — never derived/guessed client-side. short_address
+        # (if present) is used only as a secondary, shorter line for the card UI.
+        clean_address = (f.get("restaurant_address") or "").strip()
+        short_address = (f.get("restaurant_short_address") or "").strip() or clean_address
+
         foods.append({
             "id": f["id"],
             "name": f["name"],
@@ -91,17 +96,17 @@ def food_list():
             "price": platform_selling_price,
             "mrp": display_mrp,
             "available_quantity": f["available_quantity"],
+            "restaurant_id": f["restaurant_id"],
             "restaurant_name": f["restaurant_name"],
-            "restaurant_address": f["restaurant_address"],
-            "restaurant_short_address": f.get("restaurant_short_address") or "",
+            "restaurant_address": clean_address,
+            "restaurant_short_address": short_address,
             "minutes_left": max(0, int(f["minutes_left"])),
-
-    # 🔥 ADD THIS
             "latitude": f["latitude"],
-            "longitude": f["longitude"]
-})
+            "longitude": f["longitude"],
+        })
     return jsonify({"foods": foods})
-@browse_bp.route("/walkin")
+
+
 @browse_bp.route("/walkin")
 def walkin_list():
     if "user_id" not in session or session.get("role") != "user":
