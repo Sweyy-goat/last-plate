@@ -1485,10 +1485,14 @@ function buildAreaPinSVG(palette,active,index){
   return`<svg class="loc-area-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${PIN_SHAPES[index%PIN_SHAPES.length](c)}</svg>`;
 }
 
-function deriveAreaLabel(address,lat,lng){
-  if(address){const parts=address.split(/[,\/]/);for(const p of parts){const t=p.trim();if(t.length>=3&&t.length<=20&&!/^\d/.test(t))return t;}}
-  if(lat&&lng) return`${parseFloat(lat).toFixed(1)}°N`;
-  return'Area';
+function deriveAreaLabel(address) {
+  if (!address) return 'Other';
+  const parts = address.split(/[,\/]/).map(p => p.trim()).filter(Boolean);
+  // Try 2nd segment first (town/area), then 1st
+  for (const p of [parts[1], parts[0]]) {
+    if (p && p.length >= 3 && p.length <= 28 && !/^\d/.test(p)) return p;
+  }
+  return parts[0] || 'Other';
 }
 
 function clusterFoodsByArea(foods){
