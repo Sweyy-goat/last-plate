@@ -1901,44 +1901,130 @@ document.getElementById('afRow').addEventListener('click',function(e){
 });
 
 /* ═══════════════════════════════════════════════════════
-   §16  DATA FETCH
+   §16  DATA FETCH — restaurants table drives area labels
 ═══════════════════════════════════════════════════════ */
-fetch('/api/foods')
-  .then(r=>{if(!r.ok)throw 0;return r.json();})
-  .then(data=>{
-    allFoods=data.foods||[];
-    // PERF: pre-lowercase search fields once on load
-    allFoods.forEach(f=>{f._nameLower=(f.name||'').toLowerCase();f._restLower=(f.restaurant_name||'').toLowerCase();});
+// Maps restaurant_id → canonical { address, areaLabel }
+const restaurantMeta = new Map();
 
-    const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
-    document.getElementById('hs-rest').textContent=rests.size||'—';
+async function fetchRestaurantMeta() {
+  try {
+    const res = await fetch('/api/restaurants'); // returns [{id, address, ...}]
+    if (!res.ok) return;
+    const data = await res.json();
+    const rests = data.restaurants || data || [];
+    
+    // Build area label from address once per restaurant — no duplicates
+    const areaCounts = {};
+    rests.forEach(r => {
+      const raw = deriveAreaLabel(r.address);
+      areaCounts[raw] = (areaCounts[raw] || 0) + 1;
+    });
+    
+    rests.forEach(r => {
+      const raw = deriveAreaLabel(r.address);
+      restaurantMeta.set(String(r.id), {
+        address: r.address,
+        areaLabel: raw, // single canonical label — no numbering
+        lat: parseFloat(r.lat || r.latitude || NaN),
+        lng: parseFloat(r.lng || r.lon || r.longitude || NaN),
+      });
+    });
+  } catch (e) {
+    console.warn('Restaurant meta fetch failed, falling back to food addresses', e);
+  }
+}
 
-    const cuisines=[...new Set(allFoods.map(f=>(f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
-    if(cuisines.length>1){
-      const sec=document.getElementById('cuisineSection'),row=document.getElementById('cuisineRow');
-      sec.style.display='';
-      const frag=document.createDocumentFragment();
-      cuisines.forEach(c=>{const btn=document.createElement('button');btn.className='fp-chip';btn.dataset.cuisine=c;btn.textContent=c.charAt(0).toUpperCase()+c.slice(1);btn.onclick=function(){toggleCuisine(c,this);};frag.appendChild(btn);});
-      row.appendChild(frag);
+function clusterFoodsByArea(foods) {
+  const CLUSTER_RADIUS_KM = 3;
+  // Group by canonical area label from restaurants table
+  const byArea = new Map(); // areaLabel → { foods, centLat, centLng, count }
+
+  foods.forEach(food => {
+    const meta = restaurantMeta.get(String(food.restaurant_id));
+    
+    // Get coords: prefer restaurants table, fall back to food coords
+    let lat = meta && !isNaN(meta.lat) ? meta.lat : null;
+    let lng = meta && !isNaN(meta.lng) ? meta.lng : null;
+    if (!lat || !lng) {
+      const coords = getFoodCoords(food);
+      if (coords) { lat = coords.lat; lng = coords.lng; }
+    }
+    
+    // Get area label: prefer restaurants table
+    let areaLabel = meta?.areaLabel;
+    if (!areaLabel) {
+      areaLabel = deriveAreaLabel(
+        food.restaurant_short_address || food.restaurant_address || ''
+      );
     }
 
-    const prices=allFoods.map(f=>f.price||0);
-    const maxP=Math.ceil(Math.max(...prices)/50)*50||1000;
-    document.getElementById('priceMax').max=maxP;
-    document.getElementById('priceMin').max=maxP;
-    document.getElementById('priceMax').value=maxP;
-    F.priceMax=maxP;
-    document.getElementById('priceMaxLabel').textContent=maxP+'+';
-    updateFill(0,maxP);
+    if (!byArea.has(areaLabel)) {
+      byArea.set(areaLabel, { 
+        label: areaLabel, 
+        centLat: lat, 
+        centLng: lng, 
+        foods: [] 
+      });
+    }
+    const cluster = byArea.get(areaLabel);
+    cluster.foods.push(food);
+    
+    // Update centroid
+    if (lat && lng) {
+      const n = cluster.foods.length;
+      cluster.centLat = ((cluster.centLat || lat) * (n - 1) + lat) / n;
+      cluster.centLng = ((cluster.centLng || lng) * (n - 1) + lng) / n;
+    }
+  });
 
-    cacheDistances();
+  return [...byArea.values()];
+}
 
-    // PERF: rebuild pins in idle time after render
-    schedule(()=>rebuildLocationPins(),{timeout:800});
-    applyFilters();
-  })
-  .catch(()=>{allFoods=[];render([]);document.getElementById('hs-count').textContent='0';document.getElementById('hs-rest').textContent='0';});
+// Boot sequence — fetch both in parallel
+Promise.all([
+  fetchRestaurantMeta(),
+  fetch('/api/foods')
+    .then(r => { if (!r.ok) throw 0; return r.json(); })
+    .then(data => {
+      allFoods = data.foods || [];
+      allFoods.forEach(f => {
+        f._nameLower = (f.name || '').toLowerCase();
+        f._restLower = (f.restaurant_name || '').toLowerCase();
+      });
 
+      const rests = new Set(allFoods.map(f => f.restaurant_name).filter(Boolean));
+      document.getElementById('hs-rest').textContent = rests.size || '—';
+
+      const cuisines = [...new Set(allFoods.map(f => (f.cuisine || '').toLowerCase().trim()).filter(Boolean))];
+      if (cuisines.length > 1) {
+        const sec = document.getElementById('cuisineSection'), row = document.getElementById('cuisineRow');
+        sec.style.display = '';
+        const frag = document.createDocumentFragment();
+        cuisines.forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'fp-chip'; btn.dataset.cuisine = c;
+          btn.textContent = c.charAt(0).toUpperCase() + c.slice(1);
+          btn.onclick = function () { toggleCuisine(c, this); };
+          frag.appendChild(btn);
+        });
+        row.appendChild(frag);
+      }
+
+      const prices = allFoods.map(f => f.price || 0);
+      const maxP = Math.ceil(Math.max(...prices) / 50) * 50 || 1000;
+      document.getElementById('priceMax').max = maxP;
+      document.getElementById('priceMin').max = maxP;
+      document.getElementById('priceMax').value = maxP;
+      F.priceMax = maxP;
+      document.getElementById('priceMaxLabel').textContent = maxP + '+';
+      updateFill(0, maxP);
+    })
+    .catch(() => { allFoods = []; render([]); document.getElementById('hs-count').textContent = '0'; document.getElementById('hs-rest').textContent = '0'; })
+]).then(() => {
+  cacheDistances();
+  schedule(() => rebuildLocationPins(), { timeout: 800 });
+  applyFilters();
+});
 /* ═══════════════════════════════════════════════════════
    §17  MODAL
 ═══════════════════════════════════════════════════════ */
