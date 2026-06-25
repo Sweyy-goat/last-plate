@@ -58,7 +58,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select{font-family:inherit}
 img{display:block}
 
-/* ── PERF: contain layout per section ── */
 .hero,.food-grid,.feat-sec,.support-sec{contain:layout style}
 .food-card{contain:layout style paint}
 
@@ -449,9 +448,7 @@ body.dark .fp-radio{background:rgba(255,255,255,0.07)}
   padding:24px 16px 80px;
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:14px;
-  align-items:start;
-  /* PERF: GPU composited grid */
+  gap:14px;align-items:start;
   transform:translateZ(0);
 }
 @media(max-width:720px){.food-grid{grid-template-columns:1fr;padding:14px 12px 80px;gap:10px}}
@@ -462,27 +459,22 @@ body.dark .fp-radio{background:rgba(255,255,255,0.07)}
   background:var(--white);border-radius:20px;border:0.5px solid var(--border);
   box-shadow:0 1px 0px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.04);
   cursor:pointer;overflow:hidden;display:flex;flex-direction:column;
-  /* PERF: no will-change by default — only promote on hover */
   transition:transform 0.5s var(--ease-spring),box-shadow 0.4s var(--ease-out),background 0.4s;
   animation:cardIn 0.5s var(--ease-out) both;position:relative;
-  /* PERF: contain per-card paint */
   contain:layout style paint;
 }
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(0.98)}to{opacity:1;transform:none}}
 .food-card:hover{
   transform:translateY(-8px) scale(1.008);
   box-shadow:0 1px 1px rgba(0,0,0,0.03),0 4px 12px rgba(0,0,0,0.06),0 16px 40px rgba(0,0,0,0.10),0 32px 60px rgba(0,0,0,0.06);
-  will-change:transform; /* PERF: only promote when actually needed */
+  will-change:transform;
 }
 .food-card:not(:hover){will-change:auto}
 .food-card:active{transform:translateY(-2px) scale(1.002);box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:transform 0.12s,box-shadow 0.12s}
 .card-img-wrap{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--bg);flex-shrink:0;border-radius:20px 20px 0 0}
-/* PERF: images use content-visibility + intrinsic sizing */
 .card-img{width:100%;height:100%;object-fit:cover;display:block;
   filter:saturate(0.9) contrast(1.02) brightness(1.0);
-  transition:transform 0.9s var(--ease-out),filter 0.6s;
-  /* PERF: prevent layout shift — loaded lazily */
-}
+  transition:transform 0.9s var(--ease-out),filter 0.6s;}
 .food-card:hover .card-img{transform:scale(1.06);filter:saturate(1.05) contrast(1.03) brightness(1.02)}
 .card-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 30%,rgba(0,0,0,0.15) 65%,rgba(0,0,0,0.65) 100%);pointer-events:none}
 .card-badges{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;align-items:flex-end;gap:5px;z-index:2}
@@ -1229,9 +1221,7 @@ body.dark .bn-badge{border-color:rgba(11,11,15,0.9)}
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   PERFORMANCE: Theme applied synchronously before paint
-═══════════════════════════════════════════════════════ */
+/* ── Sync theme before paint ── */
 (function(){
   try{
     if(localStorage.getItem('lp-dark')==='1'||localStorage.getItem('theme')==='dark')
@@ -1246,37 +1236,17 @@ body.dark .bn-badge{border-color:rgba(11,11,15,0.9)}
   }catch{}
 })();
 
-/* ═══════════════════════════════════════════════════════
-   §0  PERF UTILS
-═══════════════════════════════════════════════════════ */
-// Debounce: coalesce rapid calls
+/* ── PERF UTILS ── */
 function debounce(fn,ms){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),ms)}}
-
-// Throttle: guarantee max call rate (for scroll etc.)
 function throttle(fn,ms){let last=0,t;return function(...a){const now=Date.now();const rem=ms-(now-last);if(rem<=0){clearTimeout(t);last=now;fn.apply(this,a)}else{clearTimeout(t);t=setTimeout(()=>{last=Date.now();fn.apply(this,a)},rem)}}}
+const schedule=typeof requestIdleCallback==='function'?(fn,opts)=>requestIdleCallback(fn,opts||{timeout:500}):(fn)=>setTimeout(fn,0);
+let _rafPending=false;const _rafQueue=[];
+function queueWrite(fn){_rafQueue.push(fn);if(!_rafPending){_rafPending=true;requestAnimationFrame(()=>{_rafPending=false;const q=[..._rafQueue];_rafQueue.length=0;q.forEach(f=>f());});}}
 
-// Schedule work in idle time with fallback
-const schedule = typeof requestIdleCallback==='function'
-  ? (fn,opts)=>requestIdleCallback(fn,opts||{timeout:500})
-  : (fn)=>setTimeout(fn,0);
+/* ── LOCATION STATE ── */
+const GEO={lat:null,lng:null,city:null,status:'idle',selectedAreaKey:null,FALLBACK:{lat:9.9312,lng:76.2673,city:'Kochi'}};
 
-// Single RAF-batched DOM writer — eliminates layout thrash
-let _rafPending=false;
-const _rafQueue=[];
-function queueWrite(fn){
-  _rafQueue.push(fn);
-  if(!_rafPending){_rafPending=true;requestAnimationFrame(()=>{_rafPending=false;const q=[..._rafQueue];_rafQueue.length=0;q.forEach(f=>f());});}
-}
-
-/* ═══════════════════════════════════════════════════════
-   §1  LOCATION STATE
-═══════════════════════════════════════════════════════ */
-const GEO={lat:null,lng:null,city:null,status:'idle',selectedAreaKey:null,
-  FALLBACK:{lat:9.9312,lng:76.2673,city:'Kochi'}};
-
-/* ═══════════════════════════════════════════════════════
-   §2  HAVERSINE — memoized per (lat1,lng1,lat2,lng2)
-═══════════════════════════════════════════════════════ */
+/* ── HAVERSINE (memoized) ── */
 const _distCache=new Map();
 function haversineKm(lat1,lng1,lat2,lng2){
   const key=`${lat1.toFixed(4)},${lng1.toFixed(4)},${lat2.toFixed(4)},${lng2.toFixed(4)}`;
@@ -1284,106 +1254,73 @@ function haversineKm(lat1,lng1,lat2,lng2){
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
   const d=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-  _distCache.set(key,d);
-  return d;
+  _distCache.set(key,d);return d;
 }
 function formatDistance(km){
   if(km===null||km===undefined||isNaN(km)) return null;
   return km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';
 }
 
-/* ═══════════════════════════════════════════════════════
-   §3  FOOD COORDS — cached per food id
-═══════════════════════════════════════════════════════ */
+/* ── FOOD COORDS (cached) ── */
 const _coordCache=new Map();
 function getFoodCoords(food){
   if(_coordCache.has(food.id)) return _coordCache.get(food.id);
   const lat=parseFloat(food.restaurant_lat??food.restaurant_latitude??food.rest_lat??food.lat??food.latitude??NaN);
   const lng=parseFloat(food.restaurant_lng??food.restaurant_lon??food.restaurant_longitude??food.rest_lng??food.lng??food.lon??food.longitude??NaN);
   const result=(!isNaN(lat)&&!isNaN(lng)&&lat!==0&&lng!==0)?{lat,lng}:null;
-  _coordCache.set(food.id,result);
-  return result;
+  _coordCache.set(food.id,result);return result;
 }
 
-/* ═══════════════════════════════════════════════════════
-   §4  USER LOCATION
-═══════════════════════════════════════════════════════ */
+/* ── USER LOCATION ── */
 function getUserLocation(){
   if(!navigator.geolocation){applyFallbackLocation();return;}
-  GEO.status='locating';
-  updateCityPill('locating','Locating…');
+  GEO.status='locating';updateCityPill('locating','Locating…');
   navigator.geolocation.getCurrentPosition(
-    pos=>{
-      GEO.lat=pos.coords.latitude;GEO.lng=pos.coords.longitude;GEO.status='ok';
-      reverseGeocode(GEO.lat,GEO.lng);
-      cacheDistances();
-      applyProximityFilter();
-    },
-    ()=>applyFallbackLocation(),
-    {timeout:8000,maximumAge:5*60*1000}
-  );
+    pos=>{GEO.lat=pos.coords.latitude;GEO.lng=pos.coords.longitude;GEO.status='ok';
+      reverseGeocode(GEO.lat,GEO.lng);cacheDistances();applyProximityFilter();},
+    ()=>applyFallbackLocation(),{timeout:8000,maximumAge:5*60*1000});
 }
-
 function requestGPS(){
-  const btn=document.getElementById('locMapGpsBtn');
-  if(btn) btn.textContent='Finding…';
+  const btn=document.getElementById('locMapGpsBtn');if(btn) btn.textContent='Finding…';
   if(!navigator.geolocation){if(btn) btn.textContent='Use GPS';return;}
   navigator.geolocation.getCurrentPosition(
-    pos=>{
-      GEO.lat=pos.coords.latitude;GEO.lng=pos.coords.longitude;GEO.status='ok';
+    pos=>{GEO.lat=pos.coords.latitude;GEO.lng=pos.coords.longitude;GEO.status='ok';
       reverseGeocode(GEO.lat,GEO.lng);
       if(btn){btn.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Located`;btn.classList.add('located');}
-      _distCache.clear(); // invalidate memoized distances on new GPS position
-      cacheDistances();rebuildLocationPins();applyFilters();
-    },
+      _distCache.clear();cacheDistances();rebuildLocationPins();applyFilters();},
     ()=>{if(btn) btn.innerHTML=`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Use GPS`;applyFallbackLocation();},
-    {timeout:8000}
-  );
+    {timeout:8000});
 }
-
 function applyFallbackLocation(){
   GEO.lat=GEO.FALLBACK.lat;GEO.lng=GEO.FALLBACK.lng;GEO.city=GEO.FALLBACK.city;GEO.status='fallback';
-  updateCityPill('denied','Nearby');
-  cacheDistances();
+  updateCityPill('denied','Nearby');cacheDistances();
 }
-
 async function reverseGeocode(lat,lng){
   try{
     const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`,{headers:{'Accept-Language':'en'}});
-    const data=await res.json();
-    const addr=data.address||{};
+    const data=await res.json();const addr=data.address||{};
     GEO.city=addr.city||addr.town||addr.village||addr.county||addr.state_district||'Your Area';
     updateCityPill('ok','📍 '+GEO.city);
   }catch{updateCityPill('ok','📍 Live');}
 }
-
 function updateCityPill(state,text){
   const pill=document.getElementById('cityPill'),name=document.getElementById('cityName');
-  pill.className='city-pill';
-  if(state==='locating') pill.classList.add('locating');
-  if(state==='denied') pill.classList.add('denied');
-  name.textContent=text;
+  pill.className='city-pill';if(state==='locating') pill.classList.add('locating');
+  if(state==='denied') pill.classList.add('denied');name.textContent=text;
 }
 
-/* ═══════════════════════════════════════════════════════
-   §5  DISTANCE CACHE — batch once, never per-card loop
-═══════════════════════════════════════════════════════ */
+/* ── DISTANCE CACHE ── */
 function cacheDistances(){
   if(GEO.lat===null||GEO.lng===null) return;
   allFoods.forEach(food=>{
     const coords=getFoodCoords(food);
-    if(coords){
-      food._lat=coords.lat;food._lng=coords.lng;
-      food._distance=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);
-    }else{food._lat=null;food._lng=null;food._distance=null;}
+    if(coords){food._lat=coords.lat;food._lng=coords.lng;food._distance=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);}
+    else{food._lat=null;food._lng=null;food._distance=null;}
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   §6  MISC UTILS
-═══════════════════════════════════════════════════════ */
+/* ── MISC UTILS ── */
 function openWalkin(){window.location.href='/walkin';}
-
 function getImg(name){
   const n=(name||'').toLowerCase();
   const m=[
@@ -1406,21 +1343,9 @@ function getImg(name){
   for(const[k,u]of m) if(k.some(x=>n.includes(x))) return u;
   return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80';
 }
-
-// Precomputed image URLs per food id — avoids re-running getImg on every render
 const _imgCache=new Map();
-function cachedImg(food){
-  if(_imgCache.has(food.id)) return _imgCache.get(food.id);
-  const u=getImg(food.name);_imgCache.set(food.id,u);return u;
-}
-
-function cuisineEmoji(c){
-  if(!c) return '○';
-  const m={kerala:'◎',arabic:'◈',mughlai:'◆',continental:'◇',dessert:'◉',chinese:'⊕',italian:'⊗',seafood:'◐',biryani:'◑'};
-  return m[(c||'').toLowerCase()]||'○';
-}
-
-// Pre-built static badge strings — no per-render string computation
+function cachedImg(food){if(_imgCache.has(food.id)) return _imgCache.get(food.id);const u=getImg(food.name);_imgCache.set(food.id,u);return u;}
+function cuisineEmoji(c){if(!c) return '○';const m={kerala:'◎',arabic:'◈',mughlai:'◆',continental:'◇',dessert:'◉',chinese:'⊕',italian:'⊗',seafood:'◐',biryani:'◑'};return m[(c||'').toLowerCase()]||'○';}
 const FT_BADGES={
   veg:`<span class="ft veg"><span class="fts veg"></span>Veg</span>`,
   egg:`<span class="ft egg"><span class="fts egg"></span>Egg</span>`,
@@ -1430,26 +1355,16 @@ const FT_BADGES={
   nonveg_sm:`<span class="ft nonveg sm"><span class="fts nonveg"></span>Non-Veg</span>`,
 };
 function getFTBadge(type,small){
-  if(!type) return '';
-  const t=type.toString().toLowerCase().trim();
+  if(!type) return '';const t=type.toString().toLowerCase().trim();
   const k=t==='veg'?'veg':t==='egg'?'egg':(t.includes('non')||t==='nonveg')?'nonveg':null;
-  if(!k) return '';
-  return FT_BADGES[small?k+'_sm':k]||'';
+  if(!k) return '';return FT_BADGES[small?k+'_sm':k]||'';
 }
-
-function normDiet(raw){
-  if(!raw) return null;
-  const t=raw.toString().toLowerCase().trim();
-  if(t==='veg') return 'veg';if(t==='egg') return 'egg';
-  if(t.includes('non')||t==='nonveg') return 'nonveg';return null;
-}
+function normDiet(raw){if(!raw) return null;const t=raw.toString().toLowerCase().trim();if(t==='veg') return 'veg';if(t==='egg') return 'egg';if(t.includes('non')||t==='nonveg') return 'nonveg';return null;}
 function getTimeColor(mins){if(mins<=15)return'var(--accent)';if(mins<=30)return'var(--gold)';return'var(--green)';}
 function getTimeWidth(mins){if(mins>=120)return'100';return Math.max(8,Math.round((mins/120)*100));}
 function calcDisc(mrp,price){if(!mrp||mrp<=price)return 0;return Math.round(((mrp-price)/mrp)*100);}
 
-/* ═══════════════════════════════════════════════════════
-   §7  DARK MODE TOGGLE
-═══════════════════════════════════════════════════════ */
+/* ── DARK MODE ── */
 document.getElementById('darkToggle').addEventListener('click',function(){
   document.body.classList.toggle('dark');
   try{localStorage.setItem('lp-dark',document.body.classList.contains('dark')?'1':'0');
@@ -1457,9 +1372,7 @@ document.getElementById('darkToggle').addEventListener('click',function(){
   if(navigator.vibrate) navigator.vibrate(6);
 });
 
-/* ═══════════════════════════════════════════════════════
-   §8  AREA COLOR PALETTES
-═══════════════════════════════════════════════════════ */
+/* ── AREA COLOR PALETTES ── */
 const AREA_PALETTES=[
   {body:'#0071E3',shadow:'rgba(0,113,227,0.45)',ring:'rgba(0,113,227,0.18)'},
   {body:'#30D158',shadow:'rgba(48,209,88,0.45)',ring:'rgba(48,209,88,0.18)'},
@@ -1471,8 +1384,6 @@ const AREA_PALETTES=[
   {body:'#FF2D55',shadow:'rgba(255,45,85,0.45)',ring:'rgba(255,45,85,0.18)'},
 ];
 function getAreaPalette(i){return AREA_PALETTES[i%AREA_PALETTES.length];}
-
-// Pre-built SVG shapes array — avoids per-call string building for pins
 const PIN_SHAPES=[
   (c)=>`<path d="M19 8.5C19 14.5 12 21 12 21S5 14.5 5 8.5a7 7 0 0 1 14 0z" fill="${c}"/><circle cx="12" cy="8.5" r="3" fill="rgba(255,255,255,0.85)"/>`,
   (c)=>`<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${c}"/><rect x="9.5" y="6.5" width="5" height="5" rx="1" fill="rgba(255,255,255,0.85)" transform="rotate(45 12 9)"/>`,
@@ -1485,50 +1396,149 @@ function buildAreaPinSVG(palette,active,index){
   return`<svg class="loc-area-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${PIN_SHAPES[index%PIN_SHAPES.length](c)}</svg>`;
 }
 
-function deriveAreaLabel(address) {
-  if (!address) return 'Other';
-  const parts = address.split(/[,\/]/).map(p => p.trim()).filter(Boolean);
-  // Try 2nd segment first (town/area), then 1st
-  for (const p of [parts[1], parts[0]]) {
-    if (p && p.length >= 3 && p.length <= 28 && !/^\d/.test(p)) return p;
-  }
-  return parts[0] || 'Other';
-}
+/* ════════════════════════════════════════════════════
+   FIXED: clusterFoodsByArea
+   
+   Root cause of the A1/A2 bug:
+   The old deriveAreaLabel() split address by comma and
+   picked the FIRST short token. For two restaurants in
+   Erattupetta:
+     "Main Road, Erattupetta"     → label = "Main Road"
+     "Near Bus Stand, Erattupetta" → label = "Near Bus Stand"
+   These two labels never matched, so the dedup suffix
+   (" 1" / " 2") was applied even though both clusters
+   were at the same physical location.
 
-function clusterFoodsByArea(foods){
-  const CLUSTER_RADIUS_KM=3,clusters=[];
-  foods.forEach(food=>{
-    const coords=getFoodCoords(food);
-    if(!coords){let o=clusters.find(c=>c.label==='Other');if(!o){o={label:'Other',centLat:null,centLng:null,foods:[]};clusters.push(o);}o.foods.push(food);return;}
-    let assigned=false;
-    for(const cluster of clusters){
-      if(cluster.centLat===null) continue;
-      if(haversineKm(cluster.centLat,cluster.centLng,coords.lat,coords.lng)<=CLUSTER_RADIUS_KM){
-        cluster.foods.push(food);const n=cluster.foods.length;
-        cluster.centLat=((cluster.centLat*(n-1))+coords.lat)/n;
-        cluster.centLng=((cluster.centLng*(n-1))+coords.lng)/n;
-        assigned=true;break;
+   The fix has two parts:
+   1. deriveClusterLabel() — called AFTER all foods are
+      grouped. It finds the longest common address token
+      shared by every food in the cluster (case-insensitive),
+      preferring the rightmost (= town-level) token.
+      Both addresses above share "Erattupetta" → single label.
+   2. Dedup logic is now applied to the derived label
+      only if two DIFFERENT geographic clusters end up
+      with the same name (true name collision), rather
+      than two restaurants in the same cluster being
+      incorrectly split apart.
+════════════════════════════════════════════════════ */
+
+/**
+ * Given all foods in a cluster, return a human-readable label.
+ * Finds the rightmost address token common to ALL foods in the cluster.
+ */
+function deriveClusterLabel(foods) {
+  // Collect unique non-empty address strings
+  const addrs = [...new Set(
+    foods.map(f => f.restaurant_short_address || f.restaurant_address || '').filter(Boolean)
+  )];
+  if (!addrs.length) return null;
+
+  // Split each address into cleaned tokens (split on comma or slash)
+  const tokenSets = addrs.map(a =>
+    a.split(/[,\/]/)
+      .map(t => t.trim())
+      .filter(t => t.length >= 3 && !/^\d/.test(t)) // skip pure-number tokens
+  );
+  if (!tokenSets.length || !tokenSets[0].length) return null;
+
+  // Find tokens present (case-insensitive) in EVERY address
+  const firstLower = tokenSets[0].map(t => t.toLowerCase());
+  const commonLower = firstLower.filter(tok =>
+    tokenSets.every(set => set.some(t => t.toLowerCase() === tok))
+  );
+
+  if (commonLower.length) {
+    // Walk the FIRST address right-to-left and return the first common token
+    // (rightmost = most general / town-level, e.g. "Erattupetta")
+    for (let i = tokenSets[0].length - 1; i >= 0; i--) {
+      if (commonLower.includes(tokenSets[0][i].toLowerCase())) {
+        return tokenSets[0][i]; // original casing
       }
     }
-    if(!assigned){const label=deriveAreaLabel(food.restaurant_short_address||food.restaurant_address||'',coords.lat,coords.lng);clusters.push({label,centLat:coords.lat,centLng:coords.lng,foods:[food]});}
+  }
+
+  // No common token across all addresses — fall back to last token of first address
+  const toks = tokenSets[0];
+  return toks[toks.length - 1] || toks[0] || null;
+}
+
+/**
+ * Cluster foods by GPS proximity (3 km radius).
+ * Labels are derived from shared address tokens AFTER clustering.
+ */
+function clusterFoodsByArea(foods) {
+  const CLUSTER_RADIUS_KM = 3;
+  const clusters = [];
+
+  foods.forEach(food => {
+    const coords = getFoodCoords(food);
+
+    if (!coords) {
+      // No coordinates — bucket into a special "Other" cluster
+      let other = clusters.find(c => c._noCoords);
+      if (!other) {
+        other = { label: 'Other', centLat: null, centLng: null, foods: [], _noCoords: true };
+        clusters.push(other);
+      }
+      other.foods.push(food);
+      return;
+    }
+
+    // Attempt to merge into an existing nearby cluster
+    let assigned = false;
+    for (const cluster of clusters) {
+      if (cluster.centLat === null) continue;
+      if (haversineKm(cluster.centLat, cluster.centLng, coords.lat, coords.lng) <= CLUSTER_RADIUS_KM) {
+        cluster.foods.push(food);
+        // Update running centroid average
+        const n = cluster.foods.length;
+        cluster.centLat = ((cluster.centLat * (n - 1)) + coords.lat) / n;
+        cluster.centLng = ((cluster.centLng * (n - 1)) + coords.lng) / n;
+        assigned = true;
+        break;
+      }
+    }
+
+    if (!assigned) {
+      // Start a new geographic cluster (label derived below)
+      clusters.push({
+        label: null,
+        centLat: coords.lat,
+        centLng: coords.lng,
+        foods: [food],
+        _noCoords: false
+      });
+    }
   });
-  const seen={};
-  clusters.forEach(c=>{if(c.label!=='Other') seen[c.label]=(seen[c.label]||0)+1;});
-  const labelCount={};
-  clusters.forEach(c=>{if(c.label==='Other')return;if(seen[c.label]>1){labelCount[c.label]=(labelCount[c.label]||0)+1;c.label=c.label+' '+labelCount[c.label];}});
+
+  // Now derive labels — all foods are grouped, so common tokens are accurate
+  const usedLabels = {};
+  clusters.forEach(cluster => {
+    if (cluster._noCoords) { cluster.label = 'Other'; return; }
+
+    const derived = deriveClusterLabel(cluster.foods);
+    // Fallback: use rounded coordinates as a last resort
+    let label = derived || `${cluster.centLat.toFixed(1)}°N`;
+
+    // Deduplicate only true collisions (different geographic clusters, same name)
+    if (usedLabels[label] !== undefined) {
+      usedLabels[label]++;
+      label = `${label} ${usedLabels[label]}`;
+    } else {
+      usedLabels[label] = 1;
+    }
+    cluster.label = label;
+  });
+
   return clusters;
 }
 
-/* ═══════════════════════════════════════════════════════
-   §9  AREA STATE
-═══════════════════════════════════════════════════════ */
+/* ── AREA STATE ── */
 let allFoods=[];
 let areaClusterKey=null;
 let builtClusters=[];
 
-/* ═══════════════════════════════════════════════════════
-   §10  LOCATION PIN BUILDER — DocumentFragment, no reflow
-═══════════════════════════════════════════════════════ */
+/* ── LOCATION PIN BUILDER ── */
 function rebuildLocationPins(){
   builtClusters=clusterFoodsByArea(allFoods);
   const track=document.getElementById('locTrack'),section=document.getElementById('locMapSection');
@@ -1541,16 +1551,12 @@ function rebuildLocationPins(){
     const dB=b.centLat!==null?haversineKm(userLat,userLng,b.centLat,b.centLng):9999;
     return dA-dB;
   });
-
-  // Build into DocumentFragment — single DOM write
   const frag=document.createDocumentFragment();
-
   const allPin=document.createElement('div');
   allPin.className='loc-pin-all'+(areaClusterKey===null?' active':'');allPin.id='locPinAll';
   allPin.innerHTML=`<div class="loc-pin-globe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="loc-pin-all-lbl">All</div>`;
   allPin.addEventListener('click',()=>selectAreaPin(null));
   frag.appendChild(allPin);
-
   builtClusters.forEach((cluster,i)=>{
     const palette=getAreaPalette(i);
     const isActive=areaClusterKey===cluster.label;
@@ -1563,10 +1569,7 @@ function rebuildLocationPins(){
     pin.addEventListener('click',()=>{if(proximityActive){removeProximityFilter();}selectAreaPin(cluster.label);});
     frag.appendChild(pin);
   });
-
-  // Single DOM mutation
-  track.innerHTML='';
-  track.appendChild(frag);
+  track.innerHTML='';track.appendChild(frag);
 }
 
 function selectAreaPin(key){
@@ -1575,8 +1578,7 @@ function selectAreaPin(key){
   const allPinEl=document.getElementById('locPinAll');
   if(allPinEl) allPinEl.classList.toggle('active',key===null);
   document.querySelectorAll('.loc-area-pin[data-area-key]').forEach((pin,i)=>{
-    const isThis=pin.dataset.areaKey===key;
-    pin.classList.toggle('active',isThis);
+    const isThis=pin.dataset.areaKey===key;pin.classList.toggle('active',isThis);
     const svgEl=pin.querySelector('.loc-area-pin-svg');
     if(svgEl){const allPins=[...document.querySelectorAll('.loc-area-pin[data-area-key]')];const idx=allPins.indexOf(pin);const palette=getAreaPalette(idx);svgEl.outerHTML=buildAreaPinSVG(palette,isThis,idx);}
   });
@@ -1587,150 +1589,92 @@ function selectAreaPin(key){
     if(cluster&&cluster.centLat!==null&&GEO.lat!==null){const km=haversineKm(GEO.lat,GEO.lng,cluster.centLat,cluster.centLng);badgeText.textContent=`${key} · ${formatDistance(km)}`;}
     else badgeText.textContent=key;
   }
-  if(navigator.vibrate) navigator.vibrate(8);
-  applyFilters();
+  if(navigator.vibrate) navigator.vibrate(8);applyFilters();
 }
 
-/* ═══════════════════════════════════════════════════════
-   §11  PROXIMITY BANNER
-═══════════════════════════════════════════════════════ */
+/* ── PROXIMITY BANNER ── */
 let proximityActive=false,bannerDismissed=false;
-
 function applyProximityFilter(){
   if(GEO.lat===null) return;
   proximityActive=true;F.maxDist='25';
   document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
-  const el25=document.querySelector('#distRow [data-dist="25"]');
-  if(el25) el25.classList.add('on');
-  document.getElementById('proximityBanner').style.display='';
-  applyFilters();
+  const el25=document.querySelector('#distRow [data-dist="25"]');if(el25) el25.classList.add('on');
+  document.getElementById('proximityBanner').style.display='';applyFilters();
 }
-
 function removeProximityFilter(){
   proximityActive=false;F.maxDist='all';
   document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
-  const elAll=document.querySelector('#distRow [data-dist="all"]');
-  if(elAll) elAll.classList.add('on');
+  const elAll=document.querySelector('#distRow [data-dist="all"]');if(elAll) elAll.classList.add('on');
   dismissBanner();applyFilters();updateBadge();
 }
-
 function dismissBanner(){
-  bannerDismissed=true;
-  const banner=document.getElementById('proximityBanner');
-  banner.style.transition='opacity 0.3s,max-height 0.4s';
-  banner.style.opacity='0';
+  bannerDismissed=true;const banner=document.getElementById('proximityBanner');
+  banner.style.transition='opacity 0.3s,max-height 0.4s';banner.style.opacity='0';
   setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},350);
 }
 
-/* ═══════════════════════════════════════════════════════
-   §12  FILTER STATE
-═══════════════════════════════════════════════════════ */
+/* ── FILTER STATE ── */
 const F={diet:new Set(),urgency:'all',discount:0,priceMin:0,priceMax:1000,qty:'all',cuisines:new Set(),sort:'default',maxDist:'all'};
-
-function setDist(val,el,silent){
-  F.maxDist=val;
-  document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
-  if(el) el.classList.add('on');
-  if(!silent) livePreview();
-}
-
+function setDist(val,el,silent){F.maxDist=val;document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));if(el) el.classList.add('on');if(!silent) livePreview();}
 function sortFoods(arr){
   const s=F.sort;if(s==='default') return arr;
   return[...arr].sort((a,b)=>{
     if(s==='nearest'){const dA=a._distance??9999,dB=b._distance??9999;return dA-dB;}
-    if(s==='price_asc') return a.price-b.price;
-    if(s==='price_desc') return b.price-a.price;
+    if(s==='price_asc') return a.price-b.price;if(s==='price_desc') return b.price-a.price;
     if(s==='discount') return calcDisc(b.mrp,b.price)-calcDisc(a.mrp,a.price);
     if(s==='time_asc') return(a.minutes_left||999)-(b.minutes_left||999);
-    if(s==='qty_desc') return(b.available_quantity||0)-(a.available_quantity||0);
-    return 0;
+    if(s==='qty_desc') return(b.available_quantity||0)-(a.available_quantity||0);return 0;
   });
 }
 
-// PERF: build area food id Set once per filter pass, not per food
-let _areaFoodIds=null;
-let _areaClusterKeySnapshot=null;
-
+let _areaFoodIds=null,_areaClusterKeySnapshot=null;
 function getFiltered(){
   const q=document.getElementById('foodSearch').value.toLowerCase();
-
-  // Rebuild area set only when selection changes
   if(_areaClusterKeySnapshot!==areaClusterKey){
     _areaClusterKeySnapshot=areaClusterKey;
-    if(areaClusterKey!==null){
-      const cluster=builtClusters.find(c=>c.label===areaClusterKey);
-      _areaFoodIds=cluster?new Set(cluster.foods.map(f=>String(f.id))):null;
-    }else{_areaFoodIds=null;}
+    if(areaClusterKey!==null){const cluster=builtClusters.find(c=>c.label===areaClusterKey);_areaFoodIds=cluster?new Set(cluster.foods.map(f=>String(f.id))):null;}
+    else{_areaFoodIds=null;}
   }
-
-  const maxKm=F.maxDist!=='all'?parseFloat(F.maxDist):null;
-  const hasGeo=GEO.lat!==null;
-
+  const maxKm=F.maxDist!=='all'?parseFloat(F.maxDist):null;const hasGeo=GEO.lat!==null;
   return allFoods.filter(f=>{
     if(_areaFoodIds!==null&&!_areaFoodIds.has(String(f.id))) return false;
     if(q&&!(f._nameLower).includes(q)&&!(f._restLower).includes(q)) return false;
     if(F.diet.size>0){const fd=normDiet(f.food_type);if(!fd||!F.diet.has(fd))return false;}
     const mins=f.minutes_left||9999;
-    if(F.urgency==='urgent'&&mins>15) return false;
-    if(F.urgency==='30'&&mins>30) return false;
-    if(F.urgency==='60'&&mins>60) return false;
+    if(F.urgency==='urgent'&&mins>15) return false;if(F.urgency==='30'&&mins>30) return false;if(F.urgency==='60'&&mins>60) return false;
     if(F.discount>0&&calcDisc(f.mrp,f.price)<F.discount) return false;
-    const p=f.price||0;
-    if(p<F.priceMin||p>F.priceMax) return false;
-    const qty=f.available_quantity||0;
-    if(F.qty!=='all'&&qty<parseInt(F.qty,10)) return false;
+    const p=f.price||0;if(p<F.priceMin||p>F.priceMax) return false;
+    const qty=f.available_quantity||0;if(F.qty!=='all'&&qty<parseInt(F.qty,10)) return false;
     if(F.cuisines.size>0){const fc=(f.cuisine||'').toLowerCase();let match=false;F.cuisines.forEach(c=>{if(fc.includes(c))match=true;});if(!match)return false;}
     if(maxKm!==null&&hasGeo){const km=f._distance;if(km===null||km===undefined||km>maxKm)return false;}
     return true;
   });
 }
 
-// PERF: filter runs in microtask, render scheduled in RAF
 let _filterPending=false;
 function applyFilters(){
-  if(_filterPending) return; // collapse rapid calls
-  _filterPending=true;
-  // Run filter sync (fast), schedule render for next frame
-  const filtered=sortFoods(getFiltered());
-  _filterPending=false;
+  if(_filterPending) return;_filterPending=true;
+  const filtered=sortFoods(getFiltered());_filterPending=false;
   queueWrite(()=>{render(filtered);updateHint(filtered.length);updatePills();});
 }
-
-// Debounced search input
 document.getElementById('foodSearch').addEventListener('input',debounce(applyFilters,220));
 document.getElementById('sortSelect').addEventListener('change',function(){F.sort=this.value;applyFilters();});
 
-/* ═══════════════════════════════════════════════════════
-   §13  RENDER — single innerHTML write + event delegation
-═══════════════════════════════════════════════════════ */
+/* ── RENDER ── */
 function buildDistanceBadge(km){
   if(GEO.status==='idle'||GEO.status==='locating') return`<span class="card-distance calculating">Calculating…</span>`;
   if(km===null||km===undefined||isNaN(km)) return`<span class="card-distance denied">Nearby</span>`;
-  const label=formatDistance(km),isClose=km<=1.5;
-  const driveMins=Math.max(1,Math.round((km*3.5)+2));
+  const label=formatDistance(km),isClose=km<=1.5;const driveMins=Math.max(1,Math.round((km*3.5)+2));
   return`<span class="card-distance${isClose?' close':''}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>${driveMins} min (${label})</span>`;
 }
-
-// PERF: find closest card index in data rather than querying DOM
-function findClosestIdx(foods){
-  let idx=-1,best=Infinity;
-  foods.forEach((f,i)=>{const d=f._distance;if(d!==null&&d!==undefined&&d<best&&d<50){best=d;idx=i;}});
-  return idx;
-}
+function findClosestIdx(foods){let idx=-1,best=Infinity;foods.forEach((f,i)=>{const d=f._distance;if(d!==null&&d!==undefined&&d<best&&d<50){best=d;idx=i;}});return idx;}
 
 function render(foods){
   document.getElementById('plateCount').textContent=`${foods.length} plate${foods.length!==1?'s':''}`;
   document.getElementById('hs-count').textContent=foods.length;
   const grid=document.getElementById('foodGrid');
-
-  if(!foods.length){
-    grid.innerHTML=`<div class="empty-state"><div class="empty-big">Empty</div><div class="empty-ttl">No plates match</div><div class="empty-sub">Try adjusting your filters or <button onclick="resetAllFilters()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-weight:600;font-size:inherit;padding:0;font-family:inherit;">clear them all</button>.</div></div>`;
-    return;
-  }
-
+  if(!foods.length){grid.innerHTML=`<div class="empty-state"><div class="empty-big">Empty</div><div class="empty-ttl">No plates match</div><div class="empty-sub">Try adjusting your filters or <button onclick="resetAllFilters()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-weight:600;font-size:inherit;padding:0;font-family:inherit;">clear them all</button>.</div></div>`;return;}
   const closestIdx=findClosestIdx(foods);
-
-  // PERF: build entire HTML string, do ONE innerHTML assignment
   const html=foods.map((f,i)=>{
     const disc=calcDisc(f.mrp,f.price),urgent=(f.minutes_left||999)<=15,mins=f.minutes_left||0;
     const timeColor=getTimeColor(mins),timeW=getTimeWidth(mins);
@@ -1739,7 +1683,6 @@ function render(foods){
     const driveMins=km!==null?Math.max(1,Math.round((km*3.5)+2)):null;
     const urgencyCombo=(km!==null&&(f.available_quantity||0)<=3)?`<span class="urgency-combo"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>${driveMins} min drive · only ${f.available_quantity} left</span>`:'';
     const closestBadge=i===closestIdx?`<div class="closest-badge">Closest to you</div>`:'';
-
     return`<article class="food-card" style="animation-delay:${Math.min(i*0.035,0.35)}s" data-food-id="${f.id}">
       <div class="card-hover-bar"></div>
       <div class="card-img-wrap">
@@ -1779,31 +1722,21 @@ function render(foods){
       </div>
     </article>`;
   }).join('');
-
   grid.innerHTML=html;
 }
 
-/* ═══════════════════════════════════════════════════════
-   §14  EVENT DELEGATION — single listener for entire grid
-═══════════════════════════════════════════════════════ */
+/* ── EVENT DELEGATION ── */
 document.getElementById('foodGrid').addEventListener('click',function(e){
-  // Buy button
   const buyBtn=e.target.closest('[data-buy]');
   if(buyBtn){e.stopPropagation();handleBuy(buyBtn.dataset.buy);return;}
-  // Card click → modal
-  const card=e.target.closest('.food-card');
-  if(card){const id=card.dataset.foodId;if(id) openModalById(id);}
+  const card=e.target.closest('.food-card');if(card){const id=card.dataset.foodId;if(id) openModalById(id);}
 });
 
-/* ═══════════════════════════════════════════════════════
-   §15  FILTER PANEL HANDLERS
-═══════════════════════════════════════════════════════ */
+/* ── FILTER PANEL ── */
 let panelOpen=false;
 document.getElementById('filterTrigger').addEventListener('click',()=>{
-  panelOpen=!panelOpen;
-  document.getElementById('filterPanel').classList.toggle('open',panelOpen);
-  document.getElementById('filterTrigger').classList.toggle('open',panelOpen);
-  if(navigator.vibrate) navigator.vibrate(8);
+  panelOpen=!panelOpen;document.getElementById('filterPanel').classList.toggle('open',panelOpen);
+  document.getElementById('filterTrigger').classList.toggle('open',panelOpen);if(navigator.vibrate) navigator.vibrate(8);
 });
 function toggleDiet(type,el){if(F.diet.has(type)){F.diet.delete(type);el.classList.remove('on');}else{F.diet.add(type);el.classList.add('on');}livePreview();}
 function setUrgency(val,el){F.urgency=val;document.querySelectorAll('#urgencyRow .fp-radio').forEach(b=>b.classList.remove('on'));el.classList.add('on');livePreview();}
@@ -1811,8 +1744,7 @@ function onDiscountInput(v){F.discount=parseInt(v,10);document.getElementById('d
 function onPriceRange(){
   const mn=document.getElementById('priceMin'),mxEl=document.getElementById('priceMax');
   let lo=parseInt(mn.value,10),hi=parseInt(mxEl.value,10);
-  if(lo>hi-50){lo=hi-50;mn.value=lo;}
-  F.priceMin=lo;F.priceMax=hi;
+  if(lo>hi-50){lo=hi-50;mn.value=lo;}F.priceMin=lo;F.priceMax=hi;
   document.getElementById('priceMinLabel').textContent=lo;
   document.getElementById('priceMaxLabel').textContent=hi>=1000?hi+'+':hi;
   updateFill(lo,hi);livePreview();
@@ -1821,20 +1753,10 @@ function updateFill(lo,hi){const max=parseInt(document.getElementById('priceMax'
 updateFill(0,1000);
 function setQty(val,el){F.qty=val;document.querySelectorAll('#qtyRow .fp-chip').forEach(b=>b.classList.remove('on'));el.classList.add('on');livePreview();}
 function toggleCuisine(val,el){if(F.cuisines.has(val)){F.cuisines.delete(val);el.classList.remove('on');}else{F.cuisines.add(val);el.classList.add('on');}livePreview();}
-
 let _hintTimer=null;
 function livePreview(){const c=getFiltered().length;updateHint(c);}
-function updateHint(c){
-  const el=document.getElementById('fpHint');
-  el.textContent=`${c} plate${c!==1?'s':''}`;el.classList.add('lit');
-  clearTimeout(_hintTimer);_hintTimer=setTimeout(()=>el.classList.remove('lit'),800);
-}
-function commitFilters(){
-  applyFilters();panelOpen=false;
-  document.getElementById('filterPanel').classList.remove('open');
-  document.getElementById('filterTrigger').classList.remove('open');
-  updateBadge();if(navigator.vibrate)navigator.vibrate(10);
-}
+function updateHint(c){const el=document.getElementById('fpHint');el.textContent=`${c} plate${c!==1?'s':''}`;el.classList.add('lit');clearTimeout(_hintTimer);_hintTimer=setTimeout(()=>el.classList.remove('lit'),800);}
+function commitFilters(){applyFilters();panelOpen=false;document.getElementById('filterPanel').classList.remove('open');document.getElementById('filterTrigger').classList.remove('open');updateBadge();if(navigator.vibrate)navigator.vibrate(10);}
 
 function resetAllFilters(){
   F.diet.clear();F.urgency='all';F.discount=0;F.priceMin=0;F.priceMax=1000;F.qty='all';F.cuisines.clear();F.sort='default';F.maxDist='all';
@@ -1847,14 +1769,10 @@ function resetAllFilters(){
   document.querySelectorAll('#distRow .fp-chip').forEach(b=>b.classList.remove('on'));
   document.querySelector('#distRow [data-dist="all"]').classList.add('on');
   document.querySelectorAll('.fp-chip[data-diet],.fp-chip[data-cuisine]').forEach(b=>b.classList.remove('on'));
-  document.getElementById('discountRange').value=0;
-  document.getElementById('discountLabel').textContent='Any';
-  document.getElementById('priceMin').value=0;
-  const mx=parseInt(document.getElementById('priceMax').max)||1000;
-  document.getElementById('priceMax').value=mx;
-  document.getElementById('priceMinLabel').textContent=0;
-  document.getElementById('priceMaxLabel').textContent=mx+'+';
-  updateFill(0,mx);
+  document.getElementById('discountRange').value=0;document.getElementById('discountLabel').textContent='Any';
+  document.getElementById('priceMin').value=0;const mx=parseInt(document.getElementById('priceMax').max)||1000;
+  document.getElementById('priceMax').value=mx;document.getElementById('priceMinLabel').textContent=0;
+  document.getElementById('priceMaxLabel').textContent=mx+'+';updateFill(0,mx);
   const allPinEl=document.getElementById('locPinAll');if(allPinEl) allPinEl.classList.add('active');
   document.querySelectorAll('.loc-area-pin[data-area-key]').forEach(p=>p.classList.remove('active'));
   const badge=document.getElementById('locActiveBadge');if(badge) badge.classList.remove('vis');
@@ -1862,19 +1780,14 @@ function resetAllFilters(){
 }
 
 function countActive(){
-  let n=0;
-  if(F.diet.size) n+=F.diet.size;
-  if(F.urgency!=='all') n++;if(F.discount>0) n++;
-  if(F.priceMin>0||F.priceMax<1000) n++;
-  if(F.qty!=='all') n++;if(F.cuisines.size) n+=F.cuisines.size;
-  if(areaClusterKey!==null) n++;if(F.maxDist!=='all') n++;
-  return n;
+  let n=0;if(F.diet.size) n+=F.diet.size;if(F.urgency!=='all') n++;if(F.discount>0) n++;
+  if(F.priceMin>0||F.priceMax<1000) n++;if(F.qty!=='all') n++;if(F.cuisines.size) n+=F.cuisines.size;
+  if(areaClusterKey!==null) n++;if(F.maxDist!=='all') n++;return n;
 }
 function updateBadge(){const n=countActive(),cnt=document.getElementById('filterCnt');cnt.textContent=n;cnt.style.display=n?'inline-flex':'none';}
 
 function updatePills(){
-  const row=document.getElementById('afRow');
-  const pills=[];
+  const row=document.getElementById('afRow');const pills=[];
   F.diet.forEach(d=>pills.push({label:d==='veg'?'Veg':d==='egg'?'Egg':'Non-Veg',blue:false,action:`removeDietPill:${d}`}));
   if(F.urgency!=='all'){const m={urgent:'≤15 min','30':'≤30 min','60':'≤60 min'};pills.push({label:m[F.urgency],blue:false,action:'removeUrgencyPill'});}
   if(F.discount>0) pills.push({label:`${F.discount}%+ off`,blue:false,action:'removeDiscountPill'});
@@ -1889,7 +1802,6 @@ function updatePills(){
   updateBadge();
 }
 
-// PERF: event delegation on pills row
 document.getElementById('afRow').addEventListener('click',function(e){
   const btn=e.target.closest('[data-pill-action]');if(!btn) return;
   const action=btn.dataset.pillAction;
@@ -1904,139 +1816,36 @@ document.getElementById('afRow').addEventListener('click',function(e){
   applyFilters();
 });
 
-/* ═══════════════════════════════════════════════════════
-   §16  DATA FETCH — restaurants table drives area labels
-═══════════════════════════════════════════════════════ */
-// Maps restaurant_id → canonical { address, areaLabel }
-const restaurantMeta = new Map();
-
-async function fetchRestaurantMeta() {
-  try {
-    const res = await fetch('/api/restaurants'); // returns [{id, address, ...}]
-    if (!res.ok) return;
-    const data = await res.json();
-    const rests = data.restaurants || data || [];
-    
-    // Build area label from address once per restaurant — no duplicates
-    const areaCounts = {};
-    rests.forEach(r => {
-      const raw = deriveAreaLabel(r.address);
-      areaCounts[raw] = (areaCounts[raw] || 0) + 1;
-    });
-    
-    rests.forEach(r => {
-      const raw = deriveAreaLabel(r.address);
-      restaurantMeta.set(String(r.id), {
-        address: r.address,
-        areaLabel: raw, // single canonical label — no numbering
-        lat: parseFloat(r.lat || r.latitude || NaN),
-        lng: parseFloat(r.lng || r.lon || r.longitude || NaN),
-      });
-    });
-  } catch (e) {
-    console.warn('Restaurant meta fetch failed, falling back to food addresses', e);
-  }
-}
-
-function clusterFoodsByArea(foods) {
-  const CLUSTER_RADIUS_KM = 3;
-  // Group by canonical area label from restaurants table
-  const byArea = new Map(); // areaLabel → { foods, centLat, centLng, count }
-
-  foods.forEach(food => {
-    const meta = restaurantMeta.get(String(food.restaurant_id));
-    
-    // Get coords: prefer restaurants table, fall back to food coords
-    let lat = meta && !isNaN(meta.lat) ? meta.lat : null;
-    let lng = meta && !isNaN(meta.lng) ? meta.lng : null;
-    if (!lat || !lng) {
-      const coords = getFoodCoords(food);
-      if (coords) { lat = coords.lat; lng = coords.lng; }
+/* ── DATA FETCH ── */
+fetch('/api/foods')
+  .then(r=>{if(!r.ok)throw 0;return r.json();})
+  .then(data=>{
+    allFoods=data.foods||[];
+    allFoods.forEach(f=>{f._nameLower=(f.name||'').toLowerCase();f._restLower=(f.restaurant_name||'').toLowerCase();});
+    const rests=new Set(allFoods.map(f=>f.restaurant_name).filter(Boolean));
+    document.getElementById('hs-rest').textContent=rests.size||'—';
+    const cuisines=[...new Set(allFoods.map(f=>(f.cuisine||'').toLowerCase().trim()).filter(Boolean))];
+    if(cuisines.length>1){
+      const sec=document.getElementById('cuisineSection'),row=document.getElementById('cuisineRow');sec.style.display='';
+      const frag=document.createDocumentFragment();
+      cuisines.forEach(c=>{const btn=document.createElement('button');btn.className='fp-chip';btn.dataset.cuisine=c;btn.textContent=c.charAt(0).toUpperCase()+c.slice(1);btn.onclick=function(){toggleCuisine(c,this);};frag.appendChild(btn);});
+      row.appendChild(frag);
     }
-    
-    // Get area label: prefer restaurants table
-    let areaLabel = meta?.areaLabel;
-    if (!areaLabel) {
-      areaLabel = deriveAreaLabel(
-        food.restaurant_short_address || food.restaurant_address || ''
-      );
-    }
+    const prices=allFoods.map(f=>f.price||0);const maxP=Math.ceil(Math.max(...prices)/50)*50||1000;
+    document.getElementById('priceMax').max=maxP;document.getElementById('priceMin').max=maxP;
+    document.getElementById('priceMax').value=maxP;F.priceMax=maxP;
+    document.getElementById('priceMaxLabel').textContent=maxP+'+';updateFill(0,maxP);
+    cacheDistances();
+    schedule(()=>rebuildLocationPins(),{timeout:800});
+    applyFilters();
+  })
+  .catch(()=>{allFoods=[];render([]);document.getElementById('hs-count').textContent='0';document.getElementById('hs-rest').textContent='0';});
 
-    if (!byArea.has(areaLabel)) {
-      byArea.set(areaLabel, { 
-        label: areaLabel, 
-        centLat: lat, 
-        centLng: lng, 
-        foods: [] 
-      });
-    }
-    const cluster = byArea.get(areaLabel);
-    cluster.foods.push(food);
-    
-    // Update centroid
-    if (lat && lng) {
-      const n = cluster.foods.length;
-      cluster.centLat = ((cluster.centLat || lat) * (n - 1) + lat) / n;
-      cluster.centLng = ((cluster.centLng || lng) * (n - 1) + lng) / n;
-    }
-  });
-
-  return [...byArea.values()];
-}
-
-// Boot sequence — fetch both in parallel
-Promise.all([
-  fetchRestaurantMeta(),
-  fetch('/api/foods')
-    .then(r => { if (!r.ok) throw 0; return r.json(); })
-    .then(data => {
-      allFoods = data.foods || [];
-      allFoods.forEach(f => {
-        f._nameLower = (f.name || '').toLowerCase();
-        f._restLower = (f.restaurant_name || '').toLowerCase();
-      });
-
-      const rests = new Set(allFoods.map(f => f.restaurant_name).filter(Boolean));
-      document.getElementById('hs-rest').textContent = rests.size || '—';
-
-      const cuisines = [...new Set(allFoods.map(f => (f.cuisine || '').toLowerCase().trim()).filter(Boolean))];
-      if (cuisines.length > 1) {
-        const sec = document.getElementById('cuisineSection'), row = document.getElementById('cuisineRow');
-        sec.style.display = '';
-        const frag = document.createDocumentFragment();
-        cuisines.forEach(c => {
-          const btn = document.createElement('button');
-          btn.className = 'fp-chip'; btn.dataset.cuisine = c;
-          btn.textContent = c.charAt(0).toUpperCase() + c.slice(1);
-          btn.onclick = function () { toggleCuisine(c, this); };
-          frag.appendChild(btn);
-        });
-        row.appendChild(frag);
-      }
-
-      const prices = allFoods.map(f => f.price || 0);
-      const maxP = Math.ceil(Math.max(...prices) / 50) * 50 || 1000;
-      document.getElementById('priceMax').max = maxP;
-      document.getElementById('priceMin').max = maxP;
-      document.getElementById('priceMax').value = maxP;
-      F.priceMax = maxP;
-      document.getElementById('priceMaxLabel').textContent = maxP + '+';
-      updateFill(0, maxP);
-    })
-    .catch(() => { allFoods = []; render([]); document.getElementById('hs-count').textContent = '0'; document.getElementById('hs-rest').textContent = '0'; })
-]).then(() => {
-  cacheDistances();
-  schedule(() => rebuildLocationPins(), { timeout: 800 });
-  applyFilters();
-});
-/* ═══════════════════════════════════════════════════════
-   §17  MODAL
-═══════════════════════════════════════════════════════ */
+/* ── MODAL ── */
 function openModalById(id){const f=allFoods.find(item=>String(item.id)===String(id));if(f) openModal(f);}
 function openModal(f){
   const disc=calcDisc(f.mrp,f.price);
-  document.getElementById('modalImg').src=cachedImg(f);
-  document.getElementById('modalImg').alt=f.name;
+  document.getElementById('modalImg').src=cachedImg(f);document.getElementById('modalImg').alt=f.name;
   document.getElementById('modalKicker').textContent=f.restaurant_name+(disc?` — ${disc}% off`:'');
   document.getElementById('modalTitle').textContent=f.name;
   document.getElementById('modalRestaurant').textContent=f.restaurant_short_address||f.restaurant_name||'';
@@ -2046,49 +1855,34 @@ function openModal(f){
   document.getElementById('modalMrp').textContent=f.mrp?`₹${f.mrp}`:'';
   document.getElementById('modalPrice').textContent=`₹${Math.ceil(f.price)}`;
   document.getElementById('modalCta').href=`/checkout/${f.id}`;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-/* ═══════════════════════════════════════════════════════
-   §18  DRAWER
-═══════════════════════════════════════════════════════ */
+/* ── DRAWER ── */
 function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.body.classList.add('page-pushed');schedule(loadProfile,{timeout:500});}
 function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.body.classList.remove('page-pushed');}
 document.getElementById('openProfile').onclick=openDrawer;
 document.getElementById('closeProfile').onclick=closeDrawer;
 document.getElementById('drawerScrim').onclick=closeDrawer;
-
 async function loadAuthUI(){
-  try{
-    const res=await fetch('/api/check-auth');const data=await res.json();
-    const container=document.getElementById('authContainer');
-    container.innerHTML=data.logged_in
-      ?`<button onclick="logout()" class="drawer-logout">Sign Out</button>`
-      :`<a href="/login" class="drawer-logout">Login</a><a href="/signup" class="drawer-logout">Sign Up</a>`;
-  }catch(err){console.error('Auth check failed',err);}
+  try{const res=await fetch('/api/check-auth');const data=await res.json();const container=document.getElementById('authContainer');container.innerHTML=data.logged_in?`<button onclick="logout()" class="drawer-logout">Sign Out</button>`:`<a href="/login" class="drawer-logout">Login</a><a href="/signup" class="drawer-logout">Sign Up</a>`;}
+  catch(err){console.error('Auth check failed',err);}
 }
 function logout(){window.location.href='/logout';}
 loadAuthUI();
-
 async function loadProfile(){
   try{
     const[uRes,oRes]=await Promise.all([fetch('/api/user/profile').catch(()=>null),fetch('/api/user/orders').catch(()=>null)]);
-    const u=uRes?.ok?await uRes.json():{name:'Rescue Agent'};
-    const orders=oRes?.ok?await oRes.json():[];
+    const u=uRes?.ok?await uRes.json():{name:'Rescue Agent'};const orders=oRes?.ok?await oRes.json():[];
     document.getElementById('profileName').textContent=u.name||'Agent';
-    document.getElementById('historyList').innerHTML=orders.length
-      ?orders.map(o=>`<div class="hist-item"><div class="hist-name">${o.food}</div><div class="hist-meta">₹${o.total_amount} · ${o.status}</div></div>`).join('')
-      :`<p style="font-size:.82rem;color:var(--ink3);padding:12px 0">No rescue history yet.</p>`;
+    document.getElementById('historyList').innerHTML=orders.length?orders.map(o=>`<div class="hist-item"><div class="hist-name">${o.food}</div><div class="hist-meta">₹${o.total_amount} · ${o.status}</div></div>`).join(''):`<p style="font-size:.82rem;color:var(--ink3);padding:12px 0">No rescue history yet.</p>`;
   }catch{document.getElementById('profileName').textContent='Guest';}
 }
 
-/* ═══════════════════════════════════════════════════════
-   §19  COLOUR BLINDNESS
-═══════════════════════════════════════════════════════ */
+/* ── COLOUR BLINDNESS ── */
 const CB_MAP={deuteranopia:{'--accent':'#0077BB','--accent2':'#0099DD','--gold':'#EE7733'},protanopia:{'--accent':'#0066CC','--accent2':'#0088FF','--gold':'#F0A500'},tritanopia:{'--accent':'#009988','--accent2':'#00BB9F','--gold':'#CC3311'}};
 function setCB(mode,el){
   ['--accent','--accent2','--gold'].forEach(v=>document.documentElement.style.removeProperty(v));
@@ -2097,24 +1891,18 @@ function setCB(mode,el){
   try{localStorage.setItem('lp-cb',mode);}catch{}
 }
 
-/* ═══════════════════════════════════════════════════════
-   §20  BOTTOM NAV
-═══════════════════════════════════════════════════════ */
+/* ── BOTTOM NAV ── */
 function setNav(id){document.querySelectorAll('.bn-item').forEach(e=>e.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');}
 setNav('bnBrowse');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();closeSheet();}});
 
-/* ═══════════════════════════════════════════════════════
-   §21  SCROLL PROGRESS — throttled
-═══════════════════════════════════════════════════════ */
+/* ── SCROLL PROGRESS ── */
 window.addEventListener('scroll',throttle(()=>{
   const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight||1);
   document.getElementById('sline').style.width=(p*100)+'%';
 },50),{passive:true});
 
-/* ═══════════════════════════════════════════════════════
-   §22  TAB SLIDER
-═══════════════════════════════════════════════════════ */
+/* ── TAB SLIDER ── */
 function initTabSlider(){
   const bar=document.getElementById('sheetTabsBar');if(!bar) return;
   let slider=bar.querySelector('.sheet-tabs-slider');
@@ -2131,23 +1919,19 @@ function initTabSlider(){
   requestAnimationFrame(()=>{const active=bar.querySelector('.sheet-tab.active');if(active)updateSlider(active);});
 }
 
-/* ═══════════════════════════════════════════════════════
-   §23  CHEF'S SHEET
-═══════════════════════════════════════════════════════ */
+/* ── CHEF'S SHEET ── */
 const sheetOverlay=document.getElementById('sheetOverlay'),theSheet=document.getElementById('theSheet'),bottomNav=document.getElementById('bottomNav');
 let secretLoaded=false,secretRests=[],dishCache={};
-
 function openSheet(){
   sheetOverlay.classList.add('open');bottomNav.classList.add('hide-nav');document.body.style.overflow='hidden';setNav('bnSecret');
   if(navigator.vibrate) navigator.vibrate(12);
-  if(!secretLoaded) secretLoaded=true, schedule(loadSecretRests,{timeout:300});
+  if(!secretLoaded) secretLoaded=true,schedule(loadSecretRests,{timeout:300});
   setTimeout(initTabSlider,60);
 }
 function closeSheet(){sheetOverlay.classList.remove('open');bottomNav.classList.remove('hide-nav');document.body.style.overflow='';setNav('bnBrowse');}
 document.getElementById('sheetClose').addEventListener('click',closeSheet);
 document.getElementById('sheetScrim').addEventListener('click',closeSheet);
 
-// Drag to close
 const dragZone=document.getElementById('sheetDrag');
 let drag={active:false,startY:0,startX:0,lastY:0,startTime:0,moved:false};
 dragZone.addEventListener('touchstart',e=>{const t=e.touches[0];drag={active:true,startY:t.clientY,startX:t.clientX,lastY:t.clientY,startTime:Date.now(),moved:false};},{passive:true});
@@ -2164,7 +1948,6 @@ dragZone.addEventListener('touchend',()=>{
 },{passive:true});
 document.getElementById('sheetBody').addEventListener('touchstart',()=>{drag.active=false;},{passive:true});
 
-// Sheet search — debounced
 const sInput=document.getElementById('secretSearch'),sClear=document.getElementById('secretClearBtn'),sPanel=document.getElementById('searchResults');
 function getAllDishes(){return Object.values(dishCache).flat();}
 function runSearch(q){
@@ -2180,24 +1963,16 @@ sInput.addEventListener('input',debounce(()=>runSearch(sInput.value),280));
 sClear.addEventListener('click',()=>{clearSearch();sInput.focus();});
 
 async function loadSecretRests(){
-  document.getElementById('panelToday').innerHTML=skelN(3);
-  document.getElementById('panelTomorrow').innerHTML=skelN(2);
+  document.getElementById('panelToday').innerHTML=skelN(3);document.getElementById('panelTomorrow').innerHTML=skelN(2);
   try{
-    const res=await fetch('/api/secret-menu/restaurants');const data=await res.json();
-    secretRests=data.restaurants||[];
+    const res=await fetch('/api/secret-menu/restaurants');const data=await res.json();secretRests=data.restaurants||[];
     const total=secretRests.reduce((s,r)=>s+(r.dish_count||0),0);
-    document.getElementById('statDishes').textContent=total||'0';
-    document.getElementById('statKitchens').textContent=secretRests.length||'0';
-    document.getElementById('statDiscount').textContent=total?'35%':'—';
-    document.getElementById('countToday').textContent=total||'0';
-    document.getElementById('countTomorrow').textContent=secretRests.length||'0';
+    document.getElementById('statDishes').textContent=total||'0';document.getElementById('statKitchens').textContent=secretRests.length||'0';
+    document.getElementById('statDiscount').textContent=total?'35%':'—';document.getElementById('countToday').textContent=total||'0';document.getElementById('countTomorrow').textContent=secretRests.length||'0';
     if(!secretRests.length){document.getElementById('panelToday').innerHTML=emptySheet('No exclusive dishes tonight.');document.getElementById('panelTomorrow').innerHTML=emptySheet('Nothing coming up yet.');return;}
-    // Prefetch all dish data in idle time
-    schedule(()=>prefetchAll(secretRests),{timeout:600});
-    renderToday(secretRests);renderTomorrow(secretRests);
+    schedule(()=>prefetchAll(secretRests),{timeout:600});renderToday(secretRests);renderTomorrow(secretRests);
   }catch{document.getElementById('panelToday').innerHTML=errSheet();document.getElementById('panelTomorrow').innerHTML=errSheet();}
 }
-
 async function prefetchAll(rests){
   await Promise.all(rests.map(async r=>{
     if(dishCache[r.restaurant_id])return;
@@ -2205,7 +1980,6 @@ async function prefetchAll(rests){
     catch{dishCache[r.restaurant_id]=[];}
   }));
 }
-
 function renderToday(rests){
   const p=document.getElementById('panelToday');
   p.innerHTML=`<div class="excl-banner"><div class="excl-ico"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>Only visible here — hidden from main browse</div><div class="sec-lbl">Kitchens</div><div class="kitchen-chips" id="kchipsToday">${rests.map((r,i)=>`<button class="kitch-chip${i===0?' active':''}" data-rid="${r.restaurant_id}" onclick="selKitch('today','${r.restaurant_id}',this)"><span class="kitch-name">${r.restaurant_name}</span><span class="kitch-cnt">${r.dish_count} dish${r.dish_count!==1?'es':''}</span></button>`).join('')}</div><div class="sec-lbl">Dishes</div><div id="dishesToday">${skelN(2)}</div>`;
@@ -2221,28 +1995,19 @@ function selKitch(mode,rid,el){
   if(el) el.classList.add('active');loadKitchDishes(mode,rid);
 }
 async function loadKitchDishes(mode,rid){
-  const cid=mode==='today'?'dishesToday':'dishesTomorrow';
-  const cont=document.getElementById(cid);if(!cont)return;
-  cont.innerHTML=skelN(2);
+  const cid=mode==='today'?'dishesToday':'dishesTomorrow';const cont=document.getElementById(cid);if(!cont)return;cont.innerHTML=skelN(2);
   if(dishCache[rid]){renderDishes(cont,dishCache[rid],mode);return;}
-  try{
-    const res=await fetch(`/api/secret-menu/${rid}`);const data=await res.json();
-    const dishes=(data.dishes||[]).map(d=>({...d,restaurant_name:secretRests.find(r=>r.restaurant_id===rid)?.restaurant_name||''}));
-    dishCache[rid]=dishes;renderDishes(cont,dishes,mode);
-  }catch{cont.innerHTML=errSheet();}
+  try{const res=await fetch(`/api/secret-menu/${rid}`);const data=await res.json();const dishes=(data.dishes||[]).map(d=>({...d,restaurant_name:secretRests.find(r=>r.restaurant_id===rid)?.restaurant_name||''}));dishCache[rid]=dishes;renderDishes(cont,dishes,mode);}
+  catch{cont.innerHTML=errSheet();}
 }
 function renderDishes(cont,dishes,mode){if(!dishes.length){cont.innerHTML=emptySheet('No dishes from this kitchen right now.');return;}cont.innerHTML=mode==='tomorrow'?dishes.map(tmrwRow).join(''):dishes.map(secretDishCard).join('');}
 
 function secretDishCard(d){
-  const img=d.img||getImg(d.name);
-  const sold=d.stock===0;
+  const img=d.img||getImg(d.name);const sold=d.stock===0;
   const fallbackRest=allFoods.find(f=>f.restaurant_id===d.restaurant_id||f.restaurant_name===d.restaurant_name)||{};
   const locName=d.restaurant_short_address||d.restaurant_address||fallbackRest.restaurant_short_address||'Premium Kitchen Location';
   let distHtml='';
-  if(GEO.lat!==null){
-    const coords=getFoodCoords(d)||getFoodCoords(fallbackRest);
-    if(coords){const km=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);const driveMins=Math.max(1,Math.round((km*3.5)+2));const distLabel=km<1?Math.round(km*1000)+'m':km.toFixed(1)+'km';distHtml=`<span class="sc-dist">📍 ${distLabel} · ${driveMins}m drive</span>`;}
-  }
+  if(GEO.lat!==null){const coords=getFoodCoords(d)||getFoodCoords(fallbackRest);if(coords){const km=haversineKm(GEO.lat,GEO.lng,coords.lat,coords.lng);const driveMins=Math.max(1,Math.round((km*3.5)+2));const distLabel=km<1?Math.round(km*1000)+'m':km.toFixed(1)+'km';distHtml=`<span class="sc-dist">📍 ${distLabel} · ${driveMins}m drive</span>`;}}
   return`<div class="secret-card" onclick="${sold?'':'location.href=\'/checkout/secret/'+d.id+'\''}" style="${sold?'opacity:0.5;filter:grayscale(1);cursor:default':''}"><div class="sc-img-wrap"><img src="${img}" alt="${d.name}" loading="lazy" decoding="async"><div class="sc-badge-blur">${sold?'Sold Out':(d.stock||0)+' Left'}</div></div><div class="sc-info"><h3 class="sc-title">${d.name}</h3><p class="sc-vendor">${d.restaurant_name}</p><div class="sc-vendor-loc"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${locName}</div>${distHtml?`<div>${distHtml}</div>`:''}<div class="sc-bottom"><div class="sc-price-box">${d.mrp?`<span class="sc-price-old">₹${d.mrp}</span>`:''}<span class="sc-price-new">₹${Math.ceil(d.price)}</span></div><button class="sc-btn" ${sold?'disabled':''} onclick="${sold?'':'event.stopPropagation();location.href=\'/checkout/secret/'+d.id+'\''}">${sold?'Gone':'Claim'}</button></div></div></div>`;
 }
 function tmrwRow(d){return`<div class="tmrw-row"><div class="tmrw-emoji">${cuisineEmoji(d.cuisine)}</div><div style="flex:1;min-width:0"><div class="tmrw-name">${d.name}</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="color:rgba(255,255,255,0.7);font-size:0.6875rem;">${d.restaurant_name||''}</span>${getFTBadge(d.food_type,'sm')}</div><div class="tmrw-hint">Unlocks tomorrow evening</div></div><button class="notify-btn" onclick="handleNotify(this)">Notify</button></div>`;}
@@ -2251,20 +2016,13 @@ function skelN(n){return Array.from({length:n},()=>`<div class="skel-dish"><div 
 function emptySheet(msg){return`<div class="sheet-empty"><div class="sheet-empty-ico">—</div><div class="sheet-empty-ttl">Nothing Here</div><div class="sheet-empty-sub">${msg}</div></div>`;}
 function errSheet(){return`<div class="sheet-empty"><div class="sheet-empty-ico">!</div><div class="sheet-empty-ttl">Couldn't Load</div><div class="sheet-empty-sub">Check connection and try again.</div></div>`;}
 
-/* ═══════════════════════════════════════════════════════
-   §24  BUY HANDLER
-═══════════════════════════════════════════════════════ */
+/* ── BUY HANDLER ── */
 async function handleBuy(foodId){
-  try{
-    const res=await fetch('/api/check-auth',{credentials:'include'});const data=await res.json();
-    if(!data.logged_in){localStorage.setItem('pendingFood',foodId);window.location.href='/login';return;}
-    window.location.href='/checkout/'+foodId;
-  }catch(err){console.error('Error:',err);}
+  try{const res=await fetch('/api/check-auth',{credentials:'include'});const data=await res.json();if(!data.logged_in){localStorage.setItem('pendingFood',foodId);window.location.href='/login';return;}window.location.href='/checkout/'+foodId;}
+  catch(err){console.error('Error:',err);}
 }
 
-/* ═══════════════════════════════════════════════════════
-   §25  BOOT
-═══════════════════════════════════════════════════════ */
+/* ── BOOT ── */
 getUserLocation();
 </script>
 </body>
